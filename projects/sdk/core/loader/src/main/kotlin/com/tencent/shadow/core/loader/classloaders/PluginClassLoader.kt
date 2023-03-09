@@ -18,11 +18,15 @@
 
 package com.tencent.shadow.core.loader.classloaders
 
+import android.content.Context
 import android.os.Build
+import com.tencent.shadow.core.dex.MultiDex
 import com.tencent.shadow.core.runtime.PluginManifest
 import dalvik.system.BaseDexClassLoader
 import org.jetbrains.annotations.TestOnly
 import java.io.File
+import java.io.IOException
+import java.lang.reflect.InvocationTargetException
 
 
 /**
@@ -38,7 +42,9 @@ import java.io.File
  *  PluginClassLoaderB        PluginClassLoaderC
  *
  */
+private const val TAG = "PluginClassLoader-App"
 class PluginClassLoader(
+    hostAppContext: Context,
     dexPath: String,
     optimizedDirectory: File?,
     librarySearchPath: String?,
@@ -55,6 +61,27 @@ class PluginClassLoader(
     private val loaderClassLoader = PluginClassLoader::class.java.classLoader!!
 
     init {
+        try {
+            val sourceApk = File(dexPath)
+            val name = sourceApk.name
+            val dataDir = File(hostAppContext.cacheDir.toString() + "/shadow_dex")
+            dataDir.mkdirs()
+            MultiDex.doInstallation(
+                hostAppContext, this, sourceApk,
+                dataDir, name, name
+            )
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: IllegalAccessException) {
+            e.printStackTrace()
+        } catch (e: NoSuchFieldException) {
+            e.printStackTrace()
+        } catch (e: InvocationTargetException) {
+            e.printStackTrace()
+        } catch (e: NoSuchMethodException) {
+            e.printStackTrace()
+        }
+
         hostWhiteList?.forEach {
             allHostWhiteTrie.insert(it)
         }

@@ -41,7 +41,7 @@ final class LoaderImplLoader extends ImplLoader {
             = "com.tencent.shadow.dynamic.loader.impl.LoaderFactoryImpl";
 
     PluginLoaderImpl load(InstalledApk installedApk, String uuid, Context appContext) throws Exception {
-        ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
+        ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(appContext,
                 installedApk,
                 LoaderImplLoader.class.getClassLoader(),
                 loadWhiteList(installedApk),

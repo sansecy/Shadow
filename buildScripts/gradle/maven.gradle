@@ -114,7 +114,7 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk8', kotlin_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform-kit', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
@@ -135,7 +135,7 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk8', kotlin_version))
                 dependencies.append(getDependencyNode('compile', 'com.squareup', 'javapoet', javapoet_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
 
@@ -181,7 +181,7 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk8', kotlin_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'activity-container', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
@@ -248,7 +248,7 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk8', kotlin_version))
                 dependencies.append(getDependencyNode('compile', 'org.javassist', 'javassist', javassist_version))
 
                 def scm = root.appendNode('scm')
@@ -363,7 +363,7 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk8', kotlin_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'activity-container', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))

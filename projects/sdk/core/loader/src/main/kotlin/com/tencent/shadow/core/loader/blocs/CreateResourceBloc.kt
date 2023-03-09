@@ -31,8 +31,12 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.webkit.WebView
+import com.tencent.shadow.core.load_parameters.LoadParameters
+import com.tencent.shadow.core.loader.infos.PluginParts
+import java.lang.RuntimeException
 import java.util.concurrent.CountDownLatch
 
 object CreateResourceBloc {
@@ -51,7 +55,12 @@ object CreateResourceBloc {
      */
     const val MAX_API_FOR_MIX_RESOURCES = Build.VERSION_CODES.O_MR1
 
-    fun create(archiveFilePath: String, hostAppContext: Context): Resources {
+    fun create(
+        archiveFilePath: String,
+        hostAppContext: Context,
+        loadParameters: LoadParameters,
+        pluginPartsMap: MutableMap<String, PluginParts>
+    ): Resources {
         triggerWebViewHookResources(hostAppContext)
 
         val packageManager = hostAppContext.packageManager
@@ -72,8 +81,18 @@ object CreateResourceBloc {
             return if (Build.VERSION.SDK_INT > MAX_API_FOR_MIX_RESOURCES) {
                 pluginResource
             } else {
-                val hostResources = hostAppContext.resources
-                MixResources(pluginResource, hostResources)
+                var dependsOnResources: Resources = hostAppContext.resources
+
+                if (loadParameters.dependsOn != null && loadParameters.dependsOn.size > 0) {
+                    for (s in loadParameters.dependsOn) {
+                        val partkey = pluginPartsMap[s]
+                        partkey?.let {
+                            dependsOnResources =
+                                MixResources(it.resources, dependsOnResources)
+                        }
+                    }
+                }
+                MixResources(pluginResource, dependsOnResources)
             }
         } catch (e: PackageManager.NameNotFoundException) {
             throw RuntimeException(e)

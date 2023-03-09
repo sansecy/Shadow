@@ -47,7 +47,7 @@ final class ManagerImplLoader extends ImplLoader {
 
     PluginManagerImpl load() {
         ApkClassLoader apkClassLoader = new ApkClassLoader(
-                installedApk,
+                applicationContext, installedApk,
                 getClass().getClassLoader(),
                 loadWhiteList(installedApk),
                 1

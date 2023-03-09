@@ -237,7 +237,7 @@ public abstract class BasePluginManager {
     public final Pair<String, String> extractSo(String uuid, String partKey, File apkFile) throws InstallPluginException {
         try {
             File root = mUnpackManager.getAppDir();
-            File soDir = AppCacheFolderManager.getLibDir(root, uuid);
+            File soDir = AppCacheFolderManager.getLibDir(root, partKey);
             String soDirMapKey = InstalledType.TYPE_PLUGIN + partKey;
             String soDirPath = soDir.getAbsolutePath();
 

@@ -2,9 +2,9 @@ apply plugin: 'com.android.library'
 
 android {
     defaultConfig {
-        compileSdkVersion project.COMPILE_SDK_VERSION
-        minSdkVersion project.MIN_SDK_VERSION
-        targetSdkVersion project.TARGET_SDK_VERSION
+        compileSdkVersion COMPILE_SDK_VERSION
+        minSdkVersion MIN_SDK_VERSION
+        targetSdkVersion TARGET_SDK_VERSION
         testInstrumentationRunner "com.tencent.shadow.core.pluginmanager.CustomAndroidJUnitRunner"
     }
     testOptions {

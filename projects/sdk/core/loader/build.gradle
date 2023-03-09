@@ -23,18 +23,19 @@ compileKotlin {
     targetCompatibility = JavaVersion.VERSION_1_7
 
     kotlinOptions {
-        jvmTarget = "1.6"
+        jvmTarget = "1.8"
         noJdk = true
         noStdlib = true
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     testImplementation "junit:junit:$junit_version"
 
     implementation 'com.tencent.shadow.coding:java-build-config'
     api project(':runtime')
+    api project(':dex')
     compileOnly project(':activity-container')
     compileOnly project(':common')
     api project(':load-parameters')

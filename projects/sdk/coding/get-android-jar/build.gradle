@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion project.COMPILE_SDK_VERSION
+    compileSdkVersion COMPILE_SDK_VERSION
 }
 
 def sdkPath = android.sdkComponents.getSdkDirectory().get().asFile.absolutePath

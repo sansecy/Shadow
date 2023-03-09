@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
+import android.util.Log
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
@@ -35,6 +36,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
+const val TAG = "LoadPluginBloc"
 object LoadPluginBloc {
     @Throws(LoadPluginException::class)
     fun loadPlugin(
@@ -51,7 +53,7 @@ object LoadPluginBloc {
         } else {
             val buildClassLoader = executorService.submit(Callable {
                 lock.withLock {
-                    LoadApkBloc.loadPlugin(installedApk, loadParameters, pluginPartsMap)
+                    LoadApkBloc.loadPlugin(hostAppContext,installedApk, loadParameters, pluginPartsMap)
                 }
             })
 
@@ -85,7 +87,7 @@ object LoadPluginBloc {
             })
 
             val buildResources = executorService.submit(Callable {
-                CreateResourceBloc.create(installedApk.apkFilePath, hostAppContext)
+                CreateResourceBloc.create(installedApk.apkFilePath, hostAppContext,loadParameters,pluginPartsMap)
             })
 
             val buildAppComponentFactory = executorService.submit(Callable {

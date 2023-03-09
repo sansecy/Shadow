@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.core.loader.blocs
 
+import android.content.Context
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.Logger
 import com.tencent.shadow.core.load_parameters.LoadParameters
@@ -42,6 +43,7 @@ object LoadApkBloc {
      */
     @Throws(LoadApkException::class)
     fun loadPlugin(
+        hostAppContext: Context,
         installedApk: InstalledApk,
         loadParameters: LoadParameters,
         pluginPartsMap: MutableMap<String, PluginParts>
@@ -54,6 +56,7 @@ object LoadApkBloc {
         val hostParentClassLoader = hostClassLoader.parent
         if (dependsOn == null || dependsOn.isEmpty()) {
             return PluginClassLoader(
+                hostAppContext,
                 apk.absolutePath,
                 odexDir,
                 installedApk.libraryPath,
@@ -68,6 +71,7 @@ object LoadApkBloc {
                 throw LoadApkException("加载" + loadParameters.partKey + "时它的依赖" + partKey + "还没有加载")
             } else {
                 return PluginClassLoader(
+                    hostAppContext,
                     apk.absolutePath,
                     odexDir,
                     installedApk.libraryPath,
@@ -88,6 +92,7 @@ object LoadApkBloc {
             val combineClassLoader =
                 CombineClassLoader(dependsOnClassLoaders, hostParentClassLoader)
             return PluginClassLoader(
+                hostAppContext,
                 apk.absolutePath,
                 odexDir,
                 installedApk.libraryPath,

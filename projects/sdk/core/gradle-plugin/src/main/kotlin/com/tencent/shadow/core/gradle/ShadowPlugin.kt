@@ -151,12 +151,7 @@ class ShadowPlugin : Plugin<Project> {
 
     private fun onEachPluginVariant(project: Project, actions: (ApplicationVariant) -> Unit) {
         val appExtension: AppExtension = project.extensions.getByType(AppExtension::class.java)
-        val pluginVariants = appExtension.applicationVariants.filter { variant ->
-            variant.productFlavors.any { flavor ->
-                flavor.dimension == ShadowTransform.DimensionName &&
-                        flavor.name == ShadowTransform.ApplyShadowTransformFlavorName
-            }
-        }
+        val pluginVariants = appExtension.applicationVariants.toList()
 
         checkPluginVariants(pluginVariants, appExtension, project.name)
 
@@ -319,20 +314,20 @@ class ShadowPlugin : Plugin<Project> {
         projectName: String
     ) {
         if (pluginVariants.isEmpty()) {
-            val errorMessage = StringBuilder()
-            errorMessage.appendLine("在${projectName}中找不到Shadow所添加的Dimension flavor")
-            errorMessage.appendLine("当前所有flavor打印如下：")
-            appExtension.applicationVariants.forEach { variant ->
-                errorMessage.appendLine("variant.name：${variant.name}")
-                variant.productFlavors.forEach { flavor ->
-                    errorMessage.appendLine(
-                        "flavor.name：${flavor.name} flavor.dimension：${flavor.dimension} "
-                    )
-                }
-            }
-            errorMessage.appendLine("提示：添加flavorDimension时，不要覆盖已有flavorDimension")
-            errorMessage.appendLine("示例：flavorDimensions(*flavorDimensionList, 'new')")
-            throw Error(errorMessage.toString())
+//            val errorMessage = StringBuilder()
+//            errorMessage.appendLine("在${projectName}中找不到Shadow所添加的Dimension flavor")
+//            errorMessage.appendLine("当前所有flavor打印如下：")
+//            appExtension.applicationVariants.forEach { variant ->
+//                errorMessage.appendLine("variant.name：${variant.name}")
+//                variant.productFlavors.forEach { flavor ->
+//                    errorMessage.appendLine(
+//                        "flavor.name：${flavor.name} flavor.dimension：${flavor.dimension} "
+//                    )
+//                }
+//            }
+//            errorMessage.appendLine("提示：添加flavorDimension时，不要覆盖已有flavorDimension")
+//            errorMessage.appendLine("示例：flavorDimensions(*flavorDimensionList, 'new')")
+//            throw Error(errorMessage.toString())
         }
     }
 

@@ -195,11 +195,14 @@ internal class PluginPackageManagerImpl(
             val packageInfo = hostPackageManager.getPackageArchiveInfo(
                 pluginArchiveFilePath,
                 PackageManager.GET_META_DATA
-            )!!
-            val metaData = packageInfo.applicationInfo.metaData
-            copy.metaData = metaData
+            )
+            packageInfo?.let {
+                val metaData = packageInfo.applicationInfo.metaData
+                copy.metaData = metaData
+            }
         }
 
         return copy
     }
+    private val TAG = "PluginPackageManagerImp"
 }

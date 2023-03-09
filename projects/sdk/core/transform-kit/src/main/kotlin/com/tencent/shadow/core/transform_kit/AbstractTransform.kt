@@ -34,49 +34,52 @@ abstract class AbstractTransform(
 
     protected abstract val mTransformManager: AbstractTransformManager
     private val mOverrideCheck = OverrideCheck()
-    private lateinit var mDebugClassJar: File
-    private lateinit var mDebugClassJarZOS: ZipOutputStream
+//    private lateinit var mDebugClassJar: File
+//    private lateinit var mDebugClassJarZOS: ZipOutputStream
 
 
     private fun cleanDebugClassFileDir() {
         val transformTempDir = File(project.buildDir, "transform-temp")
         transformTempDir.deleteRecursively()
         transformTempDir.mkdirs()
-        mDebugClassJar = File.createTempFile("transform-temp", ".jar", transformTempDir)
-        mDebugClassJarZOS = ZipOutputStream(FileOutputStream(mDebugClassJar))
+//        mDebugClassJar = File.createTempFile("transform-temp", ".jar", transformTempDir)
+//        mDebugClassJarZOS = ZipOutputStream(FileOutputStream(mDebugClassJar))
     }
 
     override fun beforeTransform(invocation: TransformInvocation) {
         super.beforeTransform(invocation)
         ReplaceClassName.resetErrorCount()
         cleanDebugClassFileDir()
+        println("beforeTransform")
     }
 
     override fun onTransform() {
         //Fixme: 这里的OverrideCheck.prepare会对mCtClassInputMap产生影响
         //原本预期是不会产生任何影响的。造成了ApplicationInfoTest失败，测试Activity没有被修改superclass。
 //        mOverrideCheck.prepare(mCtClassInputMap.keys.toSet())
-
+        println("onTransform start")
         mTransformManager.setupAll()
         mTransformManager.fireAll()
+        println("onTransform end")
     }
 
     override fun afterTransform(invocation: TransformInvocation) {
         super.afterTransform(invocation)
 
-        mDebugClassJarZOS.flush()
-        mDebugClassJarZOS.close()
+        println("afterTransform")
+//        mDebugClassJarZOS.flush()
+//        mDebugClassJarZOS.close()
 
         //CtClass在编辑后，其对象中的各种信息，比如superClass并没有更新。
         //所以需要重新创建一个ClassPool，加载转换后的类，用于各种转换后的检查。
-        val debugClassPool = classPoolBuilder.build()
-        debugClassPool.appendClassPath(mDebugClassJar.absolutePath)
-        val inputClassNames = mCtClassInputMap.keys.map { it.name }
-        onCheckTransformedClasses(debugClassPool, inputClassNames)
+//        val debugClassPool = classPoolBuilder.build()
+//        debugClassPool.appendClassPath(mDebugClassJar.absolutePath)
+//        val inputClassNames = mCtClassInputMap.keys.map { it.name }
+//        onCheckTransformedClasses(debugClassPool, inputClassNames)
     }
 
     override fun onOutputClass(entryName: String?, className: String, outputStream: OutputStream) {
-        classPool[className].debugWriteJar(entryName, mDebugClassJarZOS)
+//        classPool[className].debugWriteJar(entryName, mDebugClassJarZOS)
         super.onOutputClass(entryName, className, outputStream)
     }
 
