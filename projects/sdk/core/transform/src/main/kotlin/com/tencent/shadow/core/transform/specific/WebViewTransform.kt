@@ -41,8 +41,11 @@ class WebViewTransform : SpecificTransform() {
                 filterRefClasses(allInputClass, listOf(AndroidWebViewClassname))
 
             override fun transform(ctClass: CtClass) {
-                if (ctClass.superclass.name == AndroidWebViewClassname) {
-                    ctClass.classFile.superclass = ShadowWebViewClassname
+                try {
+                    if (ctClass.superclass.name == AndroidWebViewClassname) {
+                        ctClass.classFile.superclass = ShadowWebViewClassname
+                    }
+                } catch (e: Exception) {
                 }
             }
         })

@@ -20,6 +20,7 @@ package com.tencent.shadow.core.loader.classloaders
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import com.tencent.shadow.core.dex.MultiDex
 import com.tencent.shadow.core.runtime.PluginManifest
 import dalvik.system.BaseDexClassLoader
@@ -103,7 +104,14 @@ class PluginClassLoader(
         if (clazz == null) {
             //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
             if (specialClassLoader == null) {
-                return super.loadClass(className, resolve)
+                val loadClass = try {
+                    super.loadClass(className, resolve)
+                } catch (e: Exception) {
+                    Log.d(TAG, "loadClass: " + parent)
+                    throw e
+                }
+
+                return loadClass
             }
 
             //插件依赖跟loader一起打包的runtime类，如ShadowActivity，从loader的ClassLoader加载
@@ -113,6 +121,7 @@ class PluginClassLoader(
 
             //包名在白名单中的类按双亲委派逻辑，从宿主中加载
             if (className.inPackage(allHostWhiteTrie)) {
+                Log.i(TAG, "loadClass: " + className)
                 return super.loadClass(className, resolve)
             }
 
