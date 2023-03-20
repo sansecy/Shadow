@@ -1,0 +1,43 @@
+apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
+
+//
+//android {
+//    compileSdkVersion 28
+//    ndkVersion "16.1.4479499"
+//
+//    defaultConfig {
+//        minSdkVersion 14
+//        targetSdkVersion 28
+//        // versionCode 1
+//        versionName ARTIFACT_VERSION
+//
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+//
+//        consumerProguardFiles "proguard-rules.pro"
+//
+//        externalNativeBuild {
+//            cmake {
+//                cppFlags "-std=c++11", "-fno-exceptions", "-O2"
+//                abiFilters "arm64-v8a","armeabi", "armeabi-v7a", "x86"
+//            }
+//        }
+//    }
+//
+//    buildTypes {
+//        release {
+//            minifyEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
+//    }
+//
+//    externalNativeBuild {
+//        cmake {
+//            path "CMakeLists.txt"
+//        }
+//    }
+//}
+//
+//dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//}
+

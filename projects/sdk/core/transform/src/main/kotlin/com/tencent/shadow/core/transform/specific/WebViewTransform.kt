@@ -46,6 +46,7 @@ class WebViewTransform : SpecificTransform() {
                         ctClass.classFile.superclass = ShadowWebViewClassname
                     }
                 } catch (e: Exception) {
+                    println("shadow transform for $AndroidWebViewClassname failed ")
                 }
             }
         })

@@ -56,6 +56,7 @@ class ShadowTransform(
     override fun getName(): String = "ShadowTransform"
 
     override fun applyToVariant(variant: VariantInfo): Boolean {
-        return !variant.isTest
+        return if (variant.isTest) false
+        else variant.flavorNames.contains(ApplyShadowTransformFlavorName)
     }
 }

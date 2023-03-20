@@ -19,6 +19,14 @@ task buildSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:assemble')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:assemble')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager-multi-loader-ext:assemble')
+
+
+    dependsOn gradle.includedBuild('coding').task(':aar-to-jar-plugin:assemble')
+    dependsOn gradle.includedBuild('coding').task(':android-jar:assemble')
+    dependsOn gradle.includedBuild('coding').task(':code-generator:assemble')
+    dependsOn gradle.includedBuild('coding').task(':common-jar-settings:assemble')
+    dependsOn gradle.includedBuild('coding').task(':get-android-jar:assemble')
+    dependsOn gradle.includedBuild('coding').task(':java-build-config:assemble')
 }
 
 task jvmTestSdk() {
@@ -91,6 +99,8 @@ def sourceJar(String name, String path) {
 }
 
 def publicationVersion = project.ARTIFACT_VERSION
+def codingGroupId = 'com.tencent.shadow.coding'
+def codingPath = 'projects/sdk/coding'
 def coreGroupId = 'com.tencent.shadow.core'
 def corePath = 'projects/sdk/core'
 def dynamicGroupId = 'com.tencent.shadow.dynamic'
@@ -429,6 +439,95 @@ publishing {
                 setScm(scm)
             }
         }
+        aarToJarPlugin(MavenPublication) {
+            groupId codingGroupId
+            artifactId 'aar-to-jar-plugin'
+            version publicationVersion
+            artifact("$codingPath/aar-to-jar-plugin/build/libs/aar-to-jar-plugin.jar")
+            artifact sourceJar("aar-to-jar-plugin", "$codingPath/aar-to-jar-plugin")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        //setGeneratePomFileAndDepends('androidJar')
+        androidJar(MavenPublication) {
+            groupId codingGroupId
+            artifactId 'android-jar'
+            version publicationVersion
+            artifact("$codingPath/android-jar/build/libs/android-jar.jar")
+            artifact sourceJar("android-jar", "$codingPath/android-jar")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        //setGeneratePomFileAndDepends('codeGenerator')
+        codeGenerator(MavenPublication) {
+            groupId codingGroupId
+            artifactId 'code-generator'
+            version publicationVersion
+            artifact("$codingPath/code-generator/build/libs/code-generator.jar")
+            artifact sourceJar("code-generator", "$codingPath/code-generator")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        //setGeneratePomFileAndDepends('commonJarSettings')
+        commonJarSettings(MavenPublication) {
+            groupId codingGroupId
+            artifactId 'common-jar-settings'
+            version publicationVersion
+            artifact("$codingPath/common-jar-settings/build/libs/common-jar-settings.jar")
+            artifact sourceJar("common-jar-settings", "$codingPath/common-jar-settings")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        //setGeneratePomFileAndDepends('getAndroidJar')
+        getAndroidJar(MavenPublication) {
+            groupId codingGroupId
+            artifactId 'get-android-jar'
+            version publicationVersion
+            artifact("$codingPath/get-android-jar/build/outputs/aar/get-android-jar-release.aar")
+            artifact sourceJar("get-android-jar", "$codingPath/get-android-jar")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        //setGeneratePomFileAndDepends('javaBuildConfig')
+        javaBuildConfig(MavenPublication) {
+            groupId codingGroupId
+            artifactId 'java-build-config'
+            version publicationVersion
+            artifact("$codingPath/java-build-config/build/libs/java-build-config.jar")
+            artifact sourceJar("java-build-config", "$codingPath/java-build-config")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
     }
     repositories {
         def useLocalCredential = false
@@ -487,3 +586,9 @@ setGeneratePomFileAndDepends('dynamicLoader')
 setGeneratePomFileAndDepends('dynamicLoaderImpl')
 setGeneratePomFileAndDepends('dynamicManager')
 setGeneratePomFileAndDepends('dynamicManagerMultiLoaderExt')
+//setGeneratePomFileAndDepends('aarToJarPlugin')
+//setGeneratePomFileAndDepends('androidJar')
+//setGeneratePomFileAndDepends('codeGenerator')
+//setGeneratePomFileAndDepends('commonJarSettings')
+//setGeneratePomFileAndDepends('getAndroidJar')
+//setGeneratePomFileAndDepends('javaBuildConfig')

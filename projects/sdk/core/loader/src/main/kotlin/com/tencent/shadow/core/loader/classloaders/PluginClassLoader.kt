@@ -21,6 +21,8 @@ package com.tencent.shadow.core.loader.classloaders
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import com.bytedance.boost_multidex.BoostMultiDex
+//import com.bytedance.boost_multidex.BoostMultiDex
 import com.tencent.shadow.core.dex.MultiDex
 import com.tencent.shadow.core.runtime.PluginManifest
 import dalvik.system.BaseDexClassLoader
@@ -34,16 +36,17 @@ import java.lang.reflect.InvocationTargetException
  * 用于加载插件的ClassLoader,插件内部的classLoader树结构如下
  *                       BootClassLoader
  *                              |
- *                      xxxClassLoader
+ *                      RuntimeClassLoader
  *                        |        |
  *               PathClassLoader   |
  *                 |               |
- *     PluginClassLoaderA  CombineClassLoader
+ *     basePluginClassLoader  CombineClassLoader
  *                                 |
- *  PluginClassLoaderB        PluginClassLoaderC
+ *  mainPagePluginClassLoader        PluginClassLoaderC
  *
  */
 private const val TAG = "PluginClassLoader-App"
+
 class PluginClassLoader(
     hostAppContext: Context,
     dexPath: String,
@@ -62,26 +65,27 @@ class PluginClassLoader(
     private val loaderClassLoader = PluginClassLoader::class.java.classLoader!!
 
     init {
-        try {
-            val sourceApk = File(dexPath)
-            val name = sourceApk.name
-            val dataDir = File(hostAppContext.cacheDir.toString() + "/shadow_dex")
-            dataDir.mkdirs()
-            MultiDex.doInstallation(
-                hostAppContext, this, sourceApk,
-                dataDir, name, name
-            )
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: IllegalAccessException) {
-            e.printStackTrace()
-        } catch (e: NoSuchFieldException) {
-            e.printStackTrace()
-        } catch (e: InvocationTargetException) {
-            e.printStackTrace()
-        } catch (e: NoSuchMethodException) {
-            e.printStackTrace()
-        }
+        val sourceApk = File(dexPath)
+        val name = sourceApk.name
+        BoostMultiDex.install(hostAppContext, File(dexPath), this, null, name)
+//        try {
+//            val dataDir = File(hostAppContext.cacheDir.toString() + "/shadow_dex")
+//            dataDir.mkdirs()
+//            MultiDex.doInstallation(
+//                hostAppContext, this, sourceApk,
+//                dataDir, name, name
+//            )
+//        } catch (e: IOException) {
+//            e.printStackTrace()
+//        } catch (e: IllegalAccessException) {
+//            e.printStackTrace()
+//        } catch (e: NoSuchFieldException) {
+//            e.printStackTrace()
+//        } catch (e: InvocationTargetException) {
+//            e.printStackTrace()
+//        } catch (e: NoSuchMethodException) {
+//            e.printStackTrace()
+//        }
 
         hostWhiteList?.forEach {
             allHostWhiteTrie.insert(it)
@@ -104,16 +108,21 @@ class PluginClassLoader(
         if (clazz == null) {
             //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
             if (specialClassLoader == null) {
-                val loadClass = try {
-                    super.loadClass(className, resolve)
-                } catch (e: Exception) {
-                    Log.d(TAG, "loadClass: " + parent)
-                    throw e
-                }
-
-                return loadClass
+                return super.loadClass(className, resolve)
             }
 
+            // val loadClass = try {
+            //                    super.loadClass(className, resolve)
+            //                } catch (e: Exception) {
+            //                    try {
+            //                        val loadClass = parent.parent.loadClass(className)
+            //                        Log.d(TAG, "parent.parent.loadClass:className=[$className],loadClass = $loadClass parent.parent = [${parent.parent}]")
+            //                    } catch (e: Exception) {
+            //                        e.printStackTrace()
+            //                    }
+            //                    Log.d(TAG, "loadClass:className=[$className],this = [$this] , parent = $parent")
+            //                    throw e
+            //                }
             //插件依赖跟loader一起打包的runtime类，如ShadowActivity，从loader的ClassLoader加载
             if (className.subStringBeforeDot() == "com.tencent.shadow.core.runtime") {
                 return loaderClassLoader.loadClass(className)
@@ -121,8 +130,10 @@ class PluginClassLoader(
 
             //包名在白名单中的类按双亲委派逻辑，从宿主中加载
             if (className.inPackage(allHostWhiteTrie)) {
-                Log.i(TAG, "loadClass: " + className)
-                return super.loadClass(className, resolve)
+                Log.i(TAG, "loadingClass: " + className)
+                val loadClass = super.loadClass(className, resolve)
+                Log.i(TAG, "foundClass: $className clazz = $loadClass")
+                return loadClass
             }
 
             var suppressed: ClassNotFoundException? = null

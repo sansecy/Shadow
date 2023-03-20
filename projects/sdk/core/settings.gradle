@@ -11,4 +11,5 @@ include 'loader',
         'load-parameters',
         'transform-kit',
         'utils',
+        'boost_multidex',
         'dex'

@@ -36,6 +36,7 @@ dependencies {
     implementation 'com.tencent.shadow.coding:java-build-config'
     api project(':runtime')
     api project(':dex')
+    api project(':boost_multidex')
     compileOnly project(':activity-container')
     compileOnly project(':common')
     api project(':load-parameters')
