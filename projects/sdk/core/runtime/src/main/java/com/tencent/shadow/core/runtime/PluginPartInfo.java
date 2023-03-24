@@ -28,7 +28,7 @@ public class PluginPartInfo {
 
     public ClassLoader classLoader;
 
-    PluginPackageManager packageManager;
+    public PluginPackageManager packageManager;
 
 
     public PluginPartInfo(ShadowApplication application, Resources resources, ClassLoader classLoader, PluginPackageManager packageManager) {

@@ -74,7 +74,7 @@ class DexInstallProcessor {
         } else {
             for (final DexHolder dexHolder : dexHolderList) {
                 if (!(dexHolder instanceof DexHolder.ZipOpt || dexHolder instanceof DexHolder.DexOpt)) {
-                    OptimizeService.startOptimizeService(mainContext);
+                    new OptimizeService().startOptimizeService(mainContext, dirKey);
                     return;
                 }
             }

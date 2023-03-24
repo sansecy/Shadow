@@ -1,7 +1,6 @@
 package com.bytedance.boost_multidex;
 
-import android.app.IntentService;
-import android.content.Intent;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -12,13 +11,15 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class OptimizeService extends IntentService {
+public class OptimizeService extends OptimizeIntentService {
     static volatile boolean sAlreadyOpt;
+    private static File filesDir;
 
     File mRootDir;
     File mDexDir;
     File mOptDexDir;
     File mZipDir;
+    private Context mContext;
 
     public OptimizeService() {
         super("OptimizeService");
@@ -34,10 +35,6 @@ public class OptimizeService extends IntentService {
         super.onCreate();
 
         try {
-            File filesDir = this.getFilesDir();
-            if (!filesDir.exists()) {
-                Utility.mkdirChecked(filesDir);
-            }
 
             mRootDir = Utility.ensureDirCreated(filesDir, Constants.BOOST_MULTIDEX_DIR_NAME);
             mDexDir = Utility.ensureDirCreated(mRootDir, Constants.DEX_DIR_NAME);
@@ -49,19 +46,26 @@ public class OptimizeService extends IntentService {
         }
     }
 
-    public static void startOptimizeService(Context context) {
-        Intent intent = new Intent(context, OptimizeService.class);
-        context.startService(intent);
+    public void startOptimizeService(Context context, String dirKey) {
+        filesDir = new File(context.getFilesDir(), dirKey);
+        if (!filesDir.exists()) {
+            try {
+                Utility.mkdirChecked(filesDir);
+            } catch (IOException e) {
+                Monitor.get().logError("fail to create files", e);
+            }
+        }
+        onCreate();
+        onStart();
+        mContext = context;
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-            try {
-                handleOptimize();
-            } catch (IOException e) {
-                Monitor.get().logError("fail to handle opt", e);
-            }
+    protected void onHandleIntent() {
+        try {
+            handleOptimize();
+        } catch (IOException e) {
+            Monitor.get().logError("fail to handle opt", e);
         }
     }
 
@@ -86,7 +90,7 @@ public class OptimizeService extends IntentService {
         locker.lock();
 
         try {
-            ApplicationInfo applicationInfo = this.getApplicationInfo();
+            ApplicationInfo applicationInfo = mContext.getApplicationInfo();
             if (applicationInfo == null) {
                 throw new RuntimeException("No ApplicationInfo available, i.e. running on a test Context:"
                         + " BoostMultiDex support library is disabled.");
@@ -94,7 +98,8 @@ public class OptimizeService extends IntentService {
 
             File apkFile = new File(applicationInfo.sourceDir);
 
-            SharedPreferences preferences = this.getSharedPreferences(Constants.PREFS_FILE, Context.MODE_PRIVATE);
+            @SuppressLint("WrongConstant")
+            SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREFS_FILE, Context.MODE_PRIVATE);
             int totalDexNum = preferences.getInt(keyApkDexNum, 0);
             for (int secondaryNumber = 2; secondaryNumber <= totalDexNum; secondaryNumber++) {
                 int type = preferences.getInt(Constants.KEY_DEX_OBJ_TYPE + secondaryNumber, Constants.LOAD_TYPE_APK_BUF);
@@ -171,8 +176,6 @@ public class OptimizeService extends IntentService {
         } finally {
             locker.close();
             Monitor.get().logInfo("Exit quietly");
-            stopSelf();
-            System.exit(0);
         }
     }
 }
