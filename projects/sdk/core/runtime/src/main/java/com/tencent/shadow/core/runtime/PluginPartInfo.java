@@ -22,6 +22,8 @@ import android.content.res.Resources;
 
 public class PluginPartInfo {
 
+    public String partKey;
+
     public ShadowApplication application;
 
     public Resources resources;
@@ -30,8 +32,8 @@ public class PluginPartInfo {
 
     public PluginPackageManager packageManager;
 
-
-    public PluginPartInfo(ShadowApplication application, Resources resources, ClassLoader classLoader, PluginPackageManager packageManager) {
+    public PluginPartInfo(String partKey, ShadowApplication application, Resources resources, ClassLoader classLoader, PluginPackageManager packageManager) {
+        this.partKey = partKey;
         this.application = application;
         this.resources = resources;
         this.classLoader = classLoader;

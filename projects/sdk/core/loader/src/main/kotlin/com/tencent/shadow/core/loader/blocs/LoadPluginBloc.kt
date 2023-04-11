@@ -144,6 +144,7 @@ object LoadPluginBloc {
                     )
                     PluginPartInfoManager.addPluginInfo(
                         pluginClassLoader, PluginPartInfo(
+                            loadParameters.partKey,
                             shadowApplication, resources,
                             pluginClassLoader, pluginPackageManager
                         )
