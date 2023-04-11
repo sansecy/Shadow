@@ -43,5 +43,13 @@ public class PluginPartInfoManager {
         return sPluginInfos.values();
     }
 
-
+    public static PluginPartInfo getPluginInfo(String partKey) {
+        Collection<PluginPartInfo> values = sPluginInfos.values();
+        for (PluginPartInfo value : values) {
+            if (value.partKey.equals(partKey)) {
+                return value;
+            }
+        }
+        return null;
+    }
 }
