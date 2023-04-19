@@ -20,16 +20,12 @@ package com.tencent.shadow.core.loader.classloaders
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import com.bytedance.boost_multidex.BoostMultiDex
 //import com.bytedance.boost_multidex.BoostMultiDex
-import com.tencent.shadow.core.dex.MultiDex
 import com.tencent.shadow.core.runtime.PluginManifest
 import dalvik.system.BaseDexClassLoader
 import org.jetbrains.annotations.TestOnly
 import java.io.File
-import java.io.IOException
-import java.lang.reflect.InvocationTargetException
 
 
 /**
@@ -45,7 +41,6 @@ import java.lang.reflect.InvocationTargetException
  *  mainPagePluginClassLoader        PluginClassLoaderC
  *
  */
-private const val TAG = "PluginClassLoader-App"
 
 class PluginClassLoader(
     hostAppContext: Context,
@@ -111,18 +106,6 @@ class PluginClassLoader(
                 return super.loadClass(className, resolve)
             }
 
-            // val loadClass = try {
-            //                    super.loadClass(className, resolve)
-            //                } catch (e: Exception) {
-            //                    try {
-            //                        val loadClass = parent.parent.loadClass(className)
-            //                        Log.d(TAG, "parent.parent.loadClass:className=[$className],loadClass = $loadClass parent.parent = [${parent.parent}]")
-            //                    } catch (e: Exception) {
-            //                        e.printStackTrace()
-            //                    }
-            //                    Log.d(TAG, "loadClass:className=[$className],this = [$this] , parent = $parent")
-            //                    throw e
-            //                }
             //插件依赖跟loader一起打包的runtime类，如ShadowActivity，从loader的ClassLoader加载
             if (className.subStringBeforeDot() == "com.tencent.shadow.core.runtime") {
                 return loaderClassLoader.loadClass(className)
@@ -130,10 +113,7 @@ class PluginClassLoader(
 
             //包名在白名单中的类按双亲委派逻辑，从宿主中加载
             if (className.inPackage(allHostWhiteTrie)) {
-                Log.i(TAG, "loadingClass: " + className)
-                val loadClass = super.loadClass(className, resolve)
-                Log.i(TAG, "foundClass: $className clazz = $loadClass")
-                return loadClass
+                return super.loadClass(className, resolve)
             }
 
             var suppressed: ClassNotFoundException? = null
