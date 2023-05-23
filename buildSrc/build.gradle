@@ -1,0 +1,53 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+repositories {
+
+    maven {
+        url "https://maven.aliyun.com/repository/central"
+    }
+    maven {
+        url "https://maven.aliyun.com/repository/google"
+    }
+    maven {
+        url "https://maven.aliyun.com/repository/jcenter"
+    }
+    maven {
+        url "https://maven.aliyun.com/repository/gradle-plugin"
+    }
+    maven {
+        url "https://maven.aliyun.com/repository/public"
+    }
+
+
+    google()
+    jcenter()
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url "https://maven.google.com"
+    }
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation "com.android.tools.build:gradle:7.0.4"
+    implementation "com.android.tools.build:gradle-api:7.0.4"
+    implementation "com.android.tools:common:30.0.4"
+    implementation "com.android.tools:sdk-common:30.0.4"
+    implementation "com.android.tools:sdklib:30.0.4"
+    implementation "commons-codec:commons-codec:1.10"
+    implementation "org.apache.httpcomponents:httpcore:4.4.10"
+    implementation "com.google.guava:guava:30.1-jre"
+    implementation "commons-io:commons-io:2.11.0"
+}
+
+// Upload to Bintray
+//apply from: 'bintray_upload.gradle'
+// Upload to Maven
+//apply from: 'maven_upload.gradle'
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}

@@ -24,10 +24,17 @@ import com.tencent.shadow.core.transform_kit.TransformStep
 import javassist.CtClass
 
 open class SimpleRenameTransform(private val fromToMap: Map<String, String>) : SpecificTransform() {
-    final override fun setup(allInputClass: Set<CtClass>) {
+    override fun setup(allInputClass: Set<CtClass>) {
         newStep(object : TransformStep {
-            override fun filter(allInputClass: Set<CtClass>) =
-                filterRefClasses(allInputClass, fromToMap.keys.toList())
+            override fun filter(allInputClass: Set<CtClass>): Set<CtClass> {
+                val classSet = filterRefClasses(allInputClass, fromToMap.keys.toList()).filter {
+                    !it.name.startsWith("com.tencent.shadow.sample.plugin.utils")
+                }.toSet()
+                classSet.forEach{
+                    println("$name ++ ${it.name}")
+                }
+                return classSet
+            }
 
             override fun transform(ctClass: CtClass) {
                 fromToMap.forEach {

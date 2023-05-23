@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply from: "${project.rootProject.rootDir.path}/applyTask.gradle"
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -24,6 +25,11 @@ android {
             signingConfig.initWith(buildTypes.debug.signingConfig)
         }
     }
+    aaptOptions {
+        additionalParameters "--package-id", "0x7E", "--allow-reserved-package-id"
+        additionalParameters "--emit-ids", "${project.rootProject.file('build/public.txt').absolutePath}"
+    }
+
     sourceSets {
         debug {
             assets.srcDir('build/generated/assets/sample-manager/debug/')
@@ -39,6 +45,7 @@ android {
         abortOnError false
     }
 }
+apply plugin: 'com.didi.virtualapk.host'
 
 dependencies {
     implementation "commons-io:commons-io:$commons_io_android_version"//sample-host从assets中复制插件用的
@@ -48,6 +55,9 @@ dependencies {
     implementation 'com.tencent.shadow.dynamic:dynamic-host'
     implementation project(':sample-constant')
     implementation project(':sample-host-lib')
+    implementation project(':sample-base-lib')
+    api "com.android.support:support-v4:$android_support_version"
+    api "com.android.support:appcompat-v7:$android_support_version"
 }
 
 def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
@@ -82,15 +92,15 @@ def generateAssets(generateAssetsTask, buildType) {
             "assemble${buildType.capitalize()}"
     )
 
-    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
-    generateAssetsTask.dependsOn createCopyTask(
-            ':sample-app',
-            buildType,
-            'plugin-zip',
-            "plugin-${buildType}.zip",
-            pluginZip,
-            "package${buildType.capitalize()}Plugin"
-    )
+//    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
+//    generateAssetsTask.dependsOn createCopyTask(
+//            ':sample-app',
+//            buildType,
+//            'plugin-zip',
+//            "plugin-${buildType}.zip",
+//            pluginZip,
+//            "package${buildType.capitalize()}Plugin"
+//    )
 
 
 }

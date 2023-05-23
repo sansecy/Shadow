@@ -113,7 +113,10 @@ class PluginClassLoader(
 
             //包名在白名单中的类按双亲委派逻辑，从宿主中加载
             if (className.inPackage(allHostWhiteTrie)) {
-                return super.loadClass(className, resolve)
+               try {
+                   return super.loadClass(className, resolve)
+                } catch (e: Exception) {
+                }
             }
 
             var suppressed: ClassNotFoundException? = null
@@ -130,12 +133,12 @@ class PluginClassLoader(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         e.addSuppressed(suppressed)
                     }
-                    throw e
                 }
-
+            }
+            if (clazz == null) {
+                return super.loadClass(className, resolve)
             }
         }
-
         return clazz
     }
 

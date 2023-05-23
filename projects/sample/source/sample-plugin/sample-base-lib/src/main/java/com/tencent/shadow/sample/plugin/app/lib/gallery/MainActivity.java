@@ -42,6 +42,7 @@ import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.UseCaseManager;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.UseCaseSummaryFragment;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCaseCategory;
+import com.tencent.shadow.sample.plugin.utils.AppUtils;
 
 import java.util.List;
 
@@ -85,6 +86,7 @@ public class MainActivity extends Activity implements
         stickyLayout.setOnGiveUpTouchEventListener(this);
         slidingMenu.showMenu();
 
+        AppUtils.setWindow(this);
     }
 
 

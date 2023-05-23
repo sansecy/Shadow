@@ -59,8 +59,9 @@ class KeepHostContextTransform(private val rules: Array<String>) : SpecificTrans
             val keepSpecifying = rule.substring(indexOfRightParenthesis + 1)
 
             val ctClass = appClasses.find {
+//                println(it.name)
                 it.name == className
-            } ?: throw ClassNotFoundException("没有找到${rule}中指定的类$className")
+            } ?: throw ClassNotFoundException("没有找到${rule}中指定的类，路径：$className")
 
             val parametersCtClass = methodParametersClassName.map {
                 mClassPool.getOrNull(it)

@@ -18,7 +18,18 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.tencent.shadow.plugin'
-
+apply from: "${project.rootProject.rootDir.path}/applyTask.gradle"
+//apply plugin: 'com.didi.virtualapk.plugin'
+//
+//virtualApk {
+//    manifestPackage = 'com.cmgame.gamehalltv'
+//    packageId = 0x7A // the package id of Resources.
+//    targetHost = rootProject.rootDir.path + '/source/sample-plugin/sample-base'
+//    // the path of application module in host project.
+//    applyHostMapping = true //optional, default value: true.
+//    forceUseHostDependences = true
+//    stripResource = true
+//}
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
 
@@ -31,6 +42,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            debuggable true
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -54,6 +68,10 @@ android {
     // 将插件的资源ID分区改为和宿主0x7F不同的值
     aaptOptions {
         additionalParameters "--package-id", "0x7E", "--allow-reserved-package-id"
+        File publicTxtFile = project.rootProject.file('/build/public.txt')
+        if (publicTxtFile.exists()) {
+            additionalParameters "--stable-ids", "${project.rootProject.file('build/public.txt').absolutePath}"
+        }
     }
 }
 
@@ -62,8 +80,7 @@ dependencies {
     pluginCompileOnly project(":sample-host-lib")
     normalImplementation project(":sample-host-lib")
 
-    pluginCompileOnly project(":sample-base-lib")
-    normalImplementation project(":sample-base-lib")
+    implementation project(":sample-base-lib")
 
     //Shadow Transform后业务代码会有一部分实际引用runtime中的类
     //如果不以compileOnly方式依赖，会导致其他Transform或者Proguard找不到这些类
@@ -88,21 +105,21 @@ def createDuplicateApkTask(buildType) {
     }.dependsOn(":sample-app:assemblePlugin${buildType.capitalize()}")
 }
 
-tasks.whenTaskAdded { task ->
-    if (task.name == "assemblePluginDebug") {
-        def createTask = createDuplicateApkTask('debug')
-        task.finalizedBy(createTask)
-    }
-    if (task.name == "assemblePluginRelease") {
-        def createTask = createDuplicateApkTask('release')
-        task.finalizedBy(createTask)
-    }
-}
+//tasks.whenTaskAdded { task ->
+//    if (task.name == "assemblePluginDebug") {
+//        def createTask = createDuplicateApkTask('debug')
+//        task.finalizedBy(createTask)
+//    }
+//    if (task.name == "assemblePluginRelease") {
+//        def createTask = createDuplicateApkTask('release')
+//        task.finalizedBy(createTask)
+//    }
+//}
 
 
 shadow {
     transform {
-//        useHostContext = ['abc']
+//        useHostContext = ['com.tencent.shadow.sample.plugin.app.lib.gallery.AppUtils.setWindow(android.app.Activity)$1']
     }
 
     packagePlugin {
@@ -117,23 +134,23 @@ shadow {
                         buildTask = ':sample-app:assemblePluginDebug'
                         apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/debug/sample-app-plugin-debug.apk'
                         hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
-                        dependsOn = ['sample-base']
+//                        dependsOn = ['sample-base']
                     }
-                    pluginApk2 {
-                        businessName = 'sample-plugin-app2'
-                        partKey = 'sample-plugin-app2'
-                        buildTask = ':sample-app:assemblePluginDebug'
-                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/debug/sample-app-plugin-debug2.apk'
-                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
-                        dependsOn = ['sample-base']
-                    }
-                    sampleBase {
-                        businessName = 'sample-plugin-app'
-                        partKey = 'sample-base'
-                        buildTask = ':sample-base:assemblePluginDebug'
-                        apkPath = 'projects/sample/source/sample-plugin/sample-base/build/outputs/apk/plugin/debug/sample-base-plugin-debug.apk'
-                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
-                    }
+//                    pluginApk2 {
+//                        businessName = 'sample-plugin-app2'
+//                        partKey = 'sample-plugin-app2'
+//                        buildTask = ':sample-app:assemblePluginDebug'
+//                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/debug/sample-app-plugin-debug2.apk'
+//                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
+////                        dependsOn = ['sample-base']
+//                    }
+//                    sampleBase {
+//                        businessName = 'sample-plugin-app'
+//                        partKey = 'sample-base'
+//                        buildTask = ':sample-base:assemblePluginDebug'
+//                        apkPath = 'projects/sample/source/sample-plugin/sample-base/build/outputs/apk/plugin/debug/sample-base-plugin-debug.apk'
+//                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
+//                    }
                 }
             }
 
@@ -147,23 +164,23 @@ shadow {
                         buildTask = ':sample-app:assemblePluginRelease'
                         apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/release/sample-app-plugin-release.apk'
                         hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
-                        dependsOn = ['sample-base']
+//                        dependsOn = ['sample-base']
                     }
-                    pluginApk2 {
-                        businessName = 'sample-plugin-app2'
-                        partKey = 'sample-plugin-app2'
-                        buildTask = ':sample-app:assemblePluginRelease'
-                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/release/sample-app-plugin-release2.apk'
-                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
-                        dependsOn = ['sample-base']
-                    }
-                    sampleBase {
-                        businessName = 'sample-plugin-app'
-                        partKey = 'sample-base'
-                        buildTask = ':sample-base:assemblePluginRelease'
-                        apkPath = 'projects/sample/source/sample-plugin/sample-base/build/outputs/apk/plugin/release/sample-base-plugin-release.apk'
-                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
-                    }
+//                    pluginApk2 {
+//                        businessName = 'sample-plugin-app2'
+//                        partKey = 'sample-plugin-app2'
+//                        buildTask = ':sample-app:assemblePluginRelease'
+//                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/release/sample-app-plugin-release2.apk'
+//                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
+////                        dependsOn = ['sample-base']
+//                    }
+//                    sampleBase {
+//                        businessName = 'sample-plugin-app'
+//                        partKey = 'sample-base'
+//                        buildTask = ':sample-base:assemblePluginRelease'
+//                        apkPath = 'projects/sample/source/sample-plugin/sample-base/build/outputs/apk/plugin/release/sample-base-plugin-release.apk'
+//                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
+//                    }
                 }
             }
         }
@@ -179,4 +196,42 @@ shadow {
         compactVersion = [1, 2, 3]
         uuidNickName = "1.1.5"
     }
+}
+
+project.afterEvaluate {
+    android.applicationVariants.all { def appVariant ->
+        println "appVariant.name = " + appVariant.name
+        println "appVariant.buildType.name = " + appVariant.buildType.name
+        println "appVariant.flavorName = " + appVariant.flavorName
+
+
+        def taskName = "package${appVariant.buildType.name.capitalize()}Plugin"
+        println "taskName = " + taskName
+        project.tasks.findByName(taskName).doLast {
+            moveTask(appVariant, "", "plugin-debug.zip")
+        }
+    }
+}
+def moveTask(appVariant, fromProjectName, moveTargetName) {
+    project.copy {
+        def file = findLastApk("${rootProject.buildDir.path}")
+        from file
+        into "${project(":sample-host").buildDir.path}/generated/assets/plugin-zip/${appVariant.buildType.name}"
+        rename { "${moveTargetName}" }
+    }
+}
+
+static def findLastApk(def dir) {
+    def files = new File(dir).listFiles()
+    def newestApk = null
+    def newestTime
+    files.each {
+        if (it.name.endsWith(".zip")) {
+            if (it.lastModified() > newestTime) {
+                newestTime = it.lastModified()
+                newestApk = it
+            }
+        }
+    }
+    return newestApk
 }

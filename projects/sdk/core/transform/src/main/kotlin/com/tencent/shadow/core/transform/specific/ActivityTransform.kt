@@ -18,11 +18,23 @@
 
 package com.tencent.shadow.core.transform.specific
 
-class ActivityTransform : SimpleRenameTransform(
+import com.tencent.shadow.core.transform_kit.ReplaceClassName
+import com.tencent.shadow.core.transform_kit.TransformStep
+import javassist.CtClass
+
+class ActivityTransform() : SimpleRenameTransform(
     mapOf(
         "android.app.Activity"
                 to "com.tencent.shadow.core.runtime.ShadowActivity",
         "android.app.NativeActivity"
                 to "com.tencent.shadow.core.runtime.ShadowNativeActivity"
     )
-)
+){
+    init {
+        name = "ActivityTransform"
+    }
+
+    override fun setup(allInputClass: Set<CtClass>) {
+        super.setup(allInputClass)
+    }
+}

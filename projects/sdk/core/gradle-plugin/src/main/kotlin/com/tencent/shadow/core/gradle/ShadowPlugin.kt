@@ -158,7 +158,7 @@ class ShadowPlugin : Plugin<Project> {
             }
         }
 
-        checkPluginVariants(pluginVariants, appExtension, project.name)
+//        checkPluginVariants(pluginVariants, appExtension, project.name)
 
         pluginVariants.forEach(actions)
     }
