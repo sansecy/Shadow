@@ -78,26 +78,21 @@ object CreateResourceBloc {
         try {
             val pluginResource = packageManager.getResourcesForApplication(applicationInfo)
 
-            return if (Build.VERSION.SDK_INT > MAX_API_FOR_MIX_RESOURCES) {
-                pluginResource
-            } else {
-                var dependsOnResources: Resources = hostAppContext.resources
+             var dependsOnResources: Resources = hostAppContext.resources
 
-                if (loadParameters.dependsOn != null && loadParameters.dependsOn.size > 0) {
-                    for (s in loadParameters.dependsOn) {
-                        val partkey = pluginPartsMap[s]
-                        partkey?.let {
-                            dependsOnResources =
-                                MixResources(it.resources, dependsOnResources)
-                        }
+            if (loadParameters.dependsOn != null && loadParameters.dependsOn.size > 0) {
+                for (s in loadParameters.dependsOn) {
+                    val partkey = pluginPartsMap[s]
+                    partkey?.let {
+                        dependsOnResources =
+                            MixResources(it.resources, dependsOnResources)
                     }
                 }
-                MixResources(pluginResource, dependsOnResources)
             }
+            return  MixResources(pluginResource, dependsOnResources)
         } catch (e: PackageManager.NameNotFoundException) {
             throw RuntimeException(e)
         }
-
     }
 
     /**

@@ -12,23 +12,30 @@ import java.util.StringTokenizer;
  * Created by Xiaolin(xiaolin.gan@bytedance.com) on 2019/3/25.
  */
 public class BoostMultiDex {
+
+    public static final String BOOST_DEX = "boost_dex";
+
     public static Result install(Context context) {
         return install(context, context.getClassLoader(), null);
     }
 
     public static Result install(Context context, ClassLoader classLoader) {
-        return install(context, null, classLoader, null, null);
+        return install(context, null, classLoader, null, BOOST_DEX);
     }
 
     public static Result install(Context context, ClassLoader classLoader, Monitor monitor) {
-        return install(context, null, classLoader, monitor, null);
+        return install(context, null, classLoader, monitor, BOOST_DEX);
     }
 
-    public static Result install(Context context, File sourceDir, ClassLoader classLoader) {
-        return install(context, null, classLoader, null, null);
+    public static Result install(Context context, File sourceApk, ClassLoader classLoader) {
+        return install(context, sourceApk, classLoader, null, BOOST_DEX);
     }
 
-    public static Result install(Context context, File sourceDir, ClassLoader classLoader, Monitor monitor, String dirKey) {
+    public static Result install(Context context, File sourceApk, ClassLoader classLoader, String dirKey) {
+        return install(context, sourceApk, classLoader, null, dirKey);
+    }
+
+    public static Result install(Context context, File sourceApk, ClassLoader classLoader, Monitor monitor, String dirKey) {
         Monitor.init(monitor);
 
         monitor = Monitor.get();
@@ -49,12 +56,12 @@ public class BoostMultiDex {
         Result result = Result.get();
         try {
 
-            if (sourceDir == null) {
+            if (sourceApk == null) {
                 ApplicationInfo applicationInfo = context.getApplicationInfo();
                 if (applicationInfo == null) {
                     throw new RuntimeException("ApplicationInfo is NULL.");
                 }
-                sourceDir = new File(applicationInfo.sourceDir);
+                sourceApk = new File(applicationInfo.sourceDir);
             }
 
             String processName = monitor.getProcessName();
@@ -64,10 +71,10 @@ public class BoostMultiDex {
             if (Utility.isOptimizeProcess(processName)) {
                 // Force use dex bytes in opt process.
                 // But a better way is avoid calling install(), then go to opt service directly.
-                new DexInstallProcessor().doInstallationInOptProcess(classLoader, sourceDir);
+                new DexInstallProcessor().doInstallationInOptProcess(classLoader, sourceApk);
                 return null;
             } else {
-                new DexInstallProcessor().doInstallation(context, sourceDir, classLoader, dirKey, result);
+                new DexInstallProcessor().doInstallation(context, sourceApk, classLoader, dirKey, result);
             }
 
         } catch (Throwable e) {

@@ -54,7 +54,9 @@ project.afterEvaluate {
 }
 def moveTask(appVariant, fromProjectName, moveTargetName) {
     project.copy {
-        def file = findLastApk("${project.buildDir.path}/outputs/apk/${appVariant.buildType.name}")
+//        def file = findLastApk("${project.buildDir.path}/outputs/apk/${appVariant.buildType.name}")
+        def file = findLastApk("${project.buildDir.path}/intermediates/apk/${appVariant.buildType.name}")
+//        def file = findLastApk("${project.buildDir.path}/outputs/apk/${appVariant.buildType.name}")
         from file
         into "${project(":sample-host").buildDir.path}/generated/assets/sample-manager/${appVariant.buildType.name}"
         rename { "${moveTargetName}" }

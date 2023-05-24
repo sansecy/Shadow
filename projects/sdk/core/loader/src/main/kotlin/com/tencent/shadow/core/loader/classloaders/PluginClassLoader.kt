@@ -21,7 +21,6 @@ package com.tencent.shadow.core.loader.classloaders
 import android.content.Context
 import android.os.Build
 import com.bytedance.boost_multidex.BoostMultiDex
-//import com.bytedance.boost_multidex.BoostMultiDex
 import com.tencent.shadow.core.runtime.PluginManifest
 import dalvik.system.BaseDexClassLoader
 import org.jetbrains.annotations.TestOnly
@@ -113,10 +112,7 @@ class PluginClassLoader(
 
             //包名在白名单中的类按双亲委派逻辑，从宿主中加载
             if (className.inPackage(allHostWhiteTrie)) {
-               try {
-                   return super.loadClass(className, resolve)
-                } catch (e: Exception) {
-                }
+                return super.loadClass(className, resolve)
             }
 
             var suppressed: ClassNotFoundException? = null
@@ -133,12 +129,12 @@ class PluginClassLoader(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         e.addSuppressed(suppressed)
                     }
+                    throw e
                 }
-            }
-            if (clazz == null) {
-                return super.loadClass(className, resolve)
+
             }
         }
+
         return clazz
     }
 

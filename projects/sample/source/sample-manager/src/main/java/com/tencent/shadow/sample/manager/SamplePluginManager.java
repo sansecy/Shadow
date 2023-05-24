@@ -18,27 +18,29 @@
 
 package com.tencent.shadow.sample.manager;
 
-import static com.tencent.shadow.sample.constant.Constant.PART_KEY_PLUGIN_ANOTHER_APP;
-import static com.tencent.shadow.sample.constant.Constant.PART_KEY_PLUGIN_BASE;
-import static com.tencent.shadow.sample.constant.Constant.PART_KEY_PLUGIN_MAIN_APP;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.EnterCallback;
+import com.tencent.shadow.dynamic.host.FailedException;
 import com.tencent.shadow.sample.constant.Constant;
 
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
 
 public class SamplePluginManager extends FastPluginManager {
-
+    private static final String TAG = "SamplePluginManager-Shadow";
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private Context mCurrentContext;
@@ -61,16 +63,8 @@ public class SamplePluginManager extends FastPluginManager {
      */
     @Override
     protected String getPluginProcessServiceName(String partKey) {
-        if (PART_KEY_PLUGIN_MAIN_APP.equals(partKey)) {
-            return "com.tencent.shadow.sample.host.PluginProcessPPS";
-        } else if (PART_KEY_PLUGIN_BASE.equals(partKey)) {
-            return "com.tencent.shadow.sample.host.PluginProcessPPS";
-        } else if (PART_KEY_PLUGIN_ANOTHER_APP.equals(partKey)) {
-            return "com.tencent.shadow.sample.host.Plugin2ProcessPPS";//在这里支持多个插件
-        } else {
-            //如果有默认PPS，可用return代替throw
-            throw new IllegalArgumentException("unexpected plugin load request: " + partKey);
-        }
+        //如果有默认PPS，可用return代替throw
+        return "com.tencent.shadow.sample.host.PluginProcessPPS";
     }
 
     @Override
@@ -102,13 +96,19 @@ public class SamplePluginManager extends FastPluginManager {
         }
     }
 
+    @SuppressLint("LongLogTag")
     private void onStartActivity(final Context context, Bundle bundle, final EnterCallback callback) {
         final String pluginZipPath = bundle.getString(Constant.KEY_PLUGIN_ZIP_PATH);
-        final String partKey = bundle.getString(Constant.KEY_PLUGIN_PART_KEY);
-        final String className = bundle.getString(Constant.KEY_ACTIVITY_CLASSNAME);
-        if (className == null) {
-            throw new NullPointerException("className == null");
+        if (TextUtils.isEmpty(pluginZipPath) || !new File(pluginZipPath).exists()) {
+            Log.e(TAG, "onStartActivity: " + pluginZipPath + " 插件不存在");
+            return;
         }
+        final String partKey = bundle.getString(Constant.KEY_PLUGIN_PART_KEY);
+        if (partKey == null) {
+            throw new RuntimeException("partKey 不可为空");
+        }
+        final String className = bundle.getString(Constant.KEY_ACTIVITY_CLASSNAME);
+
         final Bundle extras = bundle.getBundle(Constant.KEY_EXTRAS);
 
         if (callback != null) {
@@ -116,25 +116,38 @@ public class SamplePluginManager extends FastPluginManager {
             callback.onShowLoadingView(view);
         }
 
+        long startTime = System.currentTimeMillis();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, true);
-                    loadPlugin(installedPlugin.UUID, PART_KEY_PLUGIN_MAIN_APP);
-                    callApplicationOnCreate(PART_KEY_PLUGIN_MAIN_APP);
+                    String localPartKey = partKey;
+                    InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, false);
+//                    Set<String> strings = installedPlugin.plugins.keySet();
+                    init(installedPlugin, partKey);
+//                    init(installedPlugin, "sample-base");
+//                    init(installedPlugin, "mainpage");
+//                    init(installedPlugin, "cloudgame");
 
-                    Intent pluginIntent = new Intent();
-                    pluginIntent.setClassName(
-                            context.getPackageName(),
-                            className
-                    );
-                    if (extras != null) {
-                        pluginIntent.replaceExtras(extras);
+                    if (!TextUtils.isEmpty(className)) {
+                        Intent pluginIntent = new Intent();
+                        pluginIntent.setClassName(
+                                context.getPackageName(),
+                                className
+                        );
+                        if (extras != null) {
+                            pluginIntent.replaceExtras(extras);
+                        }
+                        Intent intent = mPluginLoader.convertActivityIntent(pluginIntent);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mPluginLoader.startActivityInPluginProcess(intent);
+
+
+                    } else {
+                        Log.e(TAG, "className is null");
                     }
-                    Intent intent = mPluginLoader.convertActivityIntent(pluginIntent);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mPluginLoader.startActivityInPluginProcess(intent);
+                    long tookTime = System.currentTimeMillis() - startTime;
+                    Log.d(TAG, String.format("onStartActivity() install %s took %d ms", localPartKey, tookTime));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -143,5 +156,11 @@ public class SamplePluginManager extends FastPluginManager {
                 }
             }
         });
+    }
+
+    private void init(InstalledPlugin installedPlugin, String partKey) throws RemoteException, TimeoutException, FailedException {
+        Log.d(TAG, "init() called with: installedPlugin = [" + installedPlugin + "], partKey = [" + partKey + "]");
+        loadPlugin(installedPlugin.UUID, partKey);
+        callApplicationOnCreate(partKey);
     }
 }

@@ -21,6 +21,7 @@ package com.tencent.shadow.sample.host;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,7 +30,7 @@ import com.tencent.shadow.sample.constant.Constant;
 
 
 public class PluginLoadActivity extends Activity {
-
+    private static final String TAG = "PluginLoadActivity";
     private ViewGroup mViewGroup;
 
     private Handler mHandler = new Handler();
@@ -54,10 +55,17 @@ public class PluginLoadActivity extends Activity {
                 HostApplication.getApp().loadPluginManager(PluginHelper.getInstance().pluginManagerFile);
 
                 Bundle bundle = new Bundle();
-                bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, PluginHelper.getInstance().pluginZipFile.getAbsolutePath());
+                String absolutePath = PluginHelper.getInstance().pluginZipFile.getAbsolutePath();
+                Log.e(TAG, "run: " + absolutePath);
+
+                bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, absolutePath);
                 bundle.putString(Constant.KEY_PLUGIN_PART_KEY, getIntent().getStringExtra(Constant.KEY_PLUGIN_PART_KEY));
                 bundle.putString(Constant.KEY_ACTIVITY_CLASSNAME, getIntent().getStringExtra(Constant.KEY_ACTIVITY_CLASSNAME));
-
+                Bundle bundle1 = new Bundle();
+                bundle1.putString(Constant.KEY_PLUGIN_ZIP_PATH, absolutePath);
+                bundle1.putString(Constant.KEY_PLUGIN_PART_KEY, "sample-base");
+                HostApplication.getApp().getPluginManager()
+                        .enter(PluginLoadActivity.this, Constant.FROM_ID_START_ACTIVITY, bundle1, null);
                 HostApplication.getApp().getPluginManager()
                         .enter(PluginLoadActivity.this, Constant.FROM_ID_START_ACTIVITY, bundle, new EnterCallback() {
                             @Override

@@ -19,7 +19,6 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
-import android.util.Log
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException

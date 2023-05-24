@@ -101,3 +101,9 @@ def copyLocalPropertiesForIncludeBuilds() {
         }
     }
 }
+
+includeBuild("../strip-class-plugin") {
+    dependencySubstitution {
+        substitute module('com.didi.virtualapk:gradle') using project(':gradle-plugin')
+    }
+}

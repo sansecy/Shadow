@@ -18,16 +18,16 @@
 
 package com.tencent.shadow.sample.plugin.app.lib.usecases.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 import com.tencent.shadow.sample.plugin.app.lib.R;
-import com.tencent.shadow.sample.plugin.utils.AppUtils;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.util.ToastUtil;
+import com.tencent.shadow.sample.plugin.utils.AppUtils;
 
-public class TestActivityOnCreate extends Activity {
+public class TestActivityOnCreate extends AppCompatActivity {
 
     public static class Case extends UseCase {
         @Override
@@ -51,7 +51,6 @@ public class TestActivityOnCreate extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_activity_lifecycle);
         ToastUtil.showToast(this, "onCreate");
-        AppUtils.setWindow(this);
     }
 
     @Override

@@ -4,6 +4,29 @@
 
     <application
         android:name="com.tencent.shadow.sample.plugin.app.lib.gallery.TestApplication"
-        android:theme="@style/CustomActivityTheme" />
+        android:theme="@style/CustomActivityTheme" >
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.gallery.splash.SplashActivity"
+            android:theme="@style/CustomActivityTheme"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
+        </activity>
+        <activity android:name="com.tencent.shadow.sample.plugin.app.lib.gallery.MainActivity" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.general_cases.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+    </application>
 </manifest>
 

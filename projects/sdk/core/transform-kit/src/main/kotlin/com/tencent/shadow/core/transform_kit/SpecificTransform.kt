@@ -32,7 +32,6 @@ abstract class SpecificTransform {
     val list: List<TransformStep> = _list
 
     lateinit var mClassPool: ClassPool
-    protected var name = ""
 
     fun newStep(transform: TransformStep) {
         _list.add(transform)
