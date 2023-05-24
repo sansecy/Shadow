@@ -18,14 +18,15 @@
 
 package com.tencent.shadow.sample.plugin.app.lib.usecases.activity;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.tencent.shadow.sample.plugin.app.lib.R;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.util.ToastUtil;
-import com.tencent.shadow.sample.plugin.utils.AppUtils;
 
 public class TestActivityOnCreate extends AppCompatActivity {
 
@@ -46,8 +47,15 @@ public class TestActivityOnCreate extends AppCompatActivity {
         }
     }
 
+    private static final String TAG = "TestActivityOnCreate";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.e(TAG, "abc_vector_test: " + Integer.toHexString(R.drawable.abc_vector_test));
+        final Drawable d;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            d = getDrawable(R.drawable.abc_vector_test);
+            Log.e(TAG, "onCreate() called with: d = [" + d + "]");
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_activity_lifecycle);
         ToastUtil.showToast(this, "onCreate");

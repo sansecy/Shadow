@@ -7,7 +7,7 @@
         android:allowBackup="true"
         android:label="Shadow Dyanamic测试宿主App"
         android:name="com.tencent.shadow.sample.host.HostApplication"
-        android:theme="@android:style/Theme.DeviceDefault"
+        android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:label">

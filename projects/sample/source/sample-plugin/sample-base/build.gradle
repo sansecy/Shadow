@@ -54,7 +54,7 @@ android {
     // 将插件的资源ID分区改为和宿主0x7F不同的值
     aaptOptions {
         additionalParameters "--package-id", "0x7A", "--allow-reserved-package-id"
-        additionalParameters "--emit-ids", "${project.rootProject.file('/build/public.txt').absolutePath}"
+        additionalParameters "--emit-ids", "${project.rootProject.file('build/public.txt').absolutePath}"
     }
 
     lintOptions {

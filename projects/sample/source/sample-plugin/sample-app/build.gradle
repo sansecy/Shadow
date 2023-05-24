@@ -74,9 +74,9 @@ android {
     aaptOptions {
         noCompress "dat"
         additionalParameters "--package-id", "0x7A", "--allow-reserved-package-id"
-        File publicTxtFile = project.rootProject.file('/build/public.txt')
+        File publicTxtFile = project.rootProject.file('build/public.txt')
         if (publicTxtFile.exists()) {
-            additionalParameters "--stable-ids", "${project.rootProject.file('/build/public.txt').absolutePath}"
+            additionalParameters "--stable-ids", "${project.rootProject.file('build/public.txt').absolutePath}"
         }
     }
 }
@@ -86,11 +86,19 @@ dependencies {
     compileOnly project(":sample-host-lib")
     implementation project(":sample-base-lib")
 //    compileOnly project(":sample-base-lib")
+    testImplementation "junit:junit:$junit_version"
+
+    // https://mvnrepository.com/artifact/commons-io/commons-io (requires Java 8)
+    testImplementation "commons-io:commons-io:$commons_io_jvm_version"
+    // https://mvnrepository.com/artifact/org.apache.groovy/groovy-xml
+    testImplementation 'org.apache.groovy:groovy-xml:4.0.12'
 
 //    compileOnly "com.android.support:appcompat-v7:$android_support_version"
     //Shadow Transform后业务代码会有一部分实际引用runtime中的类
     //如果不以compileOnly方式依赖，会导致其他Transform或者Proguard找不到这些类
     compileOnly 'com.tencent.shadow.core:runtime'
+    implementation "com.android.support:support-v4:$android_support_version"
+    implementation "com.android.support:appcompat-v7:$android_support_version"
 }
 
 //preBuild.dependsOn(":sample-host-lib:jarDebugPackage")
@@ -146,7 +154,7 @@ shadow {
                         buildTask = "assemble${variantName.capitalize()}${buildTypeName.capitalize()}".toString()
                         name = "${project.name}-${variantName}-${buildTypeName.uncapitalize()}.apk".toString()
 //                        apkPath = "projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/${buildTypeName.uncapitalize()}/${project.name}--${variantName}-${buildTypeName.uncapitalize()}.apk".toString()
-                        apkPath = "projects/sample/source/sample-plugin/sample-app/build/intermediates/apk/plugin/${buildTypeName.uncapitalize()}/${project.name}-${variantName}-${buildTypeName.uncapitalize()}.apk".toString()
+                        apkPath = "projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/${buildTypeName.uncapitalize()}/${project.name}-${variantName}-${buildTypeName.uncapitalize()}.apk".toString()
 //                        buildTask = ':sample-app:assembleDebug'
 //                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/debug/sample-app-plugin-debug.apk'
                         hostWhiteList = [
@@ -169,7 +177,7 @@ shadow {
                         businessName = 'sample-plugin-app'
                         partKey = 'sample-base'
                         buildTask = ':sample-base:assemblePluginDebug'
-                        apkPath = 'projects/sample/source/sample-plugin/sample-base/build/intermediates/apk/plugin/debug/sample-base-plugin-debug.apk'
+                        apkPath = 'projects/sample/source/sample-plugin/sample-base/build/outputs/apk/plugin/debug/sample-base-plugin-debug.apk'
                         hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
                     }
                 }
