@@ -52,6 +52,9 @@ dependencies {
     implementation project(':sample-host-lib')
     api "com.android.support:support-v4:$android_support_version"
     api "com.android.support:appcompat-v7:$android_support_version"
+    api "com.android.support:recyclerview-v7:$android_support_version"
+    api "com.sansecy.tools:monitor"
+    api "com.sansecy.tools:see"
 }
 
 def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {

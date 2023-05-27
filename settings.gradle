@@ -102,6 +102,12 @@ def copyLocalPropertiesForIncludeBuilds() {
     }
 }
 
+includeBuild("C:\\Users\\sanse\\MiguGame\\support-see-jar"){
+    dependencySubstitution {
+        substitute module('com.sansecy.tools:monitor') using project(':monitor')
+        substitute module('com.sansecy.tools:see') using project(':see')
+    }
+}
 //includeBuild("../strip-class-plugin") {
 //    dependencySubstitution {
 //        substitute module('com.didi.virtualapk:gradle') using project(':gradle-plugin')

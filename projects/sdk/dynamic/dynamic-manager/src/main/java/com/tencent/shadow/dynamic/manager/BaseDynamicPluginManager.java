@@ -176,7 +176,7 @@ abstract public class BaseDynamicPluginManager extends BasePluginManager impleme
             try {
                 part = getPluginPartByPartKey(uuid, partKey);
             } catch (RuntimeException e) {
-                throw new NotFoundException("uuid==" + uuid + "partKey==" + partKey + "的Plugin找不到");
+                throw new NotFoundException("uuid==" + uuid + " , partKey==" + partKey + "的Plugin找不到");
             }
             String businessName = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).businessName : null;
             String[] dependsOn = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).dependsOn : null;

@@ -141,10 +141,8 @@ shadow {
             debug {
                 def buildTypeName = 'debug'
                 def variantName = 'plugin'
-//                loaderApkConfig = new Tuple2("sample-loader-${buildTypeName}.apk".toString(), ":sample-loader:assemble${buildTypeName.capitalize()}".toString())
-//                runtimeApkConfig = new Tuple2("sample-runtime-${buildTypeName}.apk".toString(), ":sample-runtime:assemble${buildTypeName.capitalize()}".toString())
-                loaderApkConfig = new Tuple2('sample-loader-debug.apk', ':sample-loader:assembleDebug')
-                runtimeApkConfig = new Tuple2('sample-runtime-debug.apk', ':sample-runtime:assembleDebug')
+                loaderApkConfig = new Tuple2("sample-loader-${buildTypeName}.apk".toString(), ":sample-loader:assemble${buildTypeName.capitalize()}".toString())
+                runtimeApkConfig = new Tuple2("sample-runtime-${buildTypeName}.apk".toString(), ":sample-runtime:assemble${buildTypeName.capitalize()}".toString())
                 pluginApks {
                     pluginApk1 {
 //businessName相同的插件，context获取的Dir是相同的。businessName留空，表示和宿主相同业务，直接使用宿主的Dir。

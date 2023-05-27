@@ -20,6 +20,7 @@ package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
 import com.tencent.shadow.core.common.InstalledApk
+import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
@@ -35,24 +36,25 @@ import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-const val TAG = "LoadPluginBloc"
+const val TAG = "LoadPluginBloc-Shadow"
+
 object LoadPluginBloc {
     @Throws(LoadPluginException::class)
     fun loadPlugin(
-        executorService: ExecutorService,
-        componentManager: ComponentManager,
-        lock: ReentrantLock,
-        pluginPartsMap: MutableMap<String, PluginParts>,
-        hostAppContext: Context,
-        installedApk: InstalledApk,
-        loadParameters: LoadParameters
+            executorService: ExecutorService,
+            componentManager: ComponentManager,
+            lock: ReentrantLock,
+            pluginPartsMap: MutableMap<String, PluginParts>,
+            hostAppContext: Context,
+            installedApk: InstalledApk,
+            loadParameters: LoadParameters
     ): Future<*> {
         if (installedApk.apkFilePath == null) {
             throw LoadPluginException("apkFilePath==null")
         } else {
             val buildClassLoader = executorService.submit(Callable {
                 lock.withLock {
-                    LoadApkBloc.loadPlugin(hostAppContext,installedApk, loadParameters, pluginPartsMap)
+                    LoadApkBloc.loadPlugin(hostAppContext, installedApk, loadParameters, pluginPartsMap)
                 }
             })
 
@@ -66,10 +68,10 @@ object LoadPluginBloc {
             val buildPluginApplicationInfo = executorService.submit(Callable {
                 val pluginManifest = buildPluginManifest.get()
                 val pluginApplicationInfo = CreatePluginApplicationInfoBloc.create(
-                    installedApk,
-                    loadParameters,
-                    pluginManifest,
-                    hostAppContext
+                        installedApk,
+                        loadParameters,
+                        pluginManifest,
+                        hostAppContext
                 )
                 pluginApplicationInfo
             })
@@ -78,15 +80,15 @@ object LoadPluginBloc {
                 val pluginApplicationInfo = buildPluginApplicationInfo.get()
                 val hostPackageManager = hostAppContext.packageManager
                 PluginPackageManagerImpl(
-                    pluginApplicationInfo,
-                    installedApk.apkFilePath,
-                    componentManager,
-                    hostPackageManager,
+                        pluginApplicationInfo,
+                        installedApk.apkFilePath,
+                        componentManager,
+                        hostPackageManager,
                 )
             })
 
             val buildResources = executorService.submit(Callable {
-                CreateResourceBloc.create(installedApk.apkFilePath, hostAppContext,loadParameters,pluginPartsMap)
+                CreateResourceBloc.create(installedApk.apkFilePath, hostAppContext, loadParameters, pluginPartsMap)
             })
 
             val buildAppComponentFactory = executorService.submit(Callable {
@@ -94,9 +96,15 @@ object LoadPluginBloc {
                 val pluginManifest = buildPluginManifest.get()
                 val appComponentFactory = pluginManifest.appComponentFactory
                 if (appComponentFactory != null) {
-                    val clazz = pluginClassLoader.loadClass(appComponentFactory)
-                    ShadowAppComponentFactory::class.java.cast(clazz.newInstance())
-                } else ShadowAppComponentFactory()
+                    try {
+                        val clazz = pluginClassLoader.loadClass(appComponentFactory)
+                        ShadowAppComponentFactory::class.java.cast(clazz.newInstance())
+                    } catch (e: Exception) {
+                        ShadowAppComponentFactory()
+                    }
+                } else {
+                    ShadowAppComponentFactory()
+                }
             })
 
             val buildApplication = executorService.submit(Callable {
@@ -107,14 +115,14 @@ object LoadPluginBloc {
                 val pluginApplicationInfo = buildPluginApplicationInfo.get()
 
                 CreateApplicationBloc.createShadowApplication(
-                    pluginClassLoader,
-                    loadParameters,
-                    pluginManifest,
-                    resources,
-                    hostAppContext,
-                    componentManager,
-                    pluginApplicationInfo,
-                    appComponentFactory
+                        pluginClassLoader,
+                        loadParameters,
+                        pluginManifest,
+                        resources,
+                        hostAppContext,
+                        componentManager,
+                        pluginApplicationInfo,
+                        appComponentFactory
                 )
             })
 
@@ -130,23 +138,23 @@ object LoadPluginBloc {
                 val pluginManifest = buildPluginManifest.get()
                 lock.withLock {
                     componentManager.addPluginApkInfo(
-                        pluginManifest,
-                        loadParameters,
-                        installedApk.apkFilePath,
+                            pluginManifest,
+                            loadParameters,
+                            installedApk.apkFilePath,
                     )
                     pluginPartsMap[loadParameters.partKey] = PluginParts(
-                        appComponentFactory,
-                        shadowApplication,
-                        pluginClassLoader,
-                        resources,
-                        pluginPackageManager
+                            appComponentFactory,
+                            shadowApplication,
+                            pluginClassLoader,
+                            resources,
+                            pluginPackageManager
                     )
                     PluginPartInfoManager.addPluginInfo(
-                        pluginClassLoader, PluginPartInfo(
+                            pluginClassLoader, PluginPartInfo(
                             loadParameters.partKey,
                             shadowApplication, resources,
                             pluginClassLoader, pluginPackageManager
-                        )
+                    )
                     )
                 }
             }

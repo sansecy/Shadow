@@ -24,6 +24,7 @@ import android.os.Looper
 import android.os.Parcel
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.LoggerFactory
+import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.core.loader.delegates.*
@@ -141,8 +142,9 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         installedApk: InstalledApk
     ): Future<*> {
         val loadParameters = installedApk.getLoadParameters()
+        ShadowLog.d("ShadowPluginLoader", "loader load plugin")
         if (mLogger.isInfoEnabled) {
-            mLogger.info("start loadPlugin")
+            mLogger.info("start loadPlugin ${loadParameters.partKey}")
         }
         // 在这里初始化PluginServiceManager
         mPluginServiceManagerLock.withLock {

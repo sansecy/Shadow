@@ -27,6 +27,21 @@ buildscript {
         classpath 'com.tencent.shadow.coding:common-jar-settings'
 //        classpath "com.didi.virtualapk:gradle"
     }
+
+    configurations.all {
+        resolutionStrategy.cacheDynamicVersionsFor 1, 'minutes' // 动态版本
+        resolutionStrategy.cacheChangingModulesFor 1, 'minutes' // 变化模块
+        // 统一support依赖包
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '27.1.1'
+//                    details.useVersion '27.1.1'
+                }
+            }
+        }
+    }
 }
 apply from: 'buildScripts/gradle/common.gradle'
 

@@ -21,6 +21,8 @@ package com.tencent.shadow.core.load_parameters;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 /**
  * Loader加载插件的输入参数结构体
  * <p>
@@ -41,6 +43,7 @@ public class LoadParameters implements Parcelable {
         this.partKey = partKey;
         this.dependsOn = dependsOn;
         this.hostWhiteList = hostWhiteList;
+
     }
 
     public LoadParameters(Parcel in) {

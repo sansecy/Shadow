@@ -24,6 +24,9 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.util.Pair
 import com.tencent.shadow.coding.java_build_config.BuildConfig
+import com.tencent.shadow.core.common.Logger
+import com.tencent.shadow.core.common.LoggerFactory
+import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.runtime.PluginManifest
@@ -34,6 +37,7 @@ import com.tencent.shadow.core.runtime.container.DelegateProvider.PROCESS_ID_KEY
 import com.tencent.shadow.core.runtime.container.DelegateProviderHolder
 import com.tencent.shadow.core.runtime.container.GeneratedHostActivityDelegator
 
+private const val TAG = "ComponentManager-Shadow"
 /**
  * 插件组件管理
  * 主要功能是管理组件和宿主中注册的壳子之间的配对关系
@@ -189,7 +193,9 @@ abstract class ComponentManager : PluginComponentLauncher {
         loadParameters: LoadParameters,
         archiveFilePath: String
     ) {
+        ShadowLog.d(TAG, "addPluginApkInfo pluginManifest = [${pluginManifest}], loadParameters = [${loadParameters}], archiveFilePath = [${archiveFilePath}]")
         fun common(componentInfo: PluginManifest.ComponentInfo, componentName: ComponentName) {
+            ShadowLog.d(TAG,"addPluginApkInfo componentInfo = [${componentInfo}], componentName = [${componentName}]")
             packageNameMap[componentInfo.className] = componentName.packageName
             val previousValue = loadParametersMap.put(componentName, loadParameters)
             if (previousValue != null) {
@@ -248,7 +254,9 @@ abstract class ComponentManager : PluginComponentLauncher {
     private fun Intent.isPluginComponent(): Boolean {
         val component = component ?: return false
         val className = component.className
-        return packageNameMap.containsKey(className)
+        val containsKey = packageNameMap.containsKey(className)
+        ShadowLog.d(TAG, "isPluginComponent $component , containsKey: $containsKey")
+        return containsKey
     }
 
     /**

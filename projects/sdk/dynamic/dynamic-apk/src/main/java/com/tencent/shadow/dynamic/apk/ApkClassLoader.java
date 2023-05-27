@@ -20,6 +20,7 @@ package com.tencent.shadow.dynamic.apk;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.core.dex.MultiDex;
@@ -88,7 +89,15 @@ public class ApkClassLoader extends DexClassLoader {
         }
 
         if (isInterface) {
-            return super.loadClass(className, resolve);
+            Class<?> loadClass = null;
+            try {
+                loadClass = super.loadClass(className, resolve);
+            } catch (ClassNotFoundException e) {
+//                Log.d(TAG, "loadClass() called with:not found className = [" + className + "], in = [" + getParent() + "]");
+                throw new ClassNotFoundException(e.getMessage());
+            }
+
+            return loadClass;
         } else {
             Class<?> clazz = findLoadedClass(className);
 
@@ -98,12 +107,14 @@ public class ApkClassLoader extends DexClassLoader {
                     clazz = findClass(className);
                 } catch (ClassNotFoundException e) {
                     suppressed = e;
+//                    Log.d(TAG, "loadClass() called with:not found className = [" + className + "], in = [" + this + "]");
                 }
 
                 if (clazz == null) {
                     try {
                         clazz = mGrandParent.loadClass(className);
                     } catch (ClassNotFoundException e) {
+//                        Log.d(TAG, "loadClass() called with:not found className = [" + className + "], in = [" + mGrandParent + "]");
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                             e.addSuppressed(suppressed);
                         }

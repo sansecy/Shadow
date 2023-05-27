@@ -20,12 +20,15 @@ package com.tencent.shadow.core.loader.classloaders
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import com.bytedance.boost_multidex.BoostMultiDex
+import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.runtime.PluginManifest
 import dalvik.system.BaseDexClassLoader
 import org.jetbrains.annotations.TestOnly
 import java.io.File
 
+private const val TAG = "PluginClassLoader-Shadow"
 
 /**
  * 用于加载插件的ClassLoader,插件内部的classLoader树结构如下
@@ -42,12 +45,13 @@ import java.io.File
  */
 
 class PluginClassLoader(
-    hostAppContext: Context,
-    dexPath: String,
-    optimizedDirectory: File?,
-    librarySearchPath: String?,
-    parent: ClassLoader,
-    private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?
+        hostAppContext: Context,
+        dexPath: String,
+        optimizedDirectory: File?,
+        librarySearchPath: String?,
+        parent: ClassLoader,
+        private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?,
+        outPartKey: String
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
     /**
@@ -58,7 +62,9 @@ class PluginClassLoader(
 
     private val loaderClassLoader = PluginClassLoader::class.java.classLoader!!
 
+    private var partKey: String = ""
     init {
+        partKey = outPartKey
         val sourceApk = File(dexPath)
         val name = sourceApk.name
         BoostMultiDex.install(hostAppContext, File(dexPath), this, null, name)
@@ -102,7 +108,14 @@ class PluginClassLoader(
         if (clazz == null) {
             //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
             if (specialClassLoader == null) {
-                return super.loadClass(className, resolve)
+                try {
+                    val loadClass = super.loadClass(className, resolve)
+                    this.loaderClassLoader
+//                    ShadowLog.e(TAG, this.partKey + " loadClass() called with: in parent , found className = $className, in parent = $parent")
+                    return loadClass
+                } catch (e: Exception) {
+                    throw e
+                }
             }
 
             //插件依赖跟loader一起打包的runtime类，如ShadowActivity，从loader的ClassLoader加载
@@ -112,7 +125,13 @@ class PluginClassLoader(
 
             //包名在白名单中的类按双亲委派逻辑，从宿主中加载
             if (className.inPackage(allHostWhiteTrie)) {
-                return super.loadClass(className, resolve)
+                try {
+                    val loadClass = super.loadClass(className, resolve)
+                    return loadClass
+                } catch (e: Exception) {
+                    ShadowLog.e(TAG, "loadClass() called with: allHostWhiteTrie, not found className = $className, in parent = ${parent}")
+                }
+
             }
 
             var suppressed: ClassNotFoundException? = null
@@ -120,19 +139,32 @@ class PluginClassLoader(
                 //正常的ClassLoader这里是parent.loadClass,插件用specialClassLoader以跳过parent
                 clazz = specialClassLoader.loadClass(className)!!
             } catch (e: ClassNotFoundException) {
+//                ShadowLog.e(TAG, "loadClass() called with:not found className = $className, in specialClassLoader = $specialClassLoader")
                 suppressed = e
             }
             if (clazz == null) {
                 try {
                     clazz = findClass(className)!!
                 } catch (e: ClassNotFoundException) {
+//                    ShadowLog.e(TAG, "loadClass() called with:not found className = $className, in this = $this")
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         e.addSuppressed(suppressed)
+                        suppressed = e
+                        throw e
                     }
                     throw e
                 }
-
             }
+//            if (clazz == null) {
+//                try {
+//                    val loadClass = super.loadClass(className, resolve)
+//                    return loadClass
+//                } catch (e: Exception) {
+////                    ShadowLog.e(TAG, "loadClass() called with: last, not found className = $className, in parent = ${parent}")
+//                    e.addSuppressed(suppressed)
+//                    throw e
+//                }
+//            }
         }
 
         return clazz
@@ -144,8 +176,8 @@ class PluginClassLoader(
             return PluginManifest::class.java.cast(clazz.newInstance())
         } catch (e: ClassNotFoundException) {
             throw Error(
-                "请注意每个插件apk构建时都需要" +
-                        "apply plugin: 'com.tencent.shadow.plugin'", e
+                    "请注意每个插件apk构建时都需要" +
+                            "apply plugin: 'com.tencent.shadow.plugin'", e
             )
         }
     }
