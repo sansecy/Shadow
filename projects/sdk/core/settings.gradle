@@ -10,6 +10,4 @@ include 'loader',
         'manifest-parser',
         'load-parameters',
         'transform-kit',
-        'utils',
-        'boost_multidex',
-        'dex'
+        'utils'

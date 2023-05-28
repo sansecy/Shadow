@@ -21,7 +21,6 @@ package com.tencent.shadow.core.loader.classloaders
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import com.bytedance.boost_multidex.BoostMultiDex
 import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.runtime.PluginManifest
 import dalvik.system.BaseDexClassLoader
@@ -67,7 +66,6 @@ class PluginClassLoader(
         partKey = outPartKey
         val sourceApk = File(dexPath)
         val name = sourceApk.name
-        BoostMultiDex.install(hostAppContext, File(dexPath), this, null, name)
 //        try {
 //            val dataDir = File(hostAppContext.cacheDir.toString() + "/shadow_dex")
 //            dataDir.mkdirs()

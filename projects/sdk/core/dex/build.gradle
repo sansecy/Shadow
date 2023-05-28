@@ -1,4 +1,0 @@
-apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
-//dependencies {
-//
-//}

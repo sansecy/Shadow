@@ -41,8 +41,11 @@ class ShadowPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         agpCompat = buildAgpCompat(project)
-        val baseExtension = project.extensions.getByName("android") as BaseExtension
-
+        val baseExtension = try {
+            project.extensions.getByName("android") as BaseExtension
+        } catch (e: Exception) {
+            return
+        }
         //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
         contextClassLoader = Thread.currentThread().contextClassLoader
         val lateInitBuilder = object : ClassPoolBuilder {
