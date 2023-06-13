@@ -73,7 +73,7 @@ class ShadowPlugin : Plugin<Project> {
             addLocateApkanalyzerTask(project)
 
             onEachPluginVariant(project) { pluginVariant ->
-//                checkAaptPackageIdConfig(pluginVariant)
+                checkAaptPackageIdConfig(pluginVariant)
 
                 val appExtension: AppExtension =
                     project.extensions.getByType(AppExtension::class.java)
@@ -160,8 +160,8 @@ class ShadowPlugin : Plugin<Project> {
                         flavor.name == ShadowTransform.ApplyShadowTransformFlavorName
             }
         }
-
-//        checkPluginVariants(pluginVariants, appExtension, project.name)
+//        val pluginVariants = appExtension.applicationVariants
+        checkPluginVariants(pluginVariants, appExtension, project.name)
 
         pluginVariants.forEach(actions)
     }

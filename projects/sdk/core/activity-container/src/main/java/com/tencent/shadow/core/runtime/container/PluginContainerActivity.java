@@ -72,7 +72,7 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
     final protected void onCreate(Bundle savedInstanceState) {
         isBeforeOnCreate = false;
         mHostTheme = null;//释放资源
-
+        Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
         boolean illegalIntent = isIllegalIntent(savedInstanceState);
         if (illegalIntent) {
             super.hostActivityDelegate = null;
@@ -157,21 +157,23 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
 
     @Override
     public Resources.Theme getTheme() {
-        if (isBeforeOnCreate) {
-            if (mHostTheme == null) {
-                mHostTheme = super.getResources().newTheme();
-            }
-            return mHostTheme;
-        } else {
-            return super.getTheme();
-        }
+        Log.d(TAG, "getTheme() called");
+//        if (isBeforeOnCreate) {
+//            if (mHostTheme == null) {
+//                mHostTheme = super.getResources().newTheme();
+//            }
+//            return mHostTheme;
+//        } else {
+//        }
+        return super.getTheme();
     }
 
     @Override
     public void setTheme(int resid) {
-        if (!isBeforeOnCreate) {
-            super.setTheme(resid);
-        }
+//        if (!isBeforeOnCreate) {
+//            Log.d(TAG, "setTheme() called with: resid = [" + Integer.toHexString(resid) + "]");
+//        }
+        super.setTheme(resid);
     }
 
 }

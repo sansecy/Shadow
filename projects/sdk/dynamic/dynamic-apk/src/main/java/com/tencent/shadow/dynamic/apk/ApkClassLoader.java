@@ -23,11 +23,6 @@ import android.os.Build;
 import android.util.Log;
 
 import com.tencent.shadow.core.common.InstalledApk;
-import com.tencent.shadow.core.dex.MultiDex;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import dalvik.system.DexClassLoader;
 
@@ -51,16 +46,6 @@ public class ApkClassLoader extends DexClassLoader {
     public ApkClassLoader(Context appContext, InstalledApk installedApk,
                           ClassLoader parent, String[] mInterfacePackageNames, int grandTimes) {
         super(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath, parent);
-//        try {
-//            File sourceApk = new File(installedApk.apkFilePath);
-//            String name = sourceApk.getName();
-//            File dataDir = new File(appContext.getCacheDir() + "/shadow_dex");
-//            dataDir.mkdirs();
-//            MultiDex.doInstallation(appContext, this, sourceApk,
-//                    dataDir, name, name);
-//        } catch (IOException | IllegalAccessException | NoSuchFieldException | InvocationTargetException | NoSuchMethodException e) {
-//            e.printStackTrace();
-//        }
 
         ClassLoader grand = parent;
         for (int i = 0; i < grandTimes; i++) {

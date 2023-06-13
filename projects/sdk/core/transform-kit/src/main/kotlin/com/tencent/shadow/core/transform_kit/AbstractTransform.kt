@@ -34,16 +34,16 @@ abstract class AbstractTransform(
 
     protected abstract val mTransformManager: AbstractTransformManager
     private val mOverrideCheck = OverrideCheck()
-//    private lateinit var mDebugClassJar: File
-//    private lateinit var mDebugClassJarZOS: ZipOutputStream
+    private lateinit var mDebugClassJar: File
+    private lateinit var mDebugClassJarZOS: ZipOutputStream
 
 
     private fun cleanDebugClassFileDir() {
         val transformTempDir = File(project.buildDir, "transform-temp")
         transformTempDir.deleteRecursively()
         transformTempDir.mkdirs()
-//        mDebugClassJar = File.createTempFile("transform-temp", ".jar", transformTempDir)
-//        mDebugClassJarZOS = ZipOutputStream(FileOutputStream(mDebugClassJar))
+        mDebugClassJar = File.createTempFile("transform-temp", ".jar", transformTempDir)
+        mDebugClassJarZOS = ZipOutputStream(FileOutputStream(mDebugClassJar))
     }
 
     override fun beforeTransform(invocation: TransformInvocation) {
@@ -67,8 +67,8 @@ abstract class AbstractTransform(
         super.afterTransform(invocation)
 
         println("afterTransform")
-//        mDebugClassJarZOS.flush()
-//        mDebugClassJarZOS.close()
+        mDebugClassJarZOS.flush()
+        mDebugClassJarZOS.close()
 
         //CtClass在编辑后，其对象中的各种信息，比如superClass并没有更新。
         //所以需要重新创建一个ClassPool，加载转换后的类，用于各种转换后的检查。
