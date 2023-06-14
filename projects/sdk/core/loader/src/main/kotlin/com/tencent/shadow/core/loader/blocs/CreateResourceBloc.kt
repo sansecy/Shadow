@@ -53,7 +53,7 @@ object CreateResourceBloc {
      * 尽管构造这种带有多资源ID分区的Resources对象所需的API在低版本系统上就已经有了，
      * 但通过不断测试发现MAX_API_FOR_MIX_RESOURCES及更低的API系统上，有个别API不能正确支持非0x7f分区的资源。
      */
-    const val MAX_API_FOR_MIX_RESOURCES = 50
+    const val MAX_API_FOR_MIX_RESOURCES = Build.VERSION_CODES.O_MR1
 
     fun create(
         archiveFilePath: String,
@@ -61,10 +61,10 @@ object CreateResourceBloc {
         loadParameters: LoadParameters,
         pluginPartsMap: MutableMap<String, PluginParts>
     ): Resources {
-        ShadowLog.d(
-            TAG,
-            "create() called with: archiveFilePath = $archiveFilePath, hostAppContext = $hostAppContext, loadParameters = $loadParameters, pluginPartsMap = $pluginPartsMap"
-        )
+//        ShadowLog.d(
+//            TAG,
+//            "create() called with: archiveFilePath = $archiveFilePath, hostAppContext = $hostAppContext, loadParameters = $loadParameters, pluginPartsMap = $pluginPartsMap"
+//        )
         triggerWebViewHookResources(hostAppContext)
 
         val packageManager = hostAppContext.packageManager

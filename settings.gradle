@@ -59,7 +59,8 @@ def includeSample() {
             'slidingmenu',
             'sample-base-lib',
             'sample-base',
-            'sample-app'
+            'sample-app',
+            'sample-app2'
     project(':sample-constant').projectDir = file('projects/sample/source/sample-constant')
     project(':sample-host').projectDir = file('projects/sample/source/sample-host')
     project(':sample-host-lib').projectDir = file('projects/sample/source/sample-host-lib')
@@ -71,6 +72,7 @@ def includeSample() {
     project(':sample-base-lib').projectDir = file('projects/sample/source/sample-plugin/sample-base-lib')
     project(':sample-base').projectDir = file('projects/sample/source/sample-plugin/sample-base')
     project(':sample-app').projectDir = file('projects/sample/source/sample-plugin/sample-app')
+    project(':sample-app2').projectDir = file('projects/sample/source/sample-plugin/sample-app2')
 }
 
 def includeSampleDynamicApk() {
@@ -102,12 +104,12 @@ def copyLocalPropertiesForIncludeBuilds() {
     }
 }
 
-includeBuild("C:\\Users\\sanse\\MiguGame\\support-see-jar"){
-    dependencySubstitution {
-        substitute module('com.sansecy.tools:monitor') using project(':monitor')
-        substitute module('com.sansecy.tools:see') using project(':see')
-    }
-}
+//includeBuild("C:\\Users\\sanse\\MiguGame\\support-see-jar"){
+//    dependencySubstitution {
+//        substitute module('com.sansecy.tools:monitor') using project(':monitor')
+//        substitute module('com.sansecy.tools:see') using project(':see')
+//    }
+//}
 //includeBuild("../strip-class-plugin") {
 //    dependencySubstitution {
 //        substitute module('com.didi.virtualapk:gradle') using project(':gradle-plugin')

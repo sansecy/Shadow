@@ -3,6 +3,7 @@ package com.tencent.shadow.core.loader.blocs
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.os.Build
+import android.util.Log
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.runtime.PluginManifest
@@ -16,6 +17,10 @@ object CreatePluginApplicationInfoBloc {
         pluginManifest: PluginManifest,
         hostAppContext: Context
     ): ApplicationInfo {
+        Log.d(
+            TAG,
+            "CreatePluginApplicationInfoBloc create() called with: loadParameters = ${loadParameters.partKey}"
+        )
         val result = ApplicationInfo(hostAppContext.applicationInfo)
         result.sourceDir = installedApk.apkFilePath
         result.nativeLibraryDir = installedApk.libraryPath

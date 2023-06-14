@@ -49,7 +49,7 @@ object LoadApkBloc {
             loadParameters: LoadParameters,
             pluginPartsMap: MutableMap<String, PluginParts>
     ): PluginClassLoader {
-        ShadowLog.d(TAG, "loadPlugin hostAppContext = [${hostAppContext}], installedApk = [${installedApk}], loadParameters = [${loadParameters}], pluginPartsMap = [${pluginPartsMap}]")
+        ShadowLog.d(TAG, "loadParameters = [${loadParameters.partKey}]")
         val apk = File(installedApk.apkFilePath)
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
         val dependsOn = loadParameters.dependsOn

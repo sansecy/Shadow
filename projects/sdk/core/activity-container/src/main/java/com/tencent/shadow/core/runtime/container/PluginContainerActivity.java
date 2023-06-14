@@ -157,7 +157,7 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
 
     @Override
     public Resources.Theme getTheme() {
-        Log.d(TAG, "getTheme() called");
+//        Log.d(TAG, "getTheme() called");
 //        if (isBeforeOnCreate) {
 //            if (mHostTheme == null) {
 //                mHostTheme = super.getResources().newTheme();

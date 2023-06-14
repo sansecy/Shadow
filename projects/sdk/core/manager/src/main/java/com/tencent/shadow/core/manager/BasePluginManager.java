@@ -115,9 +115,9 @@ public abstract class BasePluginManager {
         JSONObject configJson = mUnpackManager.getConfigJson(zip);
         PluginConfig pluginConfig = PluginConfig.parseFromJson(configJson, pluginUnpackDir);
 
-        if (!pluginConfig.isUnpacked()) {
-            mUnpackManager.unpackPlugin(zip, pluginUnpackDir);
-        }
+//        if (!pluginConfig.isUnpacked()) {
+//        }
+        mUnpackManager.unpackPlugin(zip, pluginUnpackDir);
 
         return pluginConfig;
     }

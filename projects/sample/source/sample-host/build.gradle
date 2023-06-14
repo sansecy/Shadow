@@ -30,10 +30,12 @@ android {
         debug {
             assets.srcDir('build/generated/assets/sample-manager/debug/')
             assets.srcDir('build/generated/assets/plugin-zip/debug/')
+            assets.srcDir('build/generated/assets/plugin-zip2/debug/')
         }
         release {
             assets.srcDir('build/generated/assets/sample-manager/release/')
             assets.srcDir('build/generated/assets/plugin-zip/release/')
+            assets.srcDir('build/generated/assets/plugin-zip2/release/')
         }
     }
     lintOptions {
@@ -53,8 +55,9 @@ dependencies {
     api "com.android.support:support-v4:$android_support_version"
     api "com.android.support:appcompat-v7:$android_support_version"
     api "com.android.support:recyclerview-v7:$android_support_version"
-    api "com.sansecy.tools:monitor"
-    api "com.sansecy.tools:see"
+    implementation 'org.jetbrains:annotations:15.0'
+//    api "com.sansecy.tools:monitor"
+//    api "com.sansecy.tools:see"
 }
 
 def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
@@ -89,15 +92,25 @@ def generateAssets(generateAssetsTask, buildType) {
             "assemble${buildType.capitalize()}"
     )
 
-//    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
-//    generateAssetsTask.dependsOn createCopyTask(
-//            ':sample-app',
-//            buildType,
-//            'plugin-zip',
-//            "plugin-${buildType}.zip",
-//            pluginZip,
-//            "package${buildType.capitalize()}Plugin"
-//    )
+    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
+    generateAssetsTask.dependsOn createCopyTask(
+            ':sample-app',
+            buildType,
+            'plugin-zip',
+            "plugin-${buildType}.zip",
+            pluginZip,
+            "package${buildType.capitalize()}Plugin"
+    )
+
+    def pluginZip2 = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
+    generateAssetsTask.dependsOn createCopyTask(
+            ':sample-app2',
+            buildType,
+            'plugin-zip2',
+            "plugin2-${buildType}.zip",
+            pluginZip2,
+            "package${buildType.capitalize()}Plugin"
+    )
 
 
 }

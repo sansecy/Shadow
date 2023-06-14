@@ -21,6 +21,7 @@ package com.tencent.shadow.sample.host;
 import static com.tencent.shadow.sample.constant.Constant.PART_KEY_PLUGIN_BASE;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -33,13 +34,18 @@ import android.widget.TextView;
 import com.tencent.shadow.sample.constant.Constant;
 import com.tencent.shadow.sample.host.plugin_view.HostAddPluginViewActivity;
 
+import java.io.File;
+
 
 public class MainActivity extends Activity {
+
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.TestHostTheme);
+        mContext = this;
 
         LinearLayout rootView = new LinearLayout(this);
         rootView.setOrientation(LinearLayout.VERTICAL);
@@ -71,7 +77,42 @@ public class MainActivity extends Activity {
             }
         });
         rootView.addView(startPluginButton);
+        Button pluginStart = new Button(this);
+        pluginStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, new File(mContext.getFilesDir(), PluginHelper.sPluginZip).getPath());
+                bundle.putString(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOnCreate");
+                HostApplication.getApp().getPluginManager().enter(mContext, Constant.FROM_ID_START_ACTIVITY, bundle, null);
+
+            }
+        });
+        rootView.addView(pluginStart);
+        Button uninstallBtn = new Button(this);
+        uninstallBtn.setText("卸载gamehall");
+        uninstallBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.KEY_UNINSTALL_UUID, "gamehall");
+                HostApplication.getApp().getPluginManager().enter(mContext, Constant.FROM_ID_START_ACTIVITY, bundle, null);
+            }
+        });
+        rootView.addView(uninstallBtn);
+
+        Button pluginStart2 = new Button(this);
+        rootView.addView(pluginStart2);
+        pluginStart2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, new File(mContext.getFilesDir(), PluginHelper.sPluginZip2).getPath());
+                bundle.putString(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.sample.plugin.app.lib.MainActivity");
+                HostApplication.getApp().getPluginManager().enter(mContext, Constant.FROM_ID_START_ACTIVITY, bundle, null);
+            }
+        });
         Button startHostAddPluginViewActivityButton = new Button(this);
         startHostAddPluginViewActivityButton.setText("宿主添加插件View");
         startHostAddPluginViewActivityButton.setOnClickListener(v -> {

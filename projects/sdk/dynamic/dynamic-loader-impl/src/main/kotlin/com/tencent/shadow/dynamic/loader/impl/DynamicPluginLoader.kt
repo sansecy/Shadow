@@ -32,7 +32,7 @@ import com.tencent.shadow.core.runtime.container.DelegateProviderHolder
 import com.tencent.shadow.dynamic.host.UuidManager
 import java.util.concurrent.CountDownLatch
 
-private const val TAG = "DynamicPluginLoader-Shadow"
+private const val TAG = "DynamicPluginLoader-shadow"
 internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     companion object {
         private const val CORE_LOADER_FACTORY_IMPL_NAME =

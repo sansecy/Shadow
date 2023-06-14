@@ -25,8 +25,8 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.webkit.WebView;
 
-import com.sansecy.monitor.see.See;
 import com.tencent.shadow.core.common.LoggerFactory;
+import com.tencent.shadow.core.common.ShadowLog;
 import com.tencent.shadow.dynamic.host.DynamicRuntime;
 import com.tencent.shadow.dynamic.host.PluginManager;
 import com.tencent.shadow.sample.host.lib.HostUiLayerProvider;
@@ -45,7 +45,7 @@ public class HostApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sApp = this;
-        See.init(this);
+        SeeApp.init(this);
 
         detectNonSdkApiUsageOnAndroidP();
         setWebViewDataDirectorySuffix();
@@ -61,6 +61,9 @@ public class HostApplication extends Application {
         PluginHelper.getInstance().init(this);
 
         HostUiLayerProvider.init(this);
+
+
+        ShadowLog.enable = true;
     }
 
     private static void setWebViewDataDirectorySuffix() {

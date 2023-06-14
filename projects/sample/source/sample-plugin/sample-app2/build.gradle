@@ -18,19 +18,8 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.tencent.shadow.plugin'
-apply plugin: 'cn.migu.tool.applyHostResource'
 apply from: "${project.rootProject.rootDir.path}/applyTask.gradle"
-apply plugin: 'com.didi.virtualapk.plugin'
 
-virtualApk {
-    manifestPackage = 'com.cmgame.gamehalltv'
-    packageId = 0x7A // the package id of Resources.
-    targetHost = rootProject.rootDir.path + '/projects/sample/source/sample-plugin/sample-base'
-    // the path of application module in host project.
-    applyHostMapping = true //optional, default value: true.
-    forceUseHostDependences = true
-    stripResource = true
-}
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
 
@@ -74,26 +63,19 @@ android {
     aaptOptions {
         noCompress "dat"
         additionalParameters "--package-id", "0x7A", "--allow-reserved-package-id"
-        File publicTxtFile = project.rootProject.file('build/public.txt')
-        if (publicTxtFile.exists()) {
-            additionalParameters "--stable-ids", "${project.rootProject.file('build/public.txt').absolutePath}"
-        }
     }
 }
 
 dependencies {
+// https://mvnrepository.com/artifact/com.android.support.constraint/constraint-layout
+    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
+// https://mvnrepository.com/artifact/com.bytedance.boost_multidex/boost_multidex
+    implementation 'com.bytedance.boost_multidex:boost_multidex:1.0.1'
+
+
     //注意sample-host-lib要用compileOnly编译而不打包在插件中。在packagePlugin任务中配置hostWhiteList允许插件访问宿主的类。
     compileOnly project(":sample-host-lib")
     implementation project(":sample-base-lib")
-//    compileOnly project(":sample-base-lib")
-    testImplementation "junit:junit:$junit_version"
-
-    // https://mvnrepository.com/artifact/commons-io/commons-io (requires Java 8)
-    testImplementation "commons-io:commons-io:$commons_io_jvm_version"
-    // https://mvnrepository.com/artifact/org.apache.groovy/groovy-xml
-    testImplementation 'org.apache.groovy:groovy-xml:4.0.12'
-
-//    compileOnly "com.android.support:appcompat-v7:$android_support_version"
     //Shadow Transform后业务代码会有一部分实际引用runtime中的类
     //如果不以compileOnly方式依赖，会导致其他Transform或者Proguard找不到这些类
     compileOnly 'com.tencent.shadow.core:runtime'
@@ -109,26 +91,26 @@ def createDuplicateApkTask(buildType) {
 
     return tasks.create("duplicatePlugin${buildType.capitalize()}ApkTask", Copy) {
         group = 'build'
-        description = "复制一个sample-app-plugin-${buildType}.apk用于测试目的"
+        description = "复制一个sample-app2-plugin-${buildType}.apk用于测试目的"
         from(apkDir) {
-            include("sample-app-plugin-${buildType}.apk")
-            rename { "sample-app-plugin-${buildType}2.apk" }
+            include("sample-app2-plugin-${buildType}.apk")
+            rename { "sample-app2-plugin-${buildType}2.apk" }
         }
         into(apkDir)
 
-    }.dependsOn(":sample-app:assemblePlugin${buildType.capitalize()}")
+    }.dependsOn(":sample-app2:assemblePlugin${buildType.capitalize()}")
 }
 
-tasks.whenTaskAdded { task ->
-    if (task.name == "assemblePluginDebug") {
-        def createTask = createDuplicateApkTask('debug')
-        task.finalizedBy(createTask)
-    }
-    if (task.name == "assemblePluginRelease") {
-        def createTask = createDuplicateApkTask('release')
-        task.finalizedBy(createTask)
-    }
-}
+//tasks.whenTaskAdded { task ->
+//    if (task.name == "assemblePluginDebug") {
+//        def createTask = createDuplicateApkTask('debug')
+//        task.finalizedBy(createTask)
+//    }
+//    if (task.name == "assemblePluginRelease") {
+//        def createTask = createDuplicateApkTask('release')
+//        task.finalizedBy(createTask)
+//    }
+//}
 
 
 shadow {
@@ -141,43 +123,34 @@ shadow {
             debug {
                 def buildTypeName = 'debug'
                 def variantName = 'plugin'
-                loaderApkConfig = new Tuple2("sample-loader-${buildTypeName}.apk".toString(), ":sample-loader:assemble${buildTypeName.capitalize()}".toString())
-                runtimeApkConfig = new Tuple2("sample-runtime-${buildTypeName}.apk".toString(), ":sample-runtime:assemble${buildTypeName.capitalize()}".toString())
                 pluginApks {
                     pluginApk1 {
 //businessName相同的插件，context获取的Dir是相同的。businessName留空，表示和宿主相同业务，直接使用宿主的Dir。
 //                        partKey = project.name
-                        businessName = 'sample-plugin-app'
-                        partKey = 'sample-plugin-app'
+                        businessName = ''
+                        partKey = 'sample-plugin-app2'
                         buildTask = "assemble${variantName.capitalize()}${buildTypeName.capitalize()}".toString()
                         name = "${project.name}-${variantName}-${buildTypeName.uncapitalize()}.apk".toString()
-//                        apkPath = "projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/${buildTypeName.uncapitalize()}/${project.name}--${variantName}-${buildTypeName.uncapitalize()}.apk".toString()
-                        apkPath = "projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/${buildTypeName.uncapitalize()}/${project.name}-${variantName}-${buildTypeName.uncapitalize()}.apk".toString()
-//                        buildTask = ':sample-app:assembleDebug'
-//                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/debug/sample-app-plugin-debug.apk'
+//                        apkPath = "projects/sample/source/sample-plugin/sample-app2/build/outputs/apk/plugin/${buildTypeName.uncapitalize()}/${project.name}--${variantName}-${buildTypeName.uncapitalize()}.apk".toString()
+                        apkPath = "projects/sample/source/sample-plugin/sample-app2/build/outputs/apk/plugin/${buildTypeName.uncapitalize()}/${project.name}-${variantName}-${buildTypeName.uncapitalize()}.apk".toString()
+//                        buildTask = ':sample-app2:assembleDebug'
+//                        apkPath = 'projects/sample/source/sample-plugin/sample-app2/build/outputs/apk/plugin/debug/sample-app2-plugin-debug.apk'
                         hostWhiteList = [
                                 "com.tencent.shadow.sample.host.lib",
                                 "com.tencent.shadow.sample.host.lib.**",
                                 "com.tencent.shadow.sample.plugin",
                                 "com.tencent.shadow.sample.plugin.**",
                         ]
-                        dependsOn = ['sample-base']
+//                        dependsOn = ['sample-base']
                     }
 //                    pluginApk2 {
 //                        businessName = 'sample-plugin-app2'
 //                        partKey = 'sample-plugin-app2'
-//                        buildTask = ':sample-app:assemblePluginDebug'
-//                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/debug/sample-app-plugin-debug2.apk'
+//                        buildTask = ':sample-app2:assemblePluginDebug'
+//                        apkPath = 'projects/sample/source/sample-plugin/sample-app2/build/outputs/apk/plugin/debug/sample-app2-plugin-debug2.apk'
 //                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
 ////                        dependsOn = ['sample-base']
 //                    }
-                    sampleBase {
-                        businessName = 'sample-plugin-app'
-                        partKey = 'sample-base'
-                        buildTask = ':sample-base:assemblePluginDebug'
-                        apkPath = 'projects/sample/source/sample-plugin/sample-base/build/outputs/apk/plugin/debug/sample-base-plugin-debug.apk'
-                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
-                    }
                 }
             }
 
@@ -186,18 +159,18 @@ shadow {
                 runtimeApkConfig = new Tuple2('sample-runtime-release.apk', ':sample-runtime:assembleRelease')
                 pluginApks {
                     pluginApk1 {
-                        businessName = 'sample-plugin-app'
-                        partKey = 'sample-plugin-app'
-                        buildTask = ':sample-app:assemblePluginRelease'
-                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/release/sample-app-plugin-release.apk'
+                        businessName = ''
+                        partKey = 'sample-plugin-app2'
+                        buildTask = ':sample-app2:assemblePluginRelease'
+                        apkPath = 'projects/sample/source/sample-plugin/sample-app2/build/outputs/apk/plugin/release/sample-app2-plugin-release.apk'
                         hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
 //                        dependsOn = ['sample-base']
                     }
 //                    pluginApk2 {
 //                        businessName = 'sample-plugin-app2'
 //                        partKey = 'sample-plugin-app2'
-//                        buildTask = ':sample-app:assemblePluginRelease'
-//                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/release/sample-app-plugin-release2.apk'
+//                        buildTask = ':sample-app2:assemblePluginRelease'
+//                        apkPath = 'projects/sample/source/sample-plugin/sample-app2/build/outputs/apk/plugin/release/sample-app2-plugin-release2.apk'
 //                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
 ////                        dependsOn = ['sample-base']
 //                    }
@@ -212,9 +185,6 @@ shadow {
             }
         }
 
-        loaderApkProjectPath = 'projects/sample/source/sample-plugin/sample-loader'
-        runtimeApkProjectPath = 'projects/sample/source/sample-plugin/sample-runtime'
-
         archiveSuffix = System.getenv("PluginSuffix") ?: ""
         archivePrefix = 'plugin'
         destinationDir = "${getRootProject().getBuildDir()}"
@@ -225,20 +195,20 @@ shadow {
     }
 }
 
-project.afterEvaluate {
-    android.applicationVariants.all { def appVariant ->
-        println "appVariant.name = " + appVariant.name
-        println "appVariant.buildType.name = " + appVariant.buildType.name
-        println "appVariant.flavorName = " + appVariant.flavorName
-
-
-        def taskName = "package${appVariant.buildType.name.capitalize()}Plugin"
-        println "taskName = " + taskName
-        project.tasks.findByName(taskName).doLast {
+//project.afterEvaluate {
+//    android.applicationVariants.all { def appVariant ->
+//        println "appVariant.name = " + appVariant.name
+//        println "appVariant.buildType.name = " + appVariant.buildType.name
+//        println "appVariant.flavorName = " + appVariant.flavorName
+//
+//
+//        def taskName = "package${appVariant.buildType.name.capitalize()}Plugin"
+//        println "taskName = " + taskName
+//        project.tasks.findByName(taskName).doLast {
 //            moveTask(appVariant, "", "plugin-debug.zip")
-        }
-    }
-}
+//        }
+//    }
+//}
 
 def moveTask(appVariant, fromProjectName, moveTargetName) {
     project.copy {

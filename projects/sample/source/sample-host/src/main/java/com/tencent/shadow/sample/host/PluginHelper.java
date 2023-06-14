@@ -19,6 +19,10 @@
 package com.tencent.shadow.sample.host;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
+
+import com.tencent.shadow.sample.constant.Constant;
 
 import org.apache.commons.io.FileUtils;
 
@@ -29,7 +33,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class PluginHelper {
-
+    private static final String TAG = "PluginHelper";
     /**
      * 动态加载的插件管理apk
      */
@@ -39,6 +43,7 @@ public class PluginHelper {
      * 动态加载的插件包，里面包含以下几个部分，插件apk，插件框架apk（loader apk和runtime apk）, apk信息配置关系json文件
      */
     public final static String sPluginZip = BuildConfig.DEBUG ? "plugin-debug.zip" : "plugin-release.zip";
+    public final static String sPluginZip2 = BuildConfig.DEBUG ? "plugin2-debug.zip" : "plugin2-release.zip";
 
     public File pluginManagerFile;
 
@@ -69,7 +74,6 @@ public class PluginHelper {
                 preparePlugin();
             }
         });
-
     }
 
     private void preparePlugin() {
@@ -77,13 +81,23 @@ public class PluginHelper {
             InputStream is = mContext.getAssets().open(sPluginManagerName);
             FileUtils.copyInputStreamToFile(is, pluginManagerFile);
 
-            InputStream zip = mContext.getAssets().open(sPluginZip);
-            FileUtils.copyInputStreamToFile(zip, pluginZipFile);
+            FileUtils.copyInputStreamToFile(mContext.getAssets().open(sPluginZip), pluginZipFile);
+            File pluginFile2 = new File(mContext.getFilesDir(), sPluginZip2);
+            FileUtils.copyInputStreamToFile(mContext.getAssets().open(sPluginZip2), pluginFile2);
+            HostApplication.getApp().loadPluginManager(PluginHelper.getInstance().pluginManagerFile);
+            loadPlugin(pluginZipFile);
+            loadPlugin(pluginFile2);
 
         } catch (IOException e) {
             throw new RuntimeException("从assets中复制apk出错", e);
         }
     }
 
+    private void loadPlugin(File pluginZipFile) {
+        Log.d(TAG, "loadPlugin() called with: pluginZipFile = [" + pluginZipFile + "]");
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, pluginZipFile.getPath());
+        HostApplication.getApp().getPluginManager().enter(mContext, Constant.FROM_ID_START_ACTIVITY, bundle, null);
+    }
 
 }

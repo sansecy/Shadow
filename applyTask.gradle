@@ -1,78 +1,116 @@
-//task pushStart {
-//    doLast {
-//        execCommand("adb shell am force-stop ${rootProject.project("app").android.defaultConfig.applicationId}")
-//        execCommand("adb shell monkey -p ${rootProject.project("app").android.defaultConfig.applicationId} -c android.intent.category.LAUNCHER 1")
+project.afterEvaluate {
+    android.applicationVariants.all { appVariant ->
+        println appVariant
+        generateTasks(appVariant, variantData.componentIdentity.buildType, appVariant.applicationId)
+    }
+//com.android.build.api.variant.ApplicationAndroidComponentsExtension
+//    com.android.build.gradle.internal.dsl.BaseAppModuleExtension android
+//    android.applicationVariants.all { com.android.build.gradle.api.ApplicationVariant appVariant ->
 //    }
-//    group = 'install'
-//}
-
-
-//androidComponents {
-//    onVariants { variant ->
-//        println variant
-//    }
-//}
-androidComponents {
-    beforeVariants(selector().withName("debug"), { variantBuilder ->
-        variantBuilder.enableAndroidTest = false
-    })
-    onVariants(selector().withName("debug"), { variant ->
-        if (variant.unitTest == null) {
-            throw new RuntimeException("Unit test is not active, it should be")
-        }
-        if (variant.androidTest != null) {
-            throw new RuntimeException("AndroidTest is active while it was deactivated")
-        }
-        println variant
-        println "applicationId = ${variant.applicationId.get()}"
-
-//        def variantName = variant.name.capitalize()
-//        def taskName = "push${variantName}Package"
-//
-//        def newTask = project.tasks.create(taskName, {
-//            group = "push"
-//        })
-//        def managerAssemble = project(":sample-manager").tasks.findByName(":assemble${variantName}")
-////        def hostAssemble = project.task(":sample-host:assemble${variantName}")
-//        def appPackage = project(":sample-app").tasks.findByName(":package${variantName}Plugin")
-////        hostAssemble.dependsOn(managerAssemble)
-//        appPackage.dependsOn(newTask)
-//        newTask.dependsOn(managerAssemble)
-//        appPackage.dependsOn(newTask)
-    })
-}
-//android.applicationVariants.all { appVariant ->
-//    def versionCode = rootProject.project("sample-host").android.defaultConfig.versionName
-//    def pushTask = "push${appVariant.name.capitalize()}"
-//    def task = project.task(pushTask)
-//
-//    def libName
-//    if (project.name == "mainpage") {
-//        libName = 'libmainpage'
-//    }else if (project.name == "cloudgame") {
-//        libName = 'libcloudgame'
-//    }
-//    task.group = 'install'
-//    task.doLast {
-//        def fromFile = findLastApk(project.buildDir.path + "/outputs/apk/${appVariant.flavorName}/${appVariant.buildType.name}")
-//        def deviceSDKVersion = execCommand("adb shell getprop ro.build.version.sdk")
-//        String fileName = "${libName}_${versionCode}.apk"
-//        if (deviceSDKVersion != null && Integer.valueOf(deviceSDKVersion) > 19) {
-////                execCommand("adb push ${fromFile.getAbsolutePath()} /sdcard/${fileName}")
-//            execCommand("adb shell run-as com.cmgame.gamehalltv mkdir -p /data/data/com.cmgame.gamehalltv/files/gamehall_plugin")
-//            execCommand("adb push ${fromFile.path} /data/local/tmp/${fileName}")
-//            execCommand("adb shell run-as com.cmgame.gamehalltv cp /data/local/tmp/${fileName} /data/data/com.cmgame.gamehalltv/files/gamehall_plugin/${fileName}")
-//            execCommand("adb shell rm /data/local/tmp/${fileName}")
-//        } else {
-//            String com = "adb push ${fromFile.getAbsolutePath()} /data/data/com.cmgame.gamehalltv/files/gamehall_plugin/${fileName}"
-//            execCommand(com)
+//    def android = rootProject.project("app").extensions.android
+//    println "android = " + android.class
+////    def applicationId = android.defaultConfig.applicationId
+//    android.applicationVariants.all { appVariant ->
+//        project.tasks.create("push${appVariant.name.capitalize()}Start", {
+//            group = 'install'
+//        }).doFirst {
+//            execCommand("adb shell am force-stop ${   appVariant.applicationId}")
+//            execCommand("adb shell monkey -p ${   appVariant.applicationId} -c android.intent.category.LAUNCHER 1")
 //        }
 //    }
+//    android.onVariants(android.selector().all(), { appVariant ->
+////        def applicationId = appVariant.variantDslInfo.applicationId.get()
+//    })
+
+}
+
+//androidComponents {
+//    beforeVariants(selector().all(), { variantBuilder ->
+//        variantBuilder.enableUnitTest = false
+//    })
+//    onVariants(selector(), { appVariant ->
+//        println "appVariant = " + appVariant
+////        if (true) {
+////            return false
+////        }
+//        def buildTypeName
+//        buildTypeName = appVariant.componentIdentity.buildType
 //
-//    project.task("pushAssmeble${appVariant.name.capitalize()}Plugin")
-//            .dependsOn(":${project.name}:assemble${appVariant.name.capitalize()}Plugin")
-//            .group = 'install'
+//        def applicationId
+//        applicationId = variant.applicationId.get()
+////        applicationId = appVariant.variantDslInfo.applicationId.get()
 //
+//
+//        def (String fileName, Object deviceSDKVersion, String toName, String com) = generateTasks(appVariant, buildTypeName, applicationId)
+////        def dependOnTask = "package${buildTypeName.capitalize()}Plugin"
+////        def pushPackageTask = "push${dependOnTask.capitalize()}"
+////        if (project.tasks.findByName(pushPackageTask) == null) {
+////            project.task(pushPackageTask)
+////                    .dependsOn(":${project.name}:${dependOnTask}")
+////                    .group = 'push'
+////        }
+//    })
+//}
+
+private void generateTasks(appVariant, buildTypeName, applicationId) {
+//        println "appVariant.name ${appVariant.name} applicationId:" + applicationId
+    println "appVariant.name ${appVariant.name} variantName:" + buildTypeName
+    def pushStartTaskName = "push${appVariant.name.capitalize()}Start"
+    def pushStartTask = project.task(pushStartTaskName, {
+        group = "push"
+    })
+    pushStartTask.doFirst {
+        execCommand("adb shell am force-stop ${applicationId}")
+//        execCommand("adb shell monkey -p ${applicationId} -c android.intent.category.LAUNCHER 1")
+        execCommand("adb shell am start ${applicationId}/cn.emagsoftware.gamehall.ui.activity.splash.SplashActivity")
+    }
+//        if (variant.unitTest != null) {
+//            throw new RuntimeException("UnitTest is active while it was deactivated")
+//        }
+//        if (variant.androidTest == null) {
+//            throw new RuntimeException("AndroidTest is not active, it should be")
+//        }
+
+    println "appVariant = " + appVariant
+    println "appVariant.name = " + appVariant.name
+    def pushTaskName = "push${appVariant.name.capitalize()}Apk"
+    def pushTask = project.tasks.findByName(pushTaskName)
+    if (pushTask == null) {
+        pushTask = project.task(pushTaskName)
+    }
+
+    pushTask.group = 'push'
+    pushTask.doLast {
+//             applicationId = "cn.emagsoftware.gamehall"
+        String fileName = "${project.name}-${appVariant.name.replace("plugin","").uncapitalize()}.zip"
+        def fromFile = new File(project.buildDir, "${fileName}")
+        String toName = "article_module-0.zip"
+        def deviceSDKVersion = execCommand("adb shell getprop ro.build.version.sdk")
+        if (deviceSDKVersion != null && Integer.valueOf(deviceSDKVersion) > 19) {
+            execCommand("adb shell run-as ${applicationId} mkdir -p /data/data/cn.emagsoftware.gamehall/cache/appplugin")
+            execCommand("adb push ${fromFile.path} /data/local/tmp/${fileName}")
+            execCommand("adb shell run-as ${applicationId} cp /data/local/tmp/${fileName} /data/data/cn.emagsoftware.gamehall/cache/appplugin/${toName}")
+            execCommand("adb shell rm /data/local/tmp/${fileName}")
+        } else {
+            String com = "adb push ${fromFile.getAbsolutePath()} /data/data/cn.emagsoftware.gamehall/files/appplugin/${toName}"
+            execCommand(com)
+        }
+
+
+    }
+}
+//
+//androidComponents {
+
+//    onVariants(selector().withName("debug"), { variant ->
+//        if (variant.unitTest != null) {
+//            throw new RuntimeException("UnitTest is active while it was deactivated")
+//        }
+//        if (variant.androidTest == null) {
+//            throw new RuntimeException("AndroidTest is not active, it should be")
+//        }
+//    })
+//    onVariants({ appVariant ->
 //}
 
 static def findLastApk(def dir) {

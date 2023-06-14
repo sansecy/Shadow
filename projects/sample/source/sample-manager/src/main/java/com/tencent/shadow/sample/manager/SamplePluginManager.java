@@ -18,7 +18,6 @@
 
 package com.tencent.shadow.sample.manager;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,13 +33,14 @@ import com.tencent.shadow.dynamic.host.FailedException;
 import com.tencent.shadow.sample.constant.Constant;
 
 import java.io.File;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 
 public class SamplePluginManager extends FastPluginManager {
-    private static final String TAG = "SamplePluginManager-Shadow";
+    private static final String TAG = "SampleManager-Shadow";
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private Context mCurrentContext;
@@ -55,7 +55,7 @@ public class SamplePluginManager extends FastPluginManager {
      */
     @Override
     protected String getName() {
-        return "test-dynamic-manager";
+        return "main-dynamic-manager";
     }
 
     /**
@@ -96,17 +96,23 @@ public class SamplePluginManager extends FastPluginManager {
         }
     }
 
-    @SuppressLint("LongLogTag")
     private void onStartActivity(final Context context, Bundle bundle, final EnterCallback callback) {
         final String pluginZipPath = bundle.getString(Constant.KEY_PLUGIN_ZIP_PATH);
+        Log.d(TAG, "onStartActivity: pluginZipPath = " + pluginZipPath);
+        String routePath = bundle.getString(Constant.KEY_ROUTE_PATH);
+        String uninstall_uuid = bundle.getString(Constant.KEY_UNINSTALL_UUID);
+//        if (!TextUtils.isEmpty(uninstall_uuid)) {
+//            boolean deleteInstalledPlugin = deleteInstalledPlugin(uninstall_uuid);
+//            Log.d(TAG, "onStartActivity() called with:  deleteInstalledPlugin = [" + deleteInstalledPlugin + "]");
+//        }
+
         if (TextUtils.isEmpty(pluginZipPath) || !new File(pluginZipPath).exists()) {
             Log.e(TAG, "onStartActivity: " + pluginZipPath + " 插件不存在");
-            return;
         }
         final String partKey = bundle.getString(Constant.KEY_PLUGIN_PART_KEY);
-        if (partKey == null) {
-            throw new RuntimeException("partKey 不可为空");
-        }
+//        if (partKey == null) {
+//            throw new RuntimeException("partKey 不可为空");
+//        }
         final String className = bundle.getString(Constant.KEY_ACTIVITY_CLASSNAME);
 
         final Bundle extras = bundle.getBundle(Constant.KEY_EXTRAS);
@@ -122,12 +128,30 @@ public class SamplePluginManager extends FastPluginManager {
             public void run() {
                 try {
                     String localPartKey = partKey;
-                    InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, false);
+                    if (!TextUtils.isEmpty(pluginZipPath)) {
+                        File file = new File(pluginZipPath);
+                        String name = file.getName();
+
+                        InstalledPlugin installedPlugin = installPlugin(pluginZipPath, name, false);
 //                    Set<String> strings = installedPlugin.plugins.keySet();
-                    init(installedPlugin, partKey);
-//                    init(installedPlugin, "sample-base");
-//                    init(installedPlugin, "mainpage");
-//                    init(installedPlugin, "cloudgame");
+                        Map<String, InstalledPlugin.PluginPart> plugins = installedPlugin.plugins;
+                        for (String s : plugins.keySet()) {
+                            InstalledPlugin.PluginPart pluginPart = plugins.get(s);
+                            if (pluginPart != null) {
+                                String[] dependsOn = pluginPart.dependsOn;
+                                if (dependsOn != null && dependsOn.length > 0) {
+                                    String dependOnKey = dependsOn[0];
+                                    InstalledPlugin.PluginPart dependOnPlugin = plugins.get(dependOnKey);
+                                    if (dependOnPlugin != null) {
+                                        Log.d(TAG, "init() called with: dependOnKey = [" + dependOnKey + "]");
+                                        init(installedPlugin, dependOnKey);
+                                    }
+                                }
+                                Log.d(TAG, "init() called with: partKey = [" + s + "]");
+                                init(installedPlugin, s);
+                            }
+                        }
+                    }
 
                     if (!TextUtils.isEmpty(className)) {
                         Intent pluginIntent = new Intent();
@@ -138,18 +162,24 @@ public class SamplePluginManager extends FastPluginManager {
                         if (extras != null) {
                             pluginIntent.replaceExtras(extras);
                         }
+                        pluginIntent.replaceExtras(bundle);
                         Intent intent = mPluginLoader.convertActivityIntent(pluginIntent);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mPluginLoader.startActivityInPluginProcess(intent);
-
-
+                    } else if (!TextUtils.isEmpty(routePath)) {
+                        Intent pluginIntent = new Intent();
+                        pluginIntent.replaceExtras(bundle);
+                        pluginIntent.putExtra(Constant.KEY_ROUTE_PATH, routePath);
+                        Intent intent = mPluginLoader.convertActivityIntent(pluginIntent);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mPluginLoader.startActivityInPluginProcess(intent);
                     } else {
-                        Log.e(TAG, "className is null");
+                        Log.e(TAG, "className and routePath is null,not jump");
                     }
                     long tookTime = System.currentTimeMillis() - startTime;
                     Log.d(TAG, String.format("onStartActivity() install %s took %d ms", localPartKey, tookTime));
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    Log.e(TAG, "run: ", e);
                 }
                 if (callback != null) {
                     callback.onCloseLoadingView();
@@ -159,7 +189,7 @@ public class SamplePluginManager extends FastPluginManager {
     }
 
     private void init(InstalledPlugin installedPlugin, String partKey) throws RemoteException, TimeoutException, FailedException {
-        Log.d(TAG, "init() called with: installedPlugin = [" + installedPlugin + "], partKey = [" + partKey + "]");
+//        Log.d(TAG, "init() called with: installedPlugin = [" + installedPlugin + "], partKey = [" + partKey + "]");
         loadPlugin(installedPlugin.UUID, partKey);
         callApplicationOnCreate(partKey);
     }
