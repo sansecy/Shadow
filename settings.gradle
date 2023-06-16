@@ -6,6 +6,7 @@ copyLocalPropertiesForIncludeBuilds()
 includeBuild 'projects/sdk/coding'
 includeBuild 'projects/sdk/core'
 includeBuild 'projects/sdk/dynamic'
+include ":tools"
 
 includeTest()
 includeSample()
@@ -115,3 +116,4 @@ def copyLocalPropertiesForIncludeBuilds() {
 //        substitute module('com.didi.virtualapk:gradle') using project(':gradle-plugin')
 //    }
 //}
+include ':AndroidLib'

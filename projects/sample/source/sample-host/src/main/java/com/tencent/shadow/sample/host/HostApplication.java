@@ -25,6 +25,9 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.webkit.WebView;
 
+import com.lody.virtual.client.hook.proxies.am.HCallbackStub;
+import com.sansecy.tools.ContextUtils;
+import com.sansecy.tools.MethodTracker;
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.core.common.ShadowLog;
 import com.tencent.shadow.dynamic.host.DynamicRuntime;
@@ -36,10 +39,17 @@ import java.io.File;
 
 import static android.os.Process.myPid;
 
-public class HostApplication extends Application {
+public class HostApplication extends BaseApplication {
     private static HostApplication sApp;
 
     private PluginManager mPluginManager;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        ContextUtils.init(this);
+        MethodTracker.stopName = "com.tencent.shadow.sample.host.MainActivity#onWindowFocusChanged";
+    }
 
     @Override
     public void onCreate() {
@@ -47,6 +57,11 @@ public class HostApplication extends Application {
         sApp = this;
         SeeApp.init(this);
 
+        try {
+            HCallbackStub.getDefault().inject();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         detectNonSdkApiUsageOnAndroidP();
         setWebViewDataDirectorySuffix();
         LoggerFactory.setILoggerFactory(new AndroidLogLoggerFactory());

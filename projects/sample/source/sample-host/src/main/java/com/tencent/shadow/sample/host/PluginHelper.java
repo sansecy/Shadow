@@ -89,7 +89,7 @@ public class PluginHelper {
             loadPlugin(pluginFile2);
 
         } catch (IOException e) {
-            throw new RuntimeException("从assets中复制apk出错", e);
+//            throw new RuntimeException("从assets中复制apk出错", e);
         }
     }
 

@@ -1,5 +1,23 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.tencent.shadow.gradle-method-time-statistics'
 apply from: "${project.rootProject.rootDir.path}/applyTask.gradle"
+buildscript {
+    repositories {
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            mavenCentral()
+        }
+    }
+
+    dependencies {
+        classpath 'com.tencent.shadow.core:runtime'
+        classpath 'com.tencent.shadow.core:activity-container'
+        classpath 'com.tencent.shadow.core:gradle-method-time-statistics'
+        classpath "org.javassist:javassist:$javassist_version"
+    }
+}
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -52,6 +70,8 @@ dependencies {
     implementation 'com.tencent.shadow.dynamic:dynamic-host'
     implementation project(':sample-constant')
     implementation project(':sample-host-lib')
+    implementation project(':tools')
+    implementation project(':AndroidLib')
     api "com.android.support:support-v4:$android_support_version"
     api "com.android.support:appcompat-v7:$android_support_version"
     api "com.android.support:recyclerview-v7:$android_support_version"
@@ -115,11 +135,11 @@ def generateAssets(generateAssetsTask, buildType) {
 
 }
 
-tasks.whenTaskAdded { task ->
-    if (task.name == "generateDebugAssets") {
-        generateAssets(task, 'debug')
-    }
-    if (task.name == "generateReleaseAssets") {
-        generateAssets(task, 'release')
-    }
-}
+//tasks.whenTaskAdded { task ->
+//    if (task.name == "generateDebugAssets") {
+//        generateAssets(task, 'debug')
+//    }
+//    if (task.name == "generateReleaseAssets") {
+//        generateAssets(task, 'release')
+//    }
+//}

@@ -18,8 +18,6 @@
 
 package com.tencent.shadow.sample.host;
 
-import static com.tencent.shadow.sample.constant.Constant.PART_KEY_PLUGIN_BASE;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -123,6 +121,37 @@ public class MainActivity extends Activity {
 
         setContentView(rootView);
 
+
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }
