@@ -1,8 +1,8 @@
-package com.tencent.shadow.core.transform.specific
+package cn.migu.gamehall.shadow.core.transform.specific
 
 import android.content.Context
 import android.content.Intent
-import com.tencent.shadow.core.transform_kit.AbstractTransformTest
+import cn.migu.gamehall.shadow.core.transform_kit.AbstractTransformTest
 import javassist.ClassPool
 import javassist.Loader
 import org.junit.Assert

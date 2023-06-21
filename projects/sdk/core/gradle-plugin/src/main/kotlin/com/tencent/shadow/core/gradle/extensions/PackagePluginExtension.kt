@@ -16,9 +16,9 @@
  *
  */
 
-package com.tencent.shadow.core.gradle.extensions
+package cn.migu.gamehall.shadow.core.gradle.extensions
 
-import com.tencent.shadow.core.gradle.ShadowPluginHelper
+import cn.migu.gamehall.shadow.core.gradle.ShadowPluginHelper
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project

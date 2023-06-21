@@ -3,7 +3,7 @@ package test.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.tencent.shadow.core.runtime.ShadowActivity;
+import cn.migu.gamehall.shadow.core.runtime.ShadowActivity;
 
 public class UseGetActivityFragment {
 

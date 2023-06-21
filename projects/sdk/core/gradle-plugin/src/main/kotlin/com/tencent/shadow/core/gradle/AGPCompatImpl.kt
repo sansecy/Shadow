@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.gradle
+package cn.migu.gamehall.shadow.core.gradle
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant

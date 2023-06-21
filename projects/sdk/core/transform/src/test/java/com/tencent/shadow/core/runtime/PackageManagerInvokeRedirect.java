@@ -16,7 +16,7 @@
  *
  */
 
-package com.tencent.shadow.core.runtime;
+package cn.migu.gamehall.shadow.core.runtime;
 
 import android.content.ComponentName;
 import android.content.pm.ActivityInfo;

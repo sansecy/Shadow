@@ -16,7 +16,7 @@
  *
  */
 
-package com.tencent.shadow.core.transform_kit
+package cn.migu.gamehall.shadow.core.transform_kit
 
 import javassist.*
 import javassist.bytecode.CodeAttribute

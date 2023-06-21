@@ -20,8 +20,8 @@ package common;
 
 import android.util.Log;
 
-import com.tencent.shadow.core.common.ILoggerFactory;
-import com.tencent.shadow.core.common.Logger;
+import cn.migu.gamehall.shadow.core.common.ILoggerFactory;
+import cn.migu.gamehall.shadow.core.common.Logger;
 
 import java.util.HashMap;
 import java.util.Map;

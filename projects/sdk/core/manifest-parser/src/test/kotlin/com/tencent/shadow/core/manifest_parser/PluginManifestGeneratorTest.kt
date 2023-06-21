@@ -1,5 +1,7 @@
-package com.tencent.shadow.core.manifest_parser
+package cn.migu.gamehall.shadow.core.manifest_parser
 
+import cn.migu.gamehall.shadow.core.manifest_parser.AndroidManifestReader
+import cn.migu.gamehall.shadow.core.manifest_parser.PluginManifestGenerator
 import org.junit.Assert
 import org.junit.Test
 import java.io.File

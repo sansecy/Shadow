@@ -1,5 +1,7 @@
-package com.tencent.shadow.core.transform_kit
+package cn.migu.gamehall.shadow.core.transform_kit
 
+import cn.migu.gamehall.shadow.core.transform_kit.Method_OriginalDeclaringClass
+import cn.migu.gamehall.shadow.core.transform_kit.OverrideCheck
 import javassist.ClassPool
 import javassist.CtClass
 import org.apache.commons.io.FileUtils

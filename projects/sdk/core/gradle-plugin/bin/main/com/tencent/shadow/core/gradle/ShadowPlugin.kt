@@ -16,17 +16,17 @@
  *
  */
 
-package com.tencent.shadow.core.gradle
+package cn.migu.gamehall.shadow.core.gradle
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.sdklib.AndroidVersion.VersionCodes
-import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
-import com.tencent.shadow.core.manifest_parser.generatePluginManifest
-import com.tencent.shadow.core.transform.ShadowTransform
-import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
-import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
+import cn.migu.gamehall.shadow.core.gradle.extensions.PackagePluginExtension
+import cn.migu.gamehall.shadow.core.manifest_parser.generatePluginManifest
+import cn.migu.gamehall.shadow.core.transform.ShadowTransform
+import cn.migu.gamehall.shadow.core.transform_kit.AndroidClassPoolBuilder
+import cn.migu.gamehall.shadow.core.transform_kit.ClassPoolBuilder
 import org.gradle.api.*
 import org.gradle.api.tasks.compile.JavaCompile
 import java.io.File
@@ -126,7 +126,7 @@ class ShadowPlugin : Plugin<Project> {
      */
     private fun checkKotlinAndroidPluginForPluginManifestTask(project: Project) {
         if (project.plugins.hasPlugin("kotlin-android")) {
-            throw Error("必须在kotlin-android之前应用com.tencent.shadow.plugin")
+            throw Error("必须在kotlin-android之前应用cn.migu.gamehall.shadow.plugin")
         }
     }
 
@@ -238,7 +238,7 @@ class ShadowPlugin : Plugin<Project> {
                     generatePluginManifest(
                         decodeXml,
                         pluginManifestSourceDir,
-                        "com.tencent.shadow.core.manifest_parser"
+                        "cn.migu.gamehall.shadow.core.manifest_parser"
                     )
                 }
             }
@@ -348,7 +348,7 @@ class ShadowPlugin : Plugin<Project> {
                 agpCompat.setProductFlavorDefault(it, false)
             }
         } catch (e: InvalidUserDataException) {
-            throw Error("请在android{} DSL之前apply plugin: 'com.tencent.shadow.plugin'", e)
+            throw Error("请在android{} DSL之前apply plugin: 'cn.migu.gamehall.shadow.plugin'", e)
         }
     }
 

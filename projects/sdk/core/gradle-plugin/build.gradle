@@ -5,8 +5,8 @@ apply plugin: 'kotlin'
 gradlePlugin {
     plugins {
         shadow {
-            id = "com.tencent.shadow.plugin"
-            implementationClass = "com.tencent.shadow.core.gradle.ShadowPlugin"
+            id = "cn.migu.gamehall.shadow.plugin"
+            implementationClass = "cn.migu.gamehall.shadow.core.gradle.ShadowPlugin"
         }
     }
 }

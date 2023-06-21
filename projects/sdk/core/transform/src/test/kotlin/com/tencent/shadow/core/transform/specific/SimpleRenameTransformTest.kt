@@ -16,9 +16,9 @@
  *
  */
 
-package com.tencent.shadow.core.transform.specific
+package cn.migu.gamehall.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform_kit.AbstractTransformTest
+import cn.migu.gamehall.shadow.core.transform_kit.AbstractTransformTest
 import javassist.NotFoundException
 import org.junit.Assert
 

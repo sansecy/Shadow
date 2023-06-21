@@ -16,7 +16,7 @@
  *
  */
 
-package com.tencent.shadow.core.gradle.extensions
+package cn.migu.gamehall.shadow.core.gradle.extensions
 
 open class PluginApkConfig {
 

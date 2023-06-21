@@ -1,8 +1,8 @@
-apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
+apply plugin: 'cn.migu.gamehall.shadow.internal.common-jar-settings'
 
 dependencies {
-    compileOnly 'com.tencent.shadow.core:common'
-    implementation 'com.tencent.shadow.core:manager'
+    compileOnly 'cn.migu.gamehall.shadow.core:common'
+    implementation 'cn.migu.gamehall.shadow.core:manager'
     implementation project(':dynamic-loader')
     compileOnly project(':dynamic-host')
 }

@@ -16,9 +16,9 @@
  *
  */
 
-package com.tencent.shadow.core.transform.specific
+package cn.migu.gamehall.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform_kit.AbstractTransformTest
+import cn.migu.gamehall.shadow.core.transform_kit.AbstractTransformTest
 import javassist.NotFoundException
 import org.junit.Assert
 import org.junit.Test
@@ -70,7 +70,7 @@ class ActivityLifecycleCallbacksTransformTest : AbstractTransformTest() {
                 try {
                     it.getMethod(
                         "get",
-                        "()Lcom/tencent/shadow/core/runtime/ShadowActivityLifecycleCallbacks;"
+                        "()Lcn/migu/gamehall/shadow/core/runtime/ShadowActivityLifecycleCallbacks;"
                     )
                     true
                 } catch (e: NotFoundException) {
@@ -80,7 +80,7 @@ class ActivityLifecycleCallbacksTransformTest : AbstractTransformTest() {
 
             Assert.assertEquals(
                 "ActivityLifecycleCallbacks接口应该都变为了ShadowActivityLifecycleCallbacks",
-                "com.tencent.shadow.core.runtime.ShadowActivityLifecycleCallbacks",
+                "cn.migu.gamehall.shadow.core.runtime.ShadowActivityLifecycleCallbacks",
                 it.classFile.interfaces[0]
             )
         }

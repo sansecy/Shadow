@@ -16,7 +16,7 @@
  *
  */
 
-package com.tencent.shadow.core.gradle.extensions
+package cn.migu.gamehall.shadow.core.gradle.extensions
 
 import groovy.lang.Closure
 import groovy.lang.Tuple2

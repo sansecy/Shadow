@@ -1,5 +1,7 @@
-package com.tencent.shadow.core.manifest_parser
+package cn.migu.gamehall.shadow.core.manifest_parser
 
+import cn.migu.gamehall.shadow.core.manifest_parser.AndroidManifestKeys
+import cn.migu.gamehall.shadow.core.manifest_parser.AndroidManifestReader
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -10,15 +12,15 @@ class AndroidManifestReaderTest {
         val testFile = File(javaClass.classLoader.getResource("sample-app.xml")!!.toURI())
         val androidManifest = AndroidManifestReader().read(testFile)
         Assert.assertEquals(
-            "com.tencent.shadow.sample.host",
+            "cn.migu.gamehall.shadow.sample.host",
             androidManifest[AndroidManifestKeys.`package`]
         )
         Assert.assertEquals(
-            "com.tencent.shadow.sample.plugin.app.lib.UseCaseApplication",
+            "cn.migu.gamehall.shadow.sample.plugin.app.lib.UseCaseApplication",
             androidManifest[AndroidManifestKeys.name]
         )
         Assert.assertEquals(
-            "com.tencent.shadow.test.plugin.androidx_cases.lib.TestComponentFactory",
+            "cn.migu.gamehall.shadow.test.plugin.androidx_cases.lib.TestComponentFactory",
             androidManifest[AndroidManifestKeys.appComponentFactory]
         )
         Assert.assertEquals(

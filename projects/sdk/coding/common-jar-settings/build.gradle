@@ -25,8 +25,8 @@ apply plugin: 'kotlin'
 gradlePlugin {
     plugins {
         shadow {
-            id = "com.tencent.shadow.internal.common-jar-settings"
-            implementationClass = "com.tencent.shadow.coding.common_jar_settings.CommonJarSettingsPlugin"
+            id = "cn.migu.gamehall.shadow.internal.common-jar-settings"
+            implementationClass = "cn.migu.gamehall.shadow.coding.common_jar_settings.CommonJarSettingsPlugin"
         }
     }
 }
@@ -60,7 +60,7 @@ def generateCode = tasks.register('generateCode') {
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addField(androidJarPathField).build()
 
-        JavaFile.builder("com.tencent.shadow.coding.common_jar_settings", androidJarClass)
+        JavaFile.builder("cn.migu.gamehall.shadow.coding.common_jar_settings", androidJarClass)
                 .build().writeTo(new File(project.getBuildDir(), 'generateCode'))
     }
 }

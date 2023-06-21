@@ -16,10 +16,10 @@
  *
  */
 
-package com.tencent.shadow.core.manager.installplugin;
+package cn.migu.gamehall.shadow.core.manager.installplugin;
 
-import static com.tencent.shadow.core.manager.installplugin.InstalledPluginDBHelper.DB_NAME_PREFIX;
-import static com.tencent.shadow.core.manager_aar.test.R.raw;
+import static cn.migu.gamehall.shadow.core.manager.installplugin.InstalledPluginDBHelper.DB_NAME_PREFIX;
+import static cn.migu.gamehall.shadow.core.manager_aar.test.R.raw;
 
 import android.content.Context;
 import android.os.Build;
@@ -48,6 +48,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import cn.migu.gamehall.shadow.core.manager.installplugin.InstalledDao;
+import cn.migu.gamehall.shadow.core.manager.installplugin.InstalledPluginDBHelper;
+import cn.migu.gamehall.shadow.core.manager.installplugin.PluginConfig;
 
 /**
  * 数据库兼容性测试

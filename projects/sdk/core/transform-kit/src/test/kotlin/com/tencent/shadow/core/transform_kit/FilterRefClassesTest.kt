@@ -1,5 +1,6 @@
-package com.tencent.shadow.core.transform_kit
+package cn.migu.gamehall.shadow.core.transform_kit
 
+import cn.migu.gamehall.shadow.core.transform_kit.SpecificTransform
 import org.junit.Assert
 import org.junit.Test
 

@@ -16,7 +16,7 @@
  *
  */
 
-package com.tencent.shadow.core.pluginmanager;
+package cn.migu.gamehall.shadow.core.pluginmanager;
 
 import android.os.Bundle;
 
