@@ -19,10 +19,9 @@
 package com.tencent.shadow.sample.host;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 
-import com.tencent.shadow.sample.constant.Constant;
+import com.tencent.shadow.sample.host.lib.BuildConfig;
 
 import org.apache.commons.io.FileUtils;
 
@@ -33,7 +32,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class PluginHelper {
-    private static final String TAG = "PluginHelper";
+    private static final String TAG = "PluginHelper-shadow";
+
     /**
      * 动态加载的插件管理apk
      */
@@ -42,13 +42,12 @@ public class PluginHelper {
     /**
      * 动态加载的插件包，里面包含以下几个部分，插件apk，插件框架apk（loader apk和runtime apk）, apk信息配置关系json文件
      */
-    public final static String sPluginZip = BuildConfig.DEBUG ? "plugin-debug.zip" : "plugin-release.zip";
-    public final static String sPluginZip2 = BuildConfig.DEBUG ? "plugin2-debug.zip" : "plugin2-release.zip";
-
+    public final static String sMainPluginZip = "plugin-main.zip";
+    public final static String sCloudPluginZip = "plugin-cloud.zip";
+    public final static String spluginLauncherZipName = "plugin-launcher.zip";
     public File pluginManagerFile;
 
-    public File pluginZipFile;
-
+    public File pluginLauncherZipFile;
     public ExecutorService singlePool = Executors.newSingleThreadExecutor();
 
     private Context mContext;
@@ -64,40 +63,42 @@ public class PluginHelper {
 
     public void init(Context context) {
         pluginManagerFile = new File(context.getFilesDir(), sPluginManagerName);
-        pluginZipFile = new File(context.getFilesDir(), sPluginZip);
-
+        File shadowPluginDir = new File(context.getFilesDir(), "shadow_plugin");
+        shadowPluginDir.mkdirs();
+        pluginLauncherZipFile = new File(shadowPluginDir,  spluginLauncherZipName);
+//        pluginZipFile = new File(Environment.getExternalStorageDirectory(), sPluginZip);
         mContext = context.getApplicationContext();
-
         singlePool.execute(new Runnable() {
             @Override
             public void run() {
+                long start = System.currentTimeMillis();
                 preparePlugin();
+                Log.d(TAG, "init() called preparePlugin took " + (System.currentTimeMillis() - start) + " ms");
+                long start1 = System.currentTimeMillis();
+                PluginChecker.getInstance().loadPluginManager(PluginHelper.getInstance().pluginManagerFile);
+                Log.d(TAG, "init() called loadPlugin mainpage took  " + (System.currentTimeMillis() - start1) + " ms");
             }
         });
+
     }
 
-    private void preparePlugin() {
+    public void preparePlugin() {
         try {
-            InputStream is = mContext.getAssets().open(sPluginManagerName);
-            FileUtils.copyInputStreamToFile(is, pluginManagerFile);
-
-            FileUtils.copyInputStreamToFile(mContext.getAssets().open(sPluginZip), pluginZipFile);
-            File pluginFile2 = new File(mContext.getFilesDir(), sPluginZip2);
-            FileUtils.copyInputStreamToFile(mContext.getAssets().open(sPluginZip2), pluginFile2);
-            HostApplication.getApp().loadPluginManager(PluginHelper.getInstance().pluginManagerFile);
-            loadPlugin(pluginZipFile);
-            loadPlugin(pluginFile2);
-
+            Log.d(TAG, "preparePlugin() begin ");
+            if (!pluginManagerFile.exists()) {
+                InputStream is = mContext.getAssets().open(sPluginManagerName);
+                FileUtils.copyInputStreamToFile(is, pluginManagerFile);
+                Log.d(TAG, "preparePlugin() called copy sPluginManagerName to " + pluginManagerFile);
+            }
+            if (!pluginLauncherZipFile.exists()) {
+                InputStream zip = mContext.getAssets().open(spluginLauncherZipName);
+                FileUtils.copyInputStreamToFile(zip, pluginLauncherZipFile);
+                Log.d(TAG, "preparePlugin() called copy pluginZipFile to " + pluginLauncherZipFile);
+            }
+            Log.d(TAG, "preparePlugin() done ");
         } catch (IOException e) {
 //            throw new RuntimeException("从assets中复制apk出错", e);
         }
-    }
-
-    private void loadPlugin(File pluginZipFile) {
-        Log.d(TAG, "loadPlugin() called with: pluginZipFile = [" + pluginZipFile + "]");
-        Bundle bundle = new Bundle();
-        bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, pluginZipFile.getPath());
-        HostApplication.getApp().getPluginManager().enter(mContext, Constant.FROM_ID_START_ACTIVITY, bundle, null);
     }
 
 }

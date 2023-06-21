@@ -38,20 +38,20 @@ dependencies {
     compileOnly 'com.tencent.shadow.dynamic:dynamic-host'
 }
 
-project.afterEvaluate {
-    android.applicationVariants.all { def appVariant ->
-        println "appVariant.name = " + appVariant.name
-        println "appVariant.buildType.name = " + appVariant.buildType.name
-        println "appVariant.flavorName = " + appVariant.flavorName
-
-
-        def taskName = "assemble${appVariant.name.capitalize()}"
-        println "taskName = " + taskName
-        project.tasks.findByName(taskName).doLast {
-            moveTask(appVariant, "", "pluginmanager.apk")
-        }
-    }
-}
+//project.afterEvaluate {
+//    android.applicationVariants.all { def appVariant ->
+//        println "appVariant.name = " + appVariant.name
+//        println "appVariant.buildType.name = " + appVariant.buildType.name
+//        println "appVariant.flavorName = " + appVariant.flavorName
+//
+//
+//        def taskName = "assemble${appVariant.name.capitalize()}"
+//        println "taskName = " + taskName
+//        project.tasks.findByName(taskName).doLast {
+//            moveTask(appVariant, "", "pluginmanager.apk")
+//        }
+//    }
+//}
 def moveTask(appVariant, fromProjectName, moveTargetName) {
     project.copy {
 //        def file = findLastApk("${project.buildDir.path}/outputs/apk/${appVariant.buildType.name}")

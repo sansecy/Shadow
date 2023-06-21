@@ -53,17 +53,20 @@ class ShadowPlugin : Plugin<Project> {
         }
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
+        val pluginExtension =
+            project.extensions.create("packagePlugin", PackagePluginExtension::class.java, project)
         if (!project.hasProperty("disable_shadow_transform")) {
             baseExtension.registerTransform(ShadowTransform(
                 project,
                 lateInitBuilder,
-                { shadowExtension.transformConfig.useHostContext }
+                { shadowExtension.transformConfig.useHostContext },
+                { shadowExtension.transformConfig.transformSkipClass }
             ))
         }
 
         addFlavorForTransform(baseExtension)
 
-        project.extensions.create("packagePlugin", PackagePluginExtension::class.java, project)
+
 
         project.afterEvaluate {
             initAndroidClassPoolBuilder(baseExtension, project)
@@ -377,6 +380,7 @@ class ShadowPlugin : Plugin<Project> {
 
     class TransformConfig {
         var useHostContext: Array<String> = emptyArray()
+        var transformSkipClass: Array<String> = emptyArray()
     }
 
     companion object {

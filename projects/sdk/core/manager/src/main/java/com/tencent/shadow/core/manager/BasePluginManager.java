@@ -22,10 +22,12 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.Pair;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
+import com.tencent.shadow.core.common.ShadowLog;
 import com.tencent.shadow.core.manager.installplugin.AppCacheFolderManager;
 import com.tencent.shadow.core.manager.installplugin.CopySoBloc;
 import com.tencent.shadow.core.manager.installplugin.InstallPluginException;
@@ -33,16 +35,21 @@ import com.tencent.shadow.core.manager.installplugin.InstalledDao;
 import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.manager.installplugin.InstalledPluginDBHelper;
 import com.tencent.shadow.core.manager.installplugin.InstalledType;
+import com.tencent.shadow.core.manager.installplugin.MinFileUtils;
 import com.tencent.shadow.core.manager.installplugin.ODexBloc;
 import com.tencent.shadow.core.manager.installplugin.PluginConfig;
 import com.tencent.shadow.core.manager.installplugin.SafeZipFile;
 import com.tencent.shadow.core.manager.installplugin.UnpackManager;
+import com.tencent.shadow.core.utils.Md5;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
@@ -53,6 +60,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public abstract class BasePluginManager {
+    private static final String TAG = "BasePluginManager-Shadow";
     private static final Logger mLogger = LoggerFactory.getLogger(BasePluginManager.class);
     /*
      * 宿主的context对象
@@ -101,13 +109,13 @@ public abstract class BasePluginManager {
      * 从压缩包中解压插件
      *
      * @param zip  压缩包路径
-     * @param hash 压缩包hash
+     * @param dirName 压缩包hash
      * @return PluginConfig
      */
-    public final PluginConfig installPluginFromZip(File zip, String hash) throws IOException, JSONException {
+    public final PluginConfig installPluginFromZip(File zip, String dirName) throws IOException, JSONException {
         String zipHash;
-        if (hash != null) {
-            zipHash = hash;
+        if (dirName != null) {
+            zipHash = dirName;
         } else {
             zipHash = mUnpackManager.zipHash(zip);
         }
@@ -115,11 +123,28 @@ public abstract class BasePluginManager {
         JSONObject configJson = mUnpackManager.getConfigJson(zip);
         PluginConfig pluginConfig = PluginConfig.parseFromJson(configJson, pluginUnpackDir);
 
-//        if (!pluginConfig.isUnpacked()) {
-//        }
-        mUnpackManager.unpackPlugin(zip, pluginUnpackDir);
+        File zipHashFile = new File(pluginUnpackDir, "zip_hash");
 
+        String previousZipHash = null;
+        try {
+            previousZipHash = Md5.isToString(new FileInputStream(zipHashFile));
+        } catch (IOException e) {
+            previousZipHash = "";
+        }
+
+        String newZipHash = mUnpackManager.zipHash(zip);
+        if (!pluginConfig.isUnpacked() || !previousZipHash.equals(newZipHash)) {
+            mUnpackManager.unpackPlugin(zip, pluginUnpackDir);
+        }
+        saveZipHash(zipHashFile, newZipHash);
         return pluginConfig;
+    }
+
+    private void saveZipHash(File zip_hash, String hash) throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream(zip_hash);
+        fileOutputStream.write(hash.getBytes(StandardCharsets.UTF_8));
+        fileOutputStream.flush();
+        fileOutputStream.close();
     }
 
     /**
@@ -240,7 +265,10 @@ public abstract class BasePluginManager {
             File soDir = AppCacheFolderManager.getLibDir(root, uuid);
             String soDirMapKey = InstalledType.TYPE_PLUGIN + partKey;
             String soDirPath = soDir.getAbsolutePath();
-
+            try {
+                MinFileUtils.cleanDirectory(soDir);
+            } catch (Throwable e) {
+            }
             String pluginPreferredAbi = getPluginPreferredAbi(getPluginSupportedAbis(), apkFile);
             if (pluginPreferredAbi.isEmpty()) {
                 if (mLogger.isInfoEnabled()) {
@@ -291,6 +319,12 @@ public abstract class BasePluginManager {
             String pluginPreferredAbi = getPluginPreferredAbi(getPluginSupportedAbis(), apkFile);
             String filter = "lib/" + pluginPreferredAbi + "/";
             File soDir = AppCacheFolderManager.getLibDir(root, uuid);
+
+            try {
+                MinFileUtils.cleanDirectory(soDir);
+            } catch (Throwable e) {
+
+            }
 
             if (pluginPreferredAbi.isEmpty()) {
                 if (mLogger.isInfoEnabled()) {

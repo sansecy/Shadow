@@ -25,16 +25,15 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.content.res.XmlResourceParser
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.webkit.WebView
-import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.infos.PluginParts
 import java.util.concurrent.CountDownLatch
@@ -61,10 +60,6 @@ object CreateResourceBloc {
         loadParameters: LoadParameters,
         pluginPartsMap: MutableMap<String, PluginParts>
     ): Resources {
-//        ShadowLog.d(
-//            TAG,
-//            "create() called with: archiveFilePath = $archiveFilePath, hostAppContext = $hostAppContext, loadParameters = $loadParameters, pluginPartsMap = $pluginPartsMap"
-//        )
         triggerWebViewHookResources(hostAppContext)
 
         val packageManager = hostAppContext.packageManager
@@ -102,21 +97,9 @@ object CreateResourceBloc {
         try {
             val pluginResource = packageManager.getResourcesForApplication(applicationInfo)
 
-//            try {
-//                val createFromAsset =
-//                    Typeface.createFromAsset(pluginResource.assets, "korolev_medium.otf")
-//                ShadowLog.d(
-//                    TAG,
-//                    "create() called with: createFromAsset = $createFromAsset, hostAppContext = $hostAppContext, loadParameters = $loadParameters, pluginPartsMap = $pluginPartsMap"
-//                )
-//            } catch (e: Exception) {
-//                ShadowLog.e(TAG, "create: ", e)
-//            }
             return if (Build.VERSION.SDK_INT > MAX_API_FOR_MIX_RESOURCES) {
-                ShadowLog.d(TAG, "create: api > 27 , return plugin resource")
                 pluginResource
             } else {
-                ShadowLog.d(TAG, "create: api < 27 , return mix resources")
                 var dependsOnResources: Resources = hostAppContext.resources
 
                 if (loadParameters.dependsOn != null && loadParameters.dependsOn.isNotEmpty()) {
@@ -303,36 +286,15 @@ private class MixResources(
             it.getFraction(id, base, pbase)
         }
 
-    override fun getDrawable(id: Int): Drawable? {
-        var draw: Drawable?
-        try {
-//            ShadowLog.d(TAG, "mainResources.getDrawable " + Integer.toHexString(id))
-            draw = mainResources.getDrawable(id)
-//            ShadowLog.d(TAG, "mainResources.getDrawable found " + Integer.toHexString(id))
-            draw
-        } catch (e: Exception) {
-//            ShadowLog.d(TAG, "sharedResources.getDrawable " + Integer.toHexString(id))
-            draw =    sharedResources.getDrawable(id)
-//            ShadowLog.d(TAG, "sharedResources.getDrawable found " + Integer.toHexString(id))
+    override fun getDrawable(id: Int) =
+        tryMainThenShared {
+            it.getDrawable(id)
         }
-        return draw
-    }
 
-    override fun getDrawable(id: Int, theme: Theme?): Drawable? {
-        var draw: Drawable?
-        try {
-//            ShadowLog.d(TAG, "mainResources.getDrawable " + Integer.toHexString(id))
-            draw = mainResources.getDrawable(id)
-//            ShadowLog.d(TAG, "mainResources.getDrawable found " + Integer.toHexString(id))
-            draw
-        } catch (e: Exception) {
-//            ShadowLog.d(TAG, "sharedResources.getDrawable " + Integer.toHexString(id))
-            draw =    sharedResources.getDrawable(id)
-//            ShadowLog.d(TAG, "sharedResources.getDrawable found " + Integer.toHexString(id))
+    override fun getDrawable(id: Int, theme: Theme?) =
+        tryMainThenShared {
+            it.getDrawable(id, theme)
         }
-        return draw
-    }
-
 
     override fun getDrawableForDensity(id: Int, density: Int) =
         tryMainThenShared {

@@ -61,8 +61,8 @@ private void generateTasks(appVariant, buildTypeName, applicationId) {
     })
     pushStartTask.doFirst {
         execCommand("adb shell am force-stop ${applicationId}")
-//        execCommand("adb shell monkey -p ${applicationId} -c android.intent.category.LAUNCHER 1")
-        execCommand("adb shell am start ${applicationId}/cn.emagsoftware.gamehall.ui.activity.splash.SplashActivity")
+        execCommand("adb shell monkey -p ${applicationId} -c android.intent.category.LAUNCHER 1")
+//        execCommand("adb shell am start ${applicationId}/cn.emagsoftware.gamehall.ui.activity.splash.SplashActivity")
     }
 //        if (variant.unitTest != null) {
 //            throw new RuntimeException("UnitTest is active while it was deactivated")
@@ -84,12 +84,12 @@ private void generateTasks(appVariant, buildTypeName, applicationId) {
 //             applicationId = "cn.emagsoftware.gamehall"
         String fileName = "${project.name}-${appVariant.name.replace("plugin","").uncapitalize()}.zip"
         def fromFile = new File(project.buildDir, "${fileName}")
-        String toName = "article_module-0.zip"
+        String toName = "plugin-${project.name}.zip"
         def deviceSDKVersion = execCommand("adb shell getprop ro.build.version.sdk")
         if (deviceSDKVersion != null && Integer.valueOf(deviceSDKVersion) > 19) {
-            execCommand("adb shell run-as ${applicationId} mkdir -p /data/data/cn.emagsoftware.gamehall/cache/appplugin")
+            execCommand("adb shell run-as ${applicationId} mkdir -p /data/data/${applicationId}/files/shadow_plugin")
             execCommand("adb push ${fromFile.path} /data/local/tmp/${fileName}")
-            execCommand("adb shell run-as ${applicationId} cp /data/local/tmp/${fileName} /data/data/cn.emagsoftware.gamehall/cache/appplugin/${toName}")
+            execCommand("adb shell run-as ${applicationId} cp /data/local/tmp/${fileName} /data/data/${applicationId}/files/shadow_plugin/${toName}")
             execCommand("adb shell rm /data/local/tmp/${fileName}")
         } else {
             String com = "adb push ${fromFile.getAbsolutePath()} /data/data/cn.emagsoftware.gamehall/files/appplugin/${toName}"

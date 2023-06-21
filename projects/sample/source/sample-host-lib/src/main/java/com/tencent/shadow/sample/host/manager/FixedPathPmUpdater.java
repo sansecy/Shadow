@@ -16,18 +16,39 @@
  *
  */
 
-package com.tencent.shadow.core.transform.specific
+package com.tencent.shadow.sample.host.manager;
 
-import org.junit.Test
+import com.tencent.shadow.dynamic.host.PluginManagerUpdater;
 
-class ApplicationTransformTest : SimpleRenameTransformTest(
-    ApplicationTransform(transformSkipClass), arrayOf("test.TestApplication"),
-    "get", "com.tencent.shadow.core.runtime.ShadowApplication",
-    mapOf("()Landroid/app/Application;" to "()Lcom/tencent/shadow/core/runtime/ShadowApplication;")
-) {
+import java.io.File;
+import java.util.concurrent.Future;
 
-    @Test
-    fun testApplicationTransform() {
-        doTest()
+public class FixedPathPmUpdater implements PluginManagerUpdater {
+
+    final private File apk;
+
+    FixedPathPmUpdater(File apk) {
+        this.apk = apk;
+    }
+
+
+    @Override
+    public boolean wasUpdating() {
+        return false;
+    }
+
+    @Override
+    public Future<File> update() {
+        return null;
+    }
+
+    @Override
+    public File getLatest() {
+        return apk;
+    }
+
+    @Override
+    public Future<Boolean> isAvailable(final File file) {
+        return null;
     }
 }

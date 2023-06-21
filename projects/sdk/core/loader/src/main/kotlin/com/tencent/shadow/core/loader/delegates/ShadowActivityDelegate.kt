@@ -269,7 +269,7 @@ open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivity
 
     override fun getLayoutInflater(): LayoutInflater = LayoutInflater.from(mPluginActivity)
 
-      fun getResources(): Resources {
+     fun getResources(): Resources {
         if (mDependenciesInjected) {
             return mPluginResources;
         } else {

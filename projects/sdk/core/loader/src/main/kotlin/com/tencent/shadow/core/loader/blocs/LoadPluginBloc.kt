@@ -19,7 +19,6 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
-import android.util.Log
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.load_parameters.LoadParameters
@@ -50,10 +49,6 @@ object LoadPluginBloc {
             installedApk: InstalledApk,
             loadParameters: LoadParameters
     ): Future<*> {
-        Log.d(
-            TAG,
-            "loadPlugin() called with: loadParameters = ${loadParameters.partKey}"
-        )
         if (installedApk.apkFilePath == null) {
             throw LoadPluginException("apkFilePath==null")
         } else {

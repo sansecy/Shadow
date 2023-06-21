@@ -92,13 +92,13 @@ open class ShadowPluginHelper {
                 "${project.rootDir}" +
                         "/${extension.runtimeApkProjectPath}/build/outputs/apk/$runtimeFileParent/$runtimeApkName"
             )
-//
-            if (!runtimeFile.exists()) {
-                runtimeFile = File(
-                        "${project.rootDir}" +
-                                "/${extension.runtimeApkProjectPath}/build/intermediates/apk/$runtimeFileParent/$runtimeApkName"
-                )
-            }
+
+//            if (!runtimeFile.exists()) {
+//                runtimeFile = File(
+//                        "${project.rootDir}" +
+//                                "/${extension.runtimeApkProjectPath}/build/intermediates/apk/$runtimeFileParent/$runtimeApkName"
+//                )
+//            }
             if (checkExist && !runtimeFile.exists()) {
                 throw IllegalArgumentException(runtimeFile.absolutePath + " , runtime file not exist...")
             }
@@ -123,12 +123,12 @@ open class ShadowPluginHelper {
                         "/${extension.loaderApkProjectPath}/build/outputs/apk/$loaderFileParent/$loaderApkName"
             )
 
-            if (!loaderFile.exists()) {
-                loaderFile = File(
-                        "${project.rootDir}" +
-                                "/${extension.loaderApkProjectPath}/build/intermediates/apk/$loaderFileParent/$loaderApkName"
-                )
-            }
+//            if (!loaderFile.exists()) {
+//                loaderFile = File(
+//                        "${project.rootDir}" +
+//                                "/${extension.loaderApkProjectPath}/build/intermediates/apk/$loaderFileParent/$loaderApkName"
+//                )
+//            }
             if (checkExist && !loaderFile.exists()) {
                 throw IllegalArgumentException(loaderFile.absolutePath + " , loader file not exist...")
             }

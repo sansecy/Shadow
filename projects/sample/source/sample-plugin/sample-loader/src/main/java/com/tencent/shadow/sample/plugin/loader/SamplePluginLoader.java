@@ -18,8 +18,11 @@
 
 package com.tencent.shadow.sample.plugin.loader;
 
+import static android.content.pm.PackageManager.GET_META_DATA;
+
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -30,17 +33,19 @@ import com.tencent.shadow.core.loader.classloaders.PluginClassLoader;
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException;
 import com.tencent.shadow.core.loader.infos.PluginParts;
 import com.tencent.shadow.core.loader.managers.ComponentManager;
+import com.tencent.shadow.sample.host.PluginChecker;
 import com.tencent.shadow.sample.host.lib.LoadPluginCallback;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import static android.content.pm.PackageManager.GET_META_DATA;
 
 public class SamplePluginLoader extends ShadowPluginLoader {
 
-    private final static String TAG = "SamplePluginLoader-Shadow";
+    private final static String TAG = "shadow";
 
     private ComponentManager componentManager;
+    private ExecutorService mExecutorService = Executors.newCachedThreadPool();
 
     public SamplePluginLoader(Context hostAppContext) {
         super(hostAppContext);
@@ -58,28 +63,32 @@ public class SamplePluginLoader extends ShadowPluginLoader {
         final String partKey = loadParameters.partKey;
 
         LoadPluginCallback.getCallback().beforeLoadPlugin(partKey);
-        Log.d(TAG, "loadPlugin() start called with: partKey = [" + partKey + "]");
-        final Future<?> future = super.loadPlugin(installedApk);
-        Log.d(TAG, "loadPlugin() end called with: partKey = [" + partKey + "]");
+        Future<?> future;
+        if (getPluginParts(partKey) == null) {
+            future = super.loadPlugin(installedApk);
+            try {
+                future.get();
+                PluginParts pluginParts = getPluginParts(partKey);
+                String packageName = pluginParts.getApplication().getPackageName();
+                ApplicationInfo applicationInfo = pluginParts.getPluginPackageManager().getApplicationInfo(packageName, GET_META_DATA);
+                PackageInfo packageInfo = pluginParts.getPluginPackageManager().getPackageInfo(packageName, GET_META_DATA);
+                PluginClassLoader classLoader = pluginParts.getClassLoader();
+                Resources resources = pluginParts.getResources();
 
-        getMExecutorService().submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    future.get();
-                    PluginParts pluginParts = getPluginParts(partKey);
-                    String packageName = pluginParts.getApplication().getPackageName();
-                    ApplicationInfo applicationInfo = pluginParts.getPluginPackageManager().getApplicationInfo(packageName, GET_META_DATA);
-                    PluginClassLoader classLoader = pluginParts.getClassLoader();
-                    Resources resources = pluginParts.getResources();
-
-                    LoadPluginCallback.getCallback().afterLoadPlugin(partKey, applicationInfo, classLoader, resources);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                LoadPluginCallback.getCallback().afterLoadPlugin(partKey, applicationInfo, classLoader, resources, packageInfo);
+            } catch (Exception e) {
+                Log.e(TAG, "loadPlugin error: ", e);
+                throw new RuntimeException(e);
             }
-        });
-
+        } else {
+            future = mExecutorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    PluginParts pluginParts = getPluginParts(partKey);
+                    Log.d(TAG, "loadPlugin 返回已加载的插件 " + partKey);
+                }
+            });
+        }
         return future;
     }
 

@@ -22,6 +22,7 @@ import static com.tencent.shadow.core.utils.Md5.md5File;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
+import com.tencent.shadow.core.common.ShadowLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +38,7 @@ import java.util.zip.ZipFile;
 
 
 public class UnpackManager {
-
+    private static final String TAG = "UnpackManager-Shadow";
     private static final Logger mLogger = LoggerFactory.getLogger(UnpackManager.class);
 
     private static final String CONFIG_FILENAME = "config.json";//todo #28 json的格式需要沉淀文档。
@@ -49,7 +50,7 @@ public class UnpackManager {
 
     public UnpackManager(File root, String appName) {
         File parent = new File(root, DEFAULT_STORE_DIR_NAME);
-        mPluginUnpackedDir = new File(parent, "UnpackedPlugin");
+        mPluginUnpackedDir = new File(parent.getPath());
         mPluginUnpackedDir.mkdirs();
         mAppName = appName;
     }
@@ -110,6 +111,7 @@ public class UnpackManager {
      * @param pluginUnpackDir 解压目录
      */
     public void unpackPlugin(File target, File pluginUnpackDir) throws IOException {
+        ShadowLog.d(TAG, "unpackPlugin() called with: target = [" + target + "], pluginUnpackDir = [" + pluginUnpackDir + "]");
         pluginUnpackDir.mkdirs();
         MinFileUtils.cleanDirectory(pluginUnpackDir);
 

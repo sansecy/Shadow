@@ -19,6 +19,7 @@
 package com.tencent.shadow.sample.host;
 
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -35,7 +36,7 @@ public class Plugin2ProcessPPS extends PluginProcessService {
             }
 
             @Override
-            public void afterLoadPlugin(String partKey, ApplicationInfo applicationInfo, ClassLoader pluginClassLoader, Resources pluginResources) {
+            public void afterLoadPlugin(String partKey, ApplicationInfo applicationInfo, ClassLoader pluginClassLoader, Resources pluginResources, PackageInfo packageInfo) {
                 Log.d("Plugin2ProcessPPS", "afterLoadPlugin(" + partKey + "," + applicationInfo.className + "{metaData=" + applicationInfo.metaData + "}" + "," + pluginClassLoader + ")");
             }
         });

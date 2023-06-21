@@ -5,6 +5,7 @@ dependencies {
     implementation "com.squareup:javapoet:$javapoet_version"
     implementation "org.javassist:javassist:$javassist_version"
     implementation "junit:junit:$junit_version"
+//    implementation files("libs/*.jar")
 
     compileOnly project(':android-jar')
     testImplementation project(':android-jar')

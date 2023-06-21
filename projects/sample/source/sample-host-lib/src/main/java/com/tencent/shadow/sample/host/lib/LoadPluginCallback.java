@@ -1,6 +1,7 @@
 package com.tencent.shadow.sample.host.lib;
 
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 
 public class LoadPluginCallback {
@@ -18,6 +19,6 @@ public class LoadPluginCallback {
     public interface Callback {
         void beforeLoadPlugin(String partKey);
 
-        void afterLoadPlugin(String partKey, ApplicationInfo applicationInfo, ClassLoader pluginClassLoader, Resources pluginResources);
+        void afterLoadPlugin(String partKey, ApplicationInfo applicationInfo, ClassLoader pluginClassLoader, Resources pluginResources, PackageInfo packageInfo);
     }
 }

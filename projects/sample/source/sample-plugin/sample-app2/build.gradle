@@ -83,7 +83,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$android_support_version"
 }
 
-preBuild.dependsOn(":sample-host-lib:jarDebugPackage")
+//preBuild.dependsOn(":sample-host-lib:jarDebugPackage")
 
 
 def createDuplicateApkTask(buildType) {

@@ -20,6 +20,7 @@ package com.tencent.shadow.sample.manager;
 
 import android.content.Context;
 import android.os.RemoteException;
+import android.util.Log;
 import android.util.Pair;
 
 import com.tencent.shadow.core.common.Logger;
@@ -47,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoader {
-
+    private static final String TAG = "FastPluginManager-Shadow";
     private static final Logger mLogger = LoggerFactory.getLogger(FastPluginManager.class);
 
     private ExecutorService mFixedPool = Executors.newFixedThreadPool(4);
@@ -81,6 +82,14 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
                 }
             });
             futures.add(odexLoader);
+            Future<Pair<String, String>> extractLoaderSo = mFixedPool.submit(new Callable<Pair<String, String>>() {
+                @Override
+                public Pair<String, String> call() throws Exception {
+                    return extractLoaderOrRunTimeSo(uuid, InstalledType.TYPE_PLUGIN_LOADER, pluginConfig.pluginLoader.file);
+                }
+            });
+            futures.add(extractLoaderSo);
+            extractSoFutures.add(extractLoaderSo);
         }
         for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : pluginConfig.plugins.entrySet()) {
             final String partKey = plugin.getKey();
@@ -109,8 +118,15 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
             soDirMap.put(pair.first, pair.second);
         }
         onInstallCompleted(pluginConfig, soDirMap);
-
-        return getInstalledPlugins(1).get(0);
+        InstalledPlugin installedPlugin = getInstalledPlugins(1).get(0);
+        Map<String, InstalledPlugin.PluginPart> plugins = installedPlugin.plugins;
+        for (String s : plugins.keySet()) {
+            InstalledPlugin.PluginPart pluginPart = plugins.get(s);
+            if (pluginPart != null) {
+                Log.i(TAG, "onInstallCompleted " + pluginPart.businessName);
+            }
+        }
+        return installedPlugin;
     }
 
 

@@ -47,7 +47,9 @@ public class HostApplication extends BaseApplication {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
+        ShadowLog.enable = BuildConfig.DEBUG;
         ContextUtils.init(this);
+        com.tencent.shadow.sample.host.ContextUtils.init(this);
         MethodTracker.stopName = "com.tencent.shadow.sample.host.MainActivity#onWindowFocusChanged";
     }
 
@@ -108,6 +110,9 @@ public class HostApplication extends BaseApplication {
     }
 
     public PluginManager getPluginManager() {
+        if (mPluginManager == null) {
+            loadPluginManager(PluginHelper.getInstance().pluginManagerFile);
+        }
         return mPluginManager;
     }
 

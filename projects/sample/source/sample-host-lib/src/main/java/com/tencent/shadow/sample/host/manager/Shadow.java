@@ -16,18 +16,22 @@
  *
  */
 
-package com.tencent.shadow.core.transform.specific
+package com.tencent.shadow.sample.host.manager;
 
-import org.junit.Test
+import com.tencent.shadow.dynamic.host.DynamicPluginManager;
+import com.tencent.shadow.dynamic.host.PluginManager;
 
-class ApplicationTransformTest : SimpleRenameTransformTest(
-    ApplicationTransform(transformSkipClass), arrayOf("test.TestApplication"),
-    "get", "com.tencent.shadow.core.runtime.ShadowApplication",
-    mapOf("()Landroid/app/Application;" to "()Lcom/tencent/shadow/core/runtime/ShadowApplication;")
-) {
+import java.io.File;
 
-    @Test
-    fun testApplicationTransform() {
-        doTest()
+public class Shadow {
+
+    public static PluginManager getPluginManager(File apk) {
+        final FixedPathPmUpdater fixedPathPmUpdater = new FixedPathPmUpdater(apk);
+        File tempPm = fixedPathPmUpdater.getLatest();
+        if (tempPm != null) {
+            return new DynamicPluginManager(fixedPathPmUpdater);
+        }
+        return null;
     }
+
 }

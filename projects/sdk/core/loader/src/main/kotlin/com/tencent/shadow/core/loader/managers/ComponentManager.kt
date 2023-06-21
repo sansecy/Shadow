@@ -193,14 +193,14 @@ abstract class ComponentManager : PluginComponentLauncher {
         loadParameters: LoadParameters,
         archiveFilePath: String
     ) {
-        ShadowLog.d(TAG, "addPluginApkInfo archiveFilePath = [${archiveFilePath}]")
+//        ShadowLog.d(TAG, "addPluginApkInfo pluginManifest = [${pluginManifest}], loadParameters = [${loadParameters}], archiveFilePath = [${archiveFilePath}]")
         fun common(componentInfo: PluginManifest.ComponentInfo, componentName: ComponentName) {
-            ShadowLog.d(TAG,"addPluginApkInfo componentName = [${componentName}]")
+//            ShadowLog.d(TAG,"addPluginApkInfo componentInfo = [${componentInfo}], componentName = [${componentName}]")
             packageNameMap[componentInfo.className] = componentName.packageName
             val previousValue = loadParametersMap.put(componentName, loadParameters)
-//            if (previousValue != null) {
-//                throw IllegalStateException("重复添加Component：$componentName")
-//            }
+            if (previousValue != null) {
+                throw IllegalStateException("重复添加Component：$componentName")
+            }
         }
 
         val applicationPackageName = pluginManifest.applicationPackageName

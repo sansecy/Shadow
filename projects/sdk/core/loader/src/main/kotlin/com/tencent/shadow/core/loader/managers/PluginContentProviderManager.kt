@@ -73,9 +73,9 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
         pluginProviderInfo: PluginManifest.ProviderInfo,
         containerProviderInfo: ContainerProviderInfo
     ) {
-//        if (providerMap.containsKey(pluginProviderInfo.authorities)) {
-//            throw RuntimeException("重复添加 ContentProvider")
-//        }
+        if (providerMap.containsKey(pluginProviderInfo.authorities)) {
+            throw RuntimeException("重复添加 ContentProvider")
+        }
 
         providerAuthorityMap[pluginProviderInfo.authorities] = containerProviderInfo.authority
         var pluginProviderInfos: HashSet<PluginManifest.ProviderInfo>? = null

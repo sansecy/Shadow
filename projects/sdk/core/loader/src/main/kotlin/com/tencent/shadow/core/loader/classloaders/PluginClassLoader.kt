@@ -88,7 +88,6 @@ class PluginClassLoader(
             if (specialClassLoader == null) {
                 try {
                     val loadClass = super.loadClass(className, resolve)
-                    this.loaderClassLoader
 //                    ShadowLog.e(TAG, this.partKey + " loadClass() called with: in parent , found className = $className, in parent = $parent")
                     return loadClass
                 } catch (e: Exception) {
@@ -136,6 +135,7 @@ class PluginClassLoader(
                 try {
                     //兜底方案。从宿主中查找
                     val loadClass = super.loadClass(className, resolve)
+//                     ShadowLog.e(TAG, "loadClass() in parent, className = $className, in parent = ${parent}")
                     return loadClass
                 } catch (e: Exception) {
 //                    ShadowLog.e(TAG, "loadClass() called with: last, not found className = $className, in parent = ${parent}")

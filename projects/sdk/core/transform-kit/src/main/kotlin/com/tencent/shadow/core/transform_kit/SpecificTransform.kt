@@ -58,6 +58,17 @@ abstract class SpecificTransform {
         return false
     }
 
+    fun CtClass.isClassOfInterface(className: String): Boolean {
+        var tmp: CtClass? = this
+        val find = try {
+            tmp?.interfaces?.find {
+                it.name.equals(className)
+            }
+        } catch (e: Exception) {
+        }
+        return find != null
+    }
+
     /**
      * 查找目标class是否存在目标method的调用
      */

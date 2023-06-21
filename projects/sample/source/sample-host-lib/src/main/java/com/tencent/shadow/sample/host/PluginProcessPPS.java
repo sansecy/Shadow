@@ -19,24 +19,49 @@
 package com.tencent.shadow.sample.host;
 
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.res.Resources;
 import android.util.Log;
 
 import com.tencent.shadow.dynamic.host.PluginProcessService;
 import com.tencent.shadow.sample.host.lib.LoadPluginCallback;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class PluginProcessPPS extends PluginProcessService {
+    private static ArrayList<LoadPluginCallback.Callback> mList = new ArrayList<>();
+
+    public static void addCallback(LoadPluginCallback.Callback callback) {
+        mList.add(callback);
+    }
+
+    public static void removeCallback(LoadPluginCallback.Callback callback) {
+        mList.remove(callback);
+    }
+
     public PluginProcessPPS() {
         LoadPluginCallback.setCallback(new LoadPluginCallback.Callback() {
 
             @Override
             public void beforeLoadPlugin(String partKey) {
                 Log.d("PluginProcessPPS", "beforeLoadPlugin(" + partKey + ")");
+                for (LoadPluginCallback.Callback callback : mList) {
+                    if (callback != null) {
+                        callback.beforeLoadPlugin(partKey);
+                    }
+                }
             }
 
             @Override
-            public void afterLoadPlugin(String partKey, ApplicationInfo applicationInfo, ClassLoader pluginClassLoader, Resources pluginResources) {
+            public void afterLoadPlugin(String partKey, ApplicationInfo applicationInfo, ClassLoader pluginClassLoader, Resources pluginResources, PackageInfo packageInfo) {
                 Log.d("PluginProcessPPS", "afterLoadPlugin(" + partKey + "," + applicationInfo.className + "{metaData=" + applicationInfo.metaData + "}" + "," + pluginClassLoader + ")");
+                PluginChecker.getInstance().put(partKey, new PluginInfo(applicationInfo, pluginClassLoader, pluginResources, packageInfo));
+                for (LoadPluginCallback.Callback callback : mList) {
+                    if (callback != null) {
+                        callback.afterLoadPlugin(partKey, applicationInfo, pluginClassLoader, pluginResources, packageInfo);
+                    }
+                }
             }
         });
     }

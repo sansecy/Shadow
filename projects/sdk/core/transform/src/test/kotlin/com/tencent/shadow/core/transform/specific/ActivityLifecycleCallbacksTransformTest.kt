@@ -31,7 +31,7 @@ class ActivityLifecycleCallbacksTransformTest : AbstractTransformTest() {
 
         val allInputClass = setOf(callbackTargetClass)
 
-        val applicationTransform = ApplicationTransform()
+        val applicationTransform = ApplicationTransform(transformSkipClass)
         applicationTransform.mClassPool = sLoader
         applicationTransform.setup(allInputClass)
 

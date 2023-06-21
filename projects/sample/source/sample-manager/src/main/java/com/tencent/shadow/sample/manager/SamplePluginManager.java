@@ -30,7 +30,7 @@ import android.view.View;
 import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.EnterCallback;
 import com.tencent.shadow.dynamic.host.FailedException;
-import com.tencent.shadow.sample.constant.Constant;
+import com.tencent.shadow.sample.constant.ShadowConstant;
 
 import java.io.File;
 import java.util.Map;
@@ -69,13 +69,15 @@ public class SamplePluginManager extends FastPluginManager {
 
     @Override
     public void enter(final Context context, long fromId, Bundle bundle, final EnterCallback callback) {
-        if (fromId == Constant.FROM_ID_NOOP) {
+        if (fromId == ShadowConstant.FROM_ID_DOWNLOAD) {
+
+        }else  if (fromId == ShadowConstant.FROM_ID_NOOP) {
             //do nothing.
-        } else if (fromId == Constant.FROM_ID_START_ACTIVITY) {
+        } else if (fromId == ShadowConstant.FROM_ID_START_ACTIVITY) {
             onStartActivity(context, bundle, callback);
-        } else if (fromId == Constant.FROM_ID_CLOSE) {
+        } else if (fromId == ShadowConstant.FROM_ID_CLOSE) {
             close();
-        } else if (fromId == Constant.FROM_ID_LOAD_VIEW_TO_HOST) {
+        } else if (fromId == ShadowConstant.FROM_ID_LOAD_VIEW_TO_HOST) {
             loadViewToHost(context, bundle);
         } else {
             throw new IllegalArgumentException("不认识的fromId==" + fromId);
@@ -97,25 +99,18 @@ public class SamplePluginManager extends FastPluginManager {
     }
 
     private void onStartActivity(final Context context, Bundle bundle, final EnterCallback callback) {
-        final String pluginZipPath = bundle.getString(Constant.KEY_PLUGIN_ZIP_PATH);
-        Log.d(TAG, "onStartActivity: pluginZipPath = " + pluginZipPath);
-        String routePath = bundle.getString(Constant.KEY_ROUTE_PATH);
-        String uninstall_uuid = bundle.getString(Constant.KEY_UNINSTALL_UUID);
-//        if (!TextUtils.isEmpty(uninstall_uuid)) {
-//            boolean deleteInstalledPlugin = deleteInstalledPlugin(uninstall_uuid);
-//            Log.d(TAG, "onStartActivity() called with:  deleteInstalledPlugin = [" + deleteInstalledPlugin + "]");
-//        }
-
+        final String pluginZipPath = bundle.getString(ShadowConstant.KEY_PLUGIN_ZIP_PATH);
+        String routePath = bundle.getString(ShadowConstant.KEY_ROUTE_PATH);
         if (TextUtils.isEmpty(pluginZipPath) || !new File(pluginZipPath).exists()) {
-            Log.e(TAG, "onStartActivity: " + pluginZipPath + " 插件不存在");
+            Log.e(TAG, "onStartActivity: pluginZipPath = " + pluginZipPath + " 插件不存在");
         }
-        final String partKey = bundle.getString(Constant.KEY_PLUGIN_PART_KEY);
+        final String partKey = bundle.getString(ShadowConstant.KEY_PLUGIN_PART_KEY);
 //        if (partKey == null) {
 //            throw new RuntimeException("partKey 不可为空");
 //        }
-        final String className = bundle.getString(Constant.KEY_ACTIVITY_CLASSNAME);
+        final String className = bundle.getString(ShadowConstant.KEY_ACTIVITY_CLASSNAME);
 
-        final Bundle extras = bundle.getBundle(Constant.KEY_EXTRAS);
+        final Bundle extras = bundle.getBundle(ShadowConstant.KEY_EXTRAS);
 
         if (callback != null) {
             final View view = LayoutInflater.from(mCurrentContext).inflate(R.layout.activity_load_plugin, null);
@@ -129,9 +124,7 @@ public class SamplePluginManager extends FastPluginManager {
                 try {
                     String localPartKey = partKey;
                     if (!TextUtils.isEmpty(pluginZipPath)) {
-                        File file = new File(pluginZipPath);
-                        String name = file.getName();
-
+                        String name = new File(pluginZipPath).getName();
                         InstalledPlugin installedPlugin = installPlugin(pluginZipPath, name, false);
 //                    Set<String> strings = installedPlugin.plugins.keySet();
                         Map<String, InstalledPlugin.PluginPart> plugins = installedPlugin.plugins;
@@ -143,11 +136,9 @@ public class SamplePluginManager extends FastPluginManager {
                                     String dependOnKey = dependsOn[0];
                                     InstalledPlugin.PluginPart dependOnPlugin = plugins.get(dependOnKey);
                                     if (dependOnPlugin != null) {
-                                        Log.d(TAG, "init() called with: dependOnKey = [" + dependOnKey + "]");
                                         init(installedPlugin, dependOnKey);
                                     }
                                 }
-                                Log.d(TAG, "init() called with: partKey = [" + s + "]");
                                 init(installedPlugin, s);
                             }
                         }
@@ -169,7 +160,7 @@ public class SamplePluginManager extends FastPluginManager {
                     } else if (!TextUtils.isEmpty(routePath)) {
                         Intent pluginIntent = new Intent();
                         pluginIntent.replaceExtras(bundle);
-                        pluginIntent.putExtra(Constant.KEY_ROUTE_PATH, routePath);
+                        pluginIntent.putExtra(ShadowConstant.KEY_ROUTE_PATH, routePath);
                         Intent intent = mPluginLoader.convertActivityIntent(pluginIntent);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mPluginLoader.startActivityInPluginProcess(intent);
@@ -189,7 +180,7 @@ public class SamplePluginManager extends FastPluginManager {
     }
 
     private void init(InstalledPlugin installedPlugin, String partKey) throws RemoteException, TimeoutException, FailedException {
-//        Log.d(TAG, "init() called with: installedPlugin = [" + installedPlugin + "], partKey = [" + partKey + "]");
+        Log.d(TAG, "init() called with: installedPlugin = [" + installedPlugin + "], partKey = [" + partKey + "]");
         loadPlugin(installedPlugin.UUID, partKey);
         callApplicationOnCreate(partKey);
     }
