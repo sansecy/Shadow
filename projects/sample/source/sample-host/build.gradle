@@ -111,14 +111,14 @@ def generateAssets(generateAssetsTask, buildType) {
     )
 
 
-//    generateAssetsTask.dependsOn createCopyTask(
-//            ':launcher',
-//            buildType,
-//            "launcher",
-//            'plugin-launcher.zip',
-//            file("${project(":launcher").buildDir}/launcher-${buildType}.zip"),
-//            "package${buildType.capitalize()}Plugin"
-//    )
+    generateAssetsTask.dependsOn createCopyTask(
+            ':launcher',
+            buildType,
+            "launcher",
+            'plugin-launcher.zip',
+            file("${project(":launcher").buildDir}/launcher-${buildType}.zip"),
+            "package${buildType.capitalize()}Plugin"
+    )
 
 //    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
 //    generateAssetsTask.dependsOn createCopyTask(

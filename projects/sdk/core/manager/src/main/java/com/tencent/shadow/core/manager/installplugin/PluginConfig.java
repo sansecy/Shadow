@@ -61,6 +61,8 @@ public class PluginConfig {
      */
     public File storageDir;
 
+    public boolean forceExtract = false;
+
     public boolean isUnpacked() {
         boolean pluginLoaderUnpacked = true;
         if (pluginLoader != null) {

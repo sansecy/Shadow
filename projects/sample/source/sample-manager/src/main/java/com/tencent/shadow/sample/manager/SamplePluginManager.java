@@ -117,11 +117,11 @@ public class SamplePluginManager extends FastPluginManager {
             callback.onShowLoadingView(view);
         }
 
-        long startTime = System.currentTimeMillis();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
+                    long startTime = System.currentTimeMillis();
                     String localPartKey = partKey;
                     if (!TextUtils.isEmpty(pluginZipPath)) {
                         String name = new File(pluginZipPath).getName();
@@ -154,16 +154,27 @@ public class SamplePluginManager extends FastPluginManager {
                             pluginIntent.replaceExtras(extras);
                         }
                         pluginIntent.replaceExtras(bundle);
+
+                        long localStartTime = System.currentTimeMillis();
                         Intent intent = mPluginLoader.convertActivityIntent(pluginIntent);
+//                        long tookTime = System.currentTimeMillis() - startTime;
+//                        Log.d(TAG, String.format("convertActivityIntent() took %d ms", tookTime));
+
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mPluginLoader.startActivityInPluginProcess(intent);
+                        Log.d(TAG, String.format("startActivityInPluginProcess() took %d ms", (System.currentTimeMillis() - localStartTime)));
                     } else if (!TextUtils.isEmpty(routePath)) {
                         Intent pluginIntent = new Intent();
                         pluginIntent.replaceExtras(bundle);
                         pluginIntent.putExtra(ShadowConstant.KEY_ROUTE_PATH, routePath);
+                        long localStartTime = System.currentTimeMillis();
                         Intent intent = mPluginLoader.convertActivityIntent(pluginIntent);
+//                        long tookTime = System.currentTimeMillis() - startTime;
+//                        Log.d(TAG, String.format("convertActivityIntent() took %d ms", tookTime));
+
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mPluginLoader.startActivityInPluginProcess(intent);
+                        Log.d(TAG, String.format("startActivityInPluginProcess() took %d ms", (System.currentTimeMillis() - localStartTime)));
                     } else {
                         Log.e(TAG, "className and routePath is null,not jump");
                     }

@@ -127,7 +127,7 @@ abstract public class BaseDynamicPluginManager extends BasePluginManager impleme
                 throw new TimeoutException("连接Service超时 ,等待了：" + (System.currentTimeMillis() - s));
             }
             if (mLogger.isInfoEnabled()) {
-                mLogger.info("service connected " + (System.currentTimeMillis() - s));
+                mLogger.info("service connected took " + (System.currentTimeMillis() - s) + " ms");
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

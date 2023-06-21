@@ -43,6 +43,7 @@ buildscript {
         }
     }
 }
+apply from: 'common_tool.gradle'
 apply from: 'buildScripts/gradle/common.gradle'
 
 apply from: "buildScripts/gradle/maven.gradle"

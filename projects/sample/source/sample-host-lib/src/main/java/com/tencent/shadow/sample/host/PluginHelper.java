@@ -65,7 +65,7 @@ public class PluginHelper {
         pluginManagerFile = new File(context.getFilesDir(), sPluginManagerName);
         File shadowPluginDir = new File(context.getFilesDir(), "shadow_plugin");
         shadowPluginDir.mkdirs();
-        pluginLauncherZipFile = new File(shadowPluginDir,  spluginLauncherZipName);
+        pluginLauncherZipFile = new File(shadowPluginDir, spluginLauncherZipName);
 //        pluginZipFile = new File(Environment.getExternalStorageDirectory(), sPluginZip);
         mContext = context.getApplicationContext();
         singlePool.execute(new Runnable() {
@@ -76,7 +76,7 @@ public class PluginHelper {
                 Log.d(TAG, "init() called preparePlugin took " + (System.currentTimeMillis() - start) + " ms");
                 long start1 = System.currentTimeMillis();
                 PluginChecker.getInstance().loadPluginManager(PluginHelper.getInstance().pluginManagerFile);
-                Log.d(TAG, "init() called loadPlugin mainpage took  " + (System.currentTimeMillis() - start1) + " ms");
+                Log.d(TAG, "init() called load manager took  " + (System.currentTimeMillis() - start1) + " ms");
             }
         });
 
@@ -93,7 +93,7 @@ public class PluginHelper {
             if (!pluginLauncherZipFile.exists()) {
                 InputStream zip = mContext.getAssets().open(spluginLauncherZipName);
                 FileUtils.copyInputStreamToFile(zip, pluginLauncherZipFile);
-                Log.d(TAG, "preparePlugin() called copy pluginZipFile to " + pluginLauncherZipFile);
+                Log.d(TAG, "preparePlugin() called copy " + spluginLauncherZipName + " from assets to " + pluginLauncherZipFile);
             }
             Log.d(TAG, "preparePlugin() done ");
         } catch (IOException e) {

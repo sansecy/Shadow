@@ -94,7 +94,7 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
         for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : pluginConfig.plugins.entrySet()) {
             final String partKey = plugin.getKey();
             final File apkFile = plugin.getValue().file;
-            Future<Pair<String, String>> extractSo = mFixedPool.submit(() -> extractSo(uuid, partKey, apkFile));
+            Future<Pair<String, String>> extractSo = mFixedPool.submit(() -> extractSo(uuid, partKey, apkFile, pluginConfig.forceExtract));
             futures.add(extractSo);
             extractSoFutures.add(extractSo);
             if (odex) {

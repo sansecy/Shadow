@@ -127,7 +127,10 @@ public abstract class BasePluginManager {
 
         String previousZipHash = null;
         try {
+            double startTime = System.nanoTime();
             previousZipHash = Md5.isToString(new FileInputStream(zipHashFile));
+            double tookTime = (System.nanoTime() - startTime)/1000/1000;
+            ShadowLog.d(TAG, String.format("previousZipHash = %s , check md5 took %s ms", previousZipHash, tookTime));
         } catch (IOException e) {
             previousZipHash = "";
         }
@@ -135,6 +138,7 @@ public abstract class BasePluginManager {
         String newZipHash = mUnpackManager.zipHash(zip);
         if (!pluginConfig.isUnpacked() || !previousZipHash.equals(newZipHash)) {
             mUnpackManager.unpackPlugin(zip, pluginUnpackDir);
+            pluginConfig.forceExtract = true;
         }
         saveZipHash(zipHashFile, newZipHash);
         return pluginConfig;
@@ -254,20 +258,25 @@ public abstract class BasePluginManager {
      * 注意：如果宿主没有打包so，它的ABI会被系统自动设置为设备默认值，
      * 默认值可能和插件apk中打包的ABI不一致，导致插件so解压不正确。
      *
-     * @param uuid    插件包的uuid
-     * @param partKey 要解压so的插件partkey
-     * @param apkFile 插件apk文件
+     * @param uuid         插件包的uuid
+     * @param partKey      要解压so的插件partkey
+     * @param apkFile      插件apk文件
+     * @param forceExtract
      * @return soDirMap条目
      */
-    public final Pair<String, String> extractSo(String uuid, String partKey, File apkFile) throws InstallPluginException {
+    public final Pair<String, String> extractSo(String uuid, String partKey, File apkFile, boolean forceExtract) throws InstallPluginException {
+
         try {
             File root = mUnpackManager.getAppDir();
             File soDir = AppCacheFolderManager.getLibDir(root, uuid);
             String soDirMapKey = InstalledType.TYPE_PLUGIN + partKey;
             String soDirPath = soDir.getAbsolutePath();
-            try {
-                MinFileUtils.cleanDirectory(soDir);
-            } catch (Throwable e) {
+            if (forceExtract) {
+                ShadowLog.d(TAG, "forceExtract");
+                try {
+                    MinFileUtils.cleanDirectory(soDir);
+                } catch (Throwable e) {
+                }
             }
             String pluginPreferredAbi = getPluginPreferredAbi(getPluginSupportedAbis(), apkFile);
             if (pluginPreferredAbi.isEmpty()) {
@@ -285,12 +294,16 @@ public abstract class BasePluginManager {
                             uuid, partKey, apkFile.getAbsolutePath(), soDir.getAbsolutePath(), filter, needExtractNativeLibs);
                 }
 
-                if (needExtractNativeLibs) {
-                    CopySoBloc.copySo(apkFile, soDir
-                            , AppCacheFolderManager.getLibCopiedFile(soDir, partKey), filter);
-                } else {
-                    soDirPath = apkFile.getAbsolutePath() + "!/" + filter;
-                }
+                File libCopiedFile = AppCacheFolderManager.getLibCopiedFile(soDir, partKey);
+                long startTime = System.currentTimeMillis();
+                CopySoBloc.copySo(apkFile, soDir
+                        , libCopiedFile, filter);
+                ShadowLog.d(TAG, String.format("copySo took %s ms", (System.currentTimeMillis() - startTime)));
+//                if (needExtractNativeLibs) {
+//
+//                } else {
+//                    soDirPath = apkFile.getAbsolutePath() + "!/" + filter;
+//                }
             }
             return new Pair<>(soDirMapKey, soDirPath);
         } catch (InstallPluginException e) {
@@ -318,13 +331,7 @@ public abstract class BasePluginManager {
             String key = type == InstalledType.TYPE_PLUGIN_LOADER ? "loader" : "runtime";
             String pluginPreferredAbi = getPluginPreferredAbi(getPluginSupportedAbis(), apkFile);
             String filter = "lib/" + pluginPreferredAbi + "/";
-            File soDir = AppCacheFolderManager.getLibDir(root, uuid);
-
-            try {
-                MinFileUtils.cleanDirectory(soDir);
-            } catch (Throwable e) {
-
-            }
+            File soDir = AppCacheFolderManager.getLibDir(root, uuid + "_" + key);
 
             if (pluginPreferredAbi.isEmpty()) {
                 if (mLogger.isInfoEnabled()) {
@@ -508,7 +515,9 @@ public abstract class BasePluginManager {
                 ZipEntry entry = entries.nextElement();
                 String name = entry.getName();
                 if (name.startsWith(filter)) {
-                    return entry.getMethod() != ZipEntry.STORED;
+                    boolean b = entry.getMethod() != ZipEntry.STORED;
+                    ShadowLog.d(TAG, String.format("needExtractNativeLibs name = [%s] , result = [%s] ", name, b));
+                    return b;
                 }
             }
             return false;

@@ -20,13 +20,8 @@ package com.tencent.shadow.dynamic.apk;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 
 import com.tencent.shadow.core.common.InstalledApk;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import dalvik.system.DexClassLoader;
 

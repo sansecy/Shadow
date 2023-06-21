@@ -20,17 +20,17 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.tencent.shadow.plugin'
 apply plugin: 'cn.migu.tool.applyHostResource'
 apply from: "${project.rootProject.rootDir.path}/applyTask.gradle"
-apply plugin: 'com.didi.virtualapk.plugin'
+//apply plugin: 'com.didi.virtualapk.plugin'
 
-virtualApk {
-    manifestPackage = 'com.cmgame.gamehalltv'
-    packageId = 0x7A // the package id of Resources.
-    targetHost = rootProject.rootDir.path + '/projects/sample/source/sample-plugin/sample-base'
-    // the path of application module in host project.
-    applyHostMapping = true //optional, default value: true.
-    forceUseHostDependences = true
-    stripResource = true
-}
+//virtualApk {
+//    manifestPackage = 'com.cmgame.gamehalltv'
+//    packageId = 0x7A // the package id of Resources.
+//    targetHost = rootProject.rootDir.path + '/projects/sample/source/sample-plugin/sample-base'
+//    // the path of application module in host project.
+//    applyHostMapping = true //optional, default value: true.
+//    forceUseHostDependences = true
+//    stripResource = true
+//}
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
 

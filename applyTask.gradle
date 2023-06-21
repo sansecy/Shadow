@@ -1,6 +1,5 @@
 project.afterEvaluate {
     android.applicationVariants.all { appVariant ->
-        println appVariant
         generateTasks(appVariant, variantData.componentIdentity.buildType, appVariant.applicationId)
     }
 //com.android.build.api.variant.ApplicationAndroidComponentsExtension
@@ -54,7 +53,6 @@ project.afterEvaluate {
 
 private void generateTasks(appVariant, buildTypeName, applicationId) {
 //        println "appVariant.name ${appVariant.name} applicationId:" + applicationId
-    println "appVariant.name ${appVariant.name} variantName:" + buildTypeName
     def pushStartTaskName = "push${appVariant.name.capitalize()}Start"
     def pushStartTask = project.task(pushStartTaskName, {
         group = "push"
@@ -71,8 +69,6 @@ private void generateTasks(appVariant, buildTypeName, applicationId) {
 //            throw new RuntimeException("AndroidTest is not active, it should be")
 //        }
 
-    println "appVariant = " + appVariant
-    println "appVariant.name = " + appVariant.name
     def pushTaskName = "push${appVariant.name.capitalize()}Apk"
     def pushTask = project.tasks.findByName(pushTaskName)
     if (pushTask == null) {
