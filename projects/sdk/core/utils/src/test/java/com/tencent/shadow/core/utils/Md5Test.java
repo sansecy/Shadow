@@ -1,4 +1,4 @@
-package cn.migu.gamehall.shadow.core.utils;
+package com.tencent.shadow.core.utils;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
-
-import cn.migu.gamehall.shadow.core.utils.Md5;
 
 public class Md5Test {
 

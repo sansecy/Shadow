@@ -16,10 +16,10 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.gradle
+package com.tencent.shadow.core.gradle
 
-import cn.migu.gamehall.shadow.core.gradle.extensions.PackagePluginExtension
-import cn.migu.gamehall.shadow.core.gradle.extensions.PluginBuildType
+import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
+import com.tencent.shadow.core.gradle.extensions.PluginBuildType
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.bundling.Zip

@@ -1,4 +1,6 @@
-package cn.migu.gamehall.shadow.core.manager.installplugin;
+package com.tencent.shadow.core.manager.installplugin;
+
+import com.tencent.shadow.core.utils.Md5;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -12,8 +14,6 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
-import cn.migu.gamehall.shadow.core.manager.installplugin.SafeZipFile;
 
 public class SafeZipFileTest {
     private File testZipFile;

@@ -1,13 +1,13 @@
-import cn.migu.gamehall.shadow.coding.code_generator.ActivityCodeGenerator
+import com.tencent.shadow.coding.code_generator.ActivityCodeGenerator
 
 buildscript {
     dependencies {
-        classpath 'cn.migu.gamehall.shadow.coding:android-jar'
-        classpath 'cn.migu.gamehall.shadow.coding:code-generator'
+        classpath 'com.tencent.shadow.coding:android-jar'
+        classpath 'com.tencent.shadow.coding:code-generator'
     }
 }
 
-apply plugin: 'cn.migu.gamehall.shadow.internal.common-jar-settings'
+apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
 java {
     sourceSets {
@@ -28,5 +28,5 @@ def generateCode = tasks.register('generateCode') {
 compileJava.dependsOn(generateCode)
 
 dependencies {
-    implementation 'cn.migu.gamehall.shadow.coding:java-build-config'
+    implementation 'com.tencent.shadow.coding:java-build-config'
 }

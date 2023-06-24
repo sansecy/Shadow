@@ -1,14 +1,14 @@
-import cn.migu.gamehall.shadow.coding.code_generator.ActivityCodeGenerator
-import cn.migu.gamehall.shadow.coding.common_jar_settings.AndroidJar
+import com.tencent.shadow.coding.code_generator.ActivityCodeGenerator
+import com.tencent.shadow.coding.common_jar_settings.AndroidJar
 
 buildscript {
     dependencies {
-        classpath 'cn.migu.gamehall.shadow.coding:android-jar'
-        classpath 'cn.migu.gamehall.shadow.coding:code-generator'
+        classpath 'com.tencent.shadow.coding:android-jar'
+        classpath 'com.tencent.shadow.coding:code-generator'
     }
 }
 
-apply plugin: 'cn.migu.gamehall.shadow.internal.common-jar-settings'
+apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
 apply plugin: 'kotlin'
 
@@ -33,7 +33,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     testImplementation "junit:junit:$junit_version"
 
-    implementation 'cn.migu.gamehall.shadow.coding:java-build-config'
+    implementation 'com.tencent.shadow.coding:java-build-config'
     api project(':runtime')
     compileOnly project(':activity-container')
     compileOnly project(':common')

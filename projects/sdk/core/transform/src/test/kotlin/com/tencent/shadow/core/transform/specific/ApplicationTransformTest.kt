@@ -16,14 +16,14 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.transform.specific
+package com.tencent.shadow.core.transform.specific
 
 import org.junit.Test
 
 class ApplicationTransformTest : SimpleRenameTransformTest(
     ApplicationTransform(transformSkipClass), arrayOf("test.TestApplication"),
-    "get", "cn.migu.gamehall.shadow.core.runtime.ShadowApplication",
-    mapOf("()Landroid/app/Application;" to "()Lcn/migu/gamehall/shadow/core/runtime/ShadowApplication;")
+    "get", "com.tencent.shadow.core.runtime.ShadowApplication",
+    mapOf("()Landroid/app/Application;" to "()Lcom/tencent/shadow/core/runtime/ShadowApplication;")
 ) {
 
     @Test

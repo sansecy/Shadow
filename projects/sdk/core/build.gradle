@@ -23,13 +23,13 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$build_gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'cn.migu.gamehall.shadow.coding:common-jar-settings'
+        classpath 'com.tencent.shadow.coding:common-jar-settings'
     }
 }
 apply from: '../../../buildScripts/gradle/common.gradle'
 
 allprojects {
-    group 'cn.migu.gamehall.shadow.core'
+    group 'com.tencent.shadow.core'
     buildscript {
         repositories {
             if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {

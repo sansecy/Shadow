@@ -1,4 +1,4 @@
-package cn.migu.gamehall.shadow.coding.code_generator
+package com.tencent.shadow.coding.code_generator
 
 import org.junit.Test
 

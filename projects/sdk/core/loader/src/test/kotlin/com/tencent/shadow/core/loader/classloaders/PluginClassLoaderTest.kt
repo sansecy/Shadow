@@ -16,7 +16,7 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.loader.classloaders
+package com.tencent.shadow.core.loader.classloaders
 
 import org.junit.Assert
 import org.junit.Test

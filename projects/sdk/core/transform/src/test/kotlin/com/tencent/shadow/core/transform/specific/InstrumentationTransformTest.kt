@@ -16,9 +16,9 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.transform.specific
+package com.tencent.shadow.core.transform.specific
 
-import cn.migu.gamehall.shadow.core.transform_kit.AbstractTransformTest
+import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import org.junit.Assert
 import org.junit.Test
 
@@ -43,7 +43,7 @@ class InstrumentationTransformTest : AbstractTransformTest() {
         allInputClass.forEach {
             Assert.assertEquals(
                 "Instrumentation父类应该都变为了ShadowInstrumentation",
-                "cn.migu.gamehall.shadow.core.runtime.ShadowInstrumentation",
+                "com.tencent.shadow.core.runtime.ShadowInstrumentation",
                 it.classFile.superclass
             )
         }

@@ -16,16 +16,16 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.transform.specific
+package com.tencent.shadow.core.transform.specific
 
 import org.junit.Test
 
 class ActivityTransformTest : SimpleRenameTransformTest(
     ActivityTransform(), arrayOf("test.TestActivity"),
-    "foo", "cn.migu.gamehall.shadow.core.runtime.ShadowActivity",
+    "foo", "com.tencent.shadow.core.runtime.ShadowActivity",
     mapOf(
         "(Landroid/app/Activity;)Landroid/app/Activity;"
-                to "(Lcn/migu/gamehall/shadow/core/runtime/ShadowActivity;)Lcn/migu/gamehall/shadow/core/runtime/ShadowActivity;"
+                to "(Lcom/tencent/shadow/core/runtime/ShadowActivity;)Lcom/tencent/shadow/core/runtime/ShadowActivity;"
     )
 ) {
 

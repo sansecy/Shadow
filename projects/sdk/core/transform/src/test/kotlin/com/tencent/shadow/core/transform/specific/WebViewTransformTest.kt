@@ -16,26 +16,26 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.transform.specific
+package com.tencent.shadow.core.transform.specific
 
-import cn.migu.gamehall.shadow.core.transform_kit.AbstractTransformTest
+import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import javassist.CtClass
 import org.junit.Assert
 import org.junit.Test
 
 /**
- * ./gradlew -p projects/sdk/core :transform:test --tests cn.migu.gamehall.shadow.core.transform.specific.WebViewTransformTest
+ * ./gradlew -p projects/sdk/core :transform:test --tests com.tencent.shadow.core.transform.specific.WebViewTransformTest
  */
 class WebViewTransformTest : AbstractTransformTest() {
 
     val webViewClazz = sLoader["android.webkit.WebView"]
-    val shadowWebViewClazz = sLoader["cn.migu.gamehall.shadow.core.runtime.ShadowWebView"]
+    val shadowWebViewClazz = sLoader["com.tencent.shadow.core.runtime.ShadowWebView"]
 
     @Test
     fun testWebViewTransform() {
         val allInputClass = setOf(
             sLoader["test.TestWebView"],
-            sLoader["cn.migu.gamehall.shadow.core.runtime.ShadowWebView"]
+            sLoader["com.tencent.shadow.core.runtime.ShadowWebView"]
         )
 
         val webViewTransform = WebViewTransform()
@@ -70,7 +70,7 @@ class WebViewTransformTest : AbstractTransformTest() {
         if (clazz.classFile.name == "test.TestWebView") {
             Assert.assertEquals(
                 "WebView父类应该都变为了ShadowWebView",
-                "cn.migu.gamehall.shadow.core.runtime.ShadowWebView",
+                "com.tencent.shadow.core.runtime.ShadowWebView",
                 clazz.classFile.superclass
             )
 

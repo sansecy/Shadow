@@ -1,4 +1,4 @@
-package cn.migu.gamehall.shadow.core.runtime;
+package com.tencent.shadow.core.runtime;
 
 import android.app.Fragment;
 import android.content.Context;

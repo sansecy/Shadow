@@ -16,17 +16,17 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.gradle
+package com.tencent.shadow.core.gradle
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.sdklib.AndroidVersion.VersionCodes
-import cn.migu.gamehall.shadow.core.gradle.extensions.PackagePluginExtension
-import cn.migu.gamehall.shadow.core.manifest_parser.generatePluginManifest
-import cn.migu.gamehall.shadow.core.transform.ShadowTransform
-import cn.migu.gamehall.shadow.core.transform_kit.AndroidClassPoolBuilder
-import cn.migu.gamehall.shadow.core.transform_kit.ClassPoolBuilder
+import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
+import com.tencent.shadow.core.manifest_parser.generatePluginManifest
+import com.tencent.shadow.core.transform.ShadowTransform
+import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
+import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
 import org.gradle.api.*
 import org.gradle.api.tasks.compile.JavaCompile
 import java.io.File
@@ -56,7 +56,7 @@ class ShadowPlugin : Plugin<Project> {
         val pluginExtension =
             project.extensions.create("packagePlugin", PackagePluginExtension::class.java, project)
         if (!project.hasProperty("disable_shadow_transform")) {
-            baseExtension.registerTransform(cn.migu.gamehall.shadow.core.transform.ShadowTransform(
+            baseExtension.registerTransform(ShadowTransform(
                 project,
                 lateInitBuilder,
                 { shadowExtension.transformConfig.useHostContext },
@@ -132,7 +132,7 @@ class ShadowPlugin : Plugin<Project> {
      */
     private fun checkKotlinAndroidPluginForPluginManifestTask(project: Project) {
         if (project.plugins.hasPlugin("kotlin-android")) {
-            throw Error("必须在kotlin-android之前应用cn.migu.gamehall.shadow.plugin")
+            throw Error("必须在kotlin-android之前应用com.tencent.shadow.plugin")
         }
     }
 
@@ -159,8 +159,8 @@ class ShadowPlugin : Plugin<Project> {
         val appExtension: AppExtension = project.extensions.getByType(AppExtension::class.java)
         val pluginVariants = appExtension.applicationVariants.filter { variant ->
             variant.productFlavors.any { flavor ->
-                flavor.dimension == cn.migu.gamehall.shadow.core.transform.ShadowTransform.DimensionName &&
-                        flavor.name == cn.migu.gamehall.shadow.core.transform.ShadowTransform.ApplyShadowTransformFlavorName
+                flavor.dimension == ShadowTransform.DimensionName &&
+                        flavor.name == ShadowTransform.ApplyShadowTransformFlavorName
             }
         }
 //        val pluginVariants = appExtension.applicationVariants
@@ -244,7 +244,7 @@ class ShadowPlugin : Plugin<Project> {
                     generatePluginManifest(
                         decodeXml,
                         pluginManifestSourceDir,
-                        "cn.migu.gamehall.shadow.core.manifest_parser"
+                        "com.tencent.shadow.core.manifest_parser"
                     )
                 }
             }
@@ -343,18 +343,18 @@ class ShadowPlugin : Plugin<Project> {
     }
 
     private fun addFlavorForTransform(baseExtension: BaseExtension) {
-        agpCompat.addFlavorDimension(baseExtension, cn.migu.gamehall.shadow.core.transform.ShadowTransform.DimensionName)
+        agpCompat.addFlavorDimension(baseExtension, ShadowTransform.DimensionName)
         try {
-            baseExtension.productFlavors.create(cn.migu.gamehall.shadow.core.transform.ShadowTransform.NoShadowTransformFlavorName) {
-                it.dimension = cn.migu.gamehall.shadow.core.transform.ShadowTransform.DimensionName
+            baseExtension.productFlavors.create(ShadowTransform.NoShadowTransformFlavorName) {
+                it.dimension = ShadowTransform.DimensionName
                 agpCompat.setProductFlavorDefault(it, true)
             }
-            baseExtension.productFlavors.create(cn.migu.gamehall.shadow.core.transform.ShadowTransform.ApplyShadowTransformFlavorName) {
-                it.dimension = cn.migu.gamehall.shadow.core.transform.ShadowTransform.DimensionName
+            baseExtension.productFlavors.create(ShadowTransform.ApplyShadowTransformFlavorName) {
+                it.dimension = ShadowTransform.DimensionName
                 agpCompat.setProductFlavorDefault(it, false)
             }
         } catch (e: InvalidUserDataException) {
-            throw Error("请在android{} DSL之前apply plugin: 'cn.migu.gamehall.shadow.plugin'", e)
+            throw Error("请在android{} DSL之前apply plugin: 'com.tencent.shadow.plugin'", e)
         }
     }
 

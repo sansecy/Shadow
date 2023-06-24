@@ -16,10 +16,10 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.transform.specific
+package com.tencent.shadow.core.transform.specific
 
-import cn.migu.gamehall.shadow.core.transform.ShadowTransform.Companion.SelfClassNamePlaceholder
-import cn.migu.gamehall.shadow.core.transform_kit.AbstractTransformTest
+import com.tencent.shadow.core.transform.ShadowTransform.Companion.SelfClassNamePlaceholder
+import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import javassist.CtClass
 import javassist.CtMethod
 import org.junit.Assert.assertTrue

@@ -16,23 +16,23 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.transform.specific
+package com.tencent.shadow.core.transform.specific
 
-import cn.migu.gamehall.shadow.core.transform_kit.AbstractTransformTest
+import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import javassist.CtClass
 import javassist.NotFoundException
 import org.junit.Assert
 import org.junit.Test
 
 /**
- * ./gradlew -p projects/sdk/core :transform:test --tests cn.migu.gamehall.shadow.core.transform.specific.FragmentSupportTransformTest
+ * ./gradlew -p projects/sdk/core :transform:test --tests com.tencent.shadow.core.transform.specific.FragmentSupportTransformTest
  */
 class FragmentSupportTransformTest : AbstractTransformTest() {
 
     companion object {
         const val ShadowFragmentSupportClassName =
-            "cn.migu.gamehall.shadow.core.runtime.ShadowFragmentSupport"
-        const val ShadowActivitySig = "Lcn/migu/gamehall/shadow/core/runtime/ShadowActivity;"
+            "com.tencent.shadow.core.runtime.ShadowFragmentSupport"
+        const val ShadowActivitySig = "Lcom/tencent/shadow/core/runtime/ShadowActivity;"
         const val TestFragmentSig = "Ltest/fragment/TestFragment;"
         const val FragmentSig = "Landroid/app/Fragment;"
         const val IntentSig = "Landroid/content/Intent;"

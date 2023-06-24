@@ -16,11 +16,11 @@
  *
  */
 
-package cn.migu.gamehall.shadow.core.gradle
+package com.tencent.shadow.core.gradle
 
-import cn.migu.gamehall.shadow.core.gradle.extensions.PackagePluginExtension
-import cn.migu.gamehall.shadow.core.gradle.extensions.PluginApkConfig
-import cn.migu.gamehall.shadow.core.gradle.extensions.PluginBuildType
+import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
+import com.tencent.shadow.core.gradle.extensions.PluginApkConfig
+import com.tencent.shadow.core.gradle.extensions.PluginBuildType
 import org.gradle.api.Project
 import java.io.File
 import java.io.FileInputStream

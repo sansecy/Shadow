@@ -1,6 +1,6 @@
-apply plugin: 'cn.migu.gamehall.shadow.internal.common-jar-settings'
+apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
 dependencies {
-    implementation 'cn.migu.gamehall.shadow.core:utils'
-    compileOnly 'cn.migu.gamehall.shadow.core:common'
+    implementation 'com.tencent.shadow.core:utils'
+    compileOnly 'com.tencent.shadow.core:common'
 }
