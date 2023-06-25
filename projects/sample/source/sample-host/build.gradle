@@ -14,7 +14,7 @@ buildscript {
     dependencies {
         classpath 'com.tencent.shadow.core:runtime'
         classpath 'com.tencent.shadow.core:activity-container'
-        classpath 'com.tencent.shadow.core:gradle-method-time-statistics'
+//        classpath 'com.tencent.shadow.core:gradle-method-time-statistics'
         classpath "org.javassist:javassist:$javassist_version"
     }
 }
@@ -31,6 +31,7 @@ android {
     }
     buildTypes {
         debug {
+            multiDexEnabled true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -74,6 +75,9 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.1.1"
     api "com.android.support:recyclerview-v7:$android_support_version"
     implementation 'org.jetbrains:annotations:15.0'
+
+    api 'com.github.bumptech.glide:glide:4.14.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
 //    api "com.sansecy.tools:monitor"
 //    api "com.sansecy.tools:see"
 }
@@ -110,14 +114,13 @@ def generateAssets(generateAssetsTask, buildType) {
             "assemble${buildType.capitalize()}"
     )
 
-
     generateAssetsTask.dependsOn createCopyTask(
-            ':launcher',
+            ':plugin_ar',
             buildType,
-            "launcher",
-            'plugin-launcher.zip',
-            file("${project(":launcher").buildDir}/launcher-${buildType}.zip"),
-            "package${buildType.capitalize()}Plugin"
+            "plugin_ar",
+            'plugin_ar.zip',
+            file("${project(":plugin_ar").buildDir}/plugin_ar-gamehallDebug.zip"),
+            "packageGamehall${buildType.capitalize()}Plugin"
     )
 
 //    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")

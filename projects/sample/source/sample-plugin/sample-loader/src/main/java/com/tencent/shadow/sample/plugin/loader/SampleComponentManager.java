@@ -46,6 +46,9 @@ public class SampleComponentManager extends ComponentManager {
     private static final String DEFAULT_ACTIVITY = "com.tencent.shadow.sample.plugin.runtime.PluginDefaultProxyActivity";
     private static final String SINGLE_INSTANCE_ACTIVITY = "com.tencent.shadow.sample.plugin.runtime.PluginSingleInstance1ProxyActivity";
     private static final String SINGLE_TASK_ACTIVITY = "com.tencent.shadow.sample.plugin.runtime.PluginSingleTask1ProxyActivity";
+    private static final String ProcessPluginDefaultProxyActivity = "com.tencent.shadow.sample.plugin.runtime.ProcessPluginDefaultProxyActivity";
+    private static final String ProcessPluginSingleInstance1ProxyActivity = "com.tencent.shadow.sample.plugin.runtime.ProcessPluginSingleInstance1ProxyActivity";
+    private static final String ProcessPluginSingleTask1ProxyActivity = "com.tencent.shadow.sample.plugin.runtime.ProcessPluginSingleTask1ProxyActivity";
 
     private Context context;
 
@@ -62,12 +65,22 @@ public class SampleComponentManager extends ComponentManager {
      */
     @Override
     public ComponentName onBindContainerActivity(ComponentName pluginActivity) {
-        switch (pluginActivity.getClassName()) {
+        ComponentName componentName;
+        String className = pluginActivity.getClassName();
+        switch (className) {
             /**
              * 这里配置对应的对应关系
              */
+            case "cn.migudm.ar.module.home.mvvm.ui.MainActivity":
+                componentName = new ComponentName(context, ProcessPluginDefaultProxyActivity);
+                break;
+            default:
+                componentName = new ComponentName(context, DEFAULT_ACTIVITY);
         }
-        return new ComponentName(context, DEFAULT_ACTIVITY);
+        //todo loader最好按照插件分，否则需要把插件所有的Activity作配对关系
+        componentName = new ComponentName(context, ProcessPluginDefaultProxyActivity);
+        ShadowLog.d(TAG, "onBindContainerActivity() called with: className = [" + className + "] to [" + componentName.getClassName() + "]");
+        return componentName;
     }
 
     /**

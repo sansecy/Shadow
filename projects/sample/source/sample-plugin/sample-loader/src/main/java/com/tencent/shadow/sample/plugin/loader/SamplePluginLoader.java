@@ -33,7 +33,6 @@ import com.tencent.shadow.core.loader.classloaders.PluginClassLoader;
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException;
 import com.tencent.shadow.core.loader.infos.PluginParts;
 import com.tencent.shadow.core.loader.managers.ComponentManager;
-import com.tencent.shadow.sample.host.PluginChecker;
 import com.tencent.shadow.sample.host.lib.LoadPluginCallback;
 
 import java.util.concurrent.ExecutorService;

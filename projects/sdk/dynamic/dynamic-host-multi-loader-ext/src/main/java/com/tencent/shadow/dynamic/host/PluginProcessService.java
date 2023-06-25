@@ -36,9 +36,10 @@ import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MA
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION;
 
 
-public class PluginProcessService extends BasePluginProcessService {
+public class PluginProcessService extends BasePluginProcessService implements BinderService {
 
-    private final PpsBinder mPpsControllerBinder = new PpsBinder(this);
+    //    private final PpsBinder mPpsControllerBinder = new PpsBinder(this);
+    private final MultiLoaderPpsBinder mPpsControllerBinder = new MultiLoaderPpsBinder(this);
 
     static final ActivityHolder sActivityHolder = new ActivityHolder();
 
@@ -84,6 +85,10 @@ public class PluginProcessService extends BasePluginProcessService {
     }
 
     void loadRuntime(String uuid) throws FailedException {
+        loadRunimteInternal(uuid, "");
+    }
+
+    private void loadRunimteInternal(String uuid, String pluginKey) throws FailedException {
         checkUuidManagerNotNull();
         setUuid(uuid);
         if (mRuntimeLoaded) {
@@ -118,6 +123,10 @@ public class PluginProcessService extends BasePluginProcessService {
     }
 
     void loadPluginLoader(String uuid) throws FailedException {
+        loadPluginLoaderInternal(uuid, "");
+    }
+
+    private void loadPluginLoaderInternal(String uuid, String pluginKey) throws FailedException {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadPluginLoader uuid:" + uuid + " mPluginLoader:" + mPluginLoader);
         }
@@ -167,6 +176,10 @@ public class PluginProcessService extends BasePluginProcessService {
     }
 
     void setUuidManager(UuidManager uuidManager) {
+        setUUidInternal(uuidManager, "");
+    }
+
+    private void setUUidInternal(UuidManager uuidManager, String pluginKey) {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("setUuidManager uuidManager==" + uuidManager);
         }
@@ -179,7 +192,32 @@ public class PluginProcessService extends BasePluginProcessService {
         }
     }
 
-    void exit() {
+    @Override
+    public void loadRuntimeForPlugin(String pluginKey, String uuid) throws FailedException {
+        loadRunimteInternal(uuid, pluginKey);
+    }
+
+    @Override
+    public void loadPluginLoaderForPlugin(String pluginKey, String uuid) throws FailedException {
+        loadPluginLoaderInternal(uuid, pluginKey);
+    }
+
+    @Override
+    public void setUuidManagerForPlugin(String pluginKey, UuidManager uuidManager) {
+        setUUidInternal(uuidManager, pluginKey);
+    }
+
+    @Override
+    public PpsStatus getPpsStatusForPlugin(String pluginKey) {
+        return getPpsStatus();
+    }
+
+    @Override
+    public IBinder getPluginLoaderForPlugin(String pluginKey) {
+        return getPluginLoader();
+    }
+
+    public void exit() {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("exit ");
         }

@@ -109,6 +109,7 @@ public class MainActivity extends Activity {
                 Bundle bundle = new Bundle();
                 bundle.putString(ShadowConstant.KEY_PLUGIN_ZIP_PATH, PluginHelper.getInstance().pluginLauncherZipFile.getPath());
                 bundle.putString(ShadowConstant.KEY_ACTIVITY_CLASSNAME, "cn.migudm.ar.module.home.mvvm.ui.MainActivity");
+                bundle.putString(ShadowConstant.KEY_PLUGIN_PART_KEY, "plugin_ar");
                 HostApplication.getApp().getPluginManager().enter(mContext, ShadowConstant.FROM_ID_START_ACTIVITY, bundle, null);
             }
         });

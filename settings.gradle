@@ -118,3 +118,4 @@ def copyLocalPropertiesForIncludeBuilds() {
 //    }
 //}
 include ':AndroidLib'
+include ':plugin_ar'

@@ -3,12 +3,11 @@
 
     <application>
 
-        <service android:name="com.tencent.shadow.sample.host.PluginProcessPPS"
-            android:process=":plugin"
-            />
-        <service android:name="com.tencent.shadow.sample.host.Plugin2ProcessPPS"
-            android:process=":plugin"
-            />
+        <service android:name="com.tencent.shadow.sample.host.PluginProcessPPS" />
+
+        <service
+            android:name="com.tencent.shadow.sample.host.Plugin2ProcessPPS"
+            android:process=":plugin" />
 
         <!--dynamic activity注册
           注意configChanges需要全注册
@@ -19,27 +18,48 @@
             android:name="com.tencent.shadow.sample.plugin.runtime.PluginDefaultProxyActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
             android:hardwareAccelerated="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:process=":plugin"
             android:launchMode="standard"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.tencent.shadow.sample.plugin.runtime.PluginSingleInstance1ProxyActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
             android:hardwareAccelerated="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:launchMode="singleInstance"
-            android:process=":plugin"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity
             android:name="com.tencent.shadow.sample.plugin.runtime.PluginSingleTask1ProxyActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
             android:hardwareAccelerated="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.ProcessPluginDefaultProxyActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
+            android:hardwareAccelerated="true"
+            android:launchMode="standard"
+            android:process=":plugin"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.ProcessPluginSingleInstance1ProxyActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleInstance"
+            android:process=":plugin"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.ProcessPluginSingleTask1ProxyActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
+            android:hardwareAccelerated="true"
             android:launchMode="singleTask"
             android:process=":plugin"
             android:screenOrientation="portrait"
-            />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 </manifest>

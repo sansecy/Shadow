@@ -27,6 +27,7 @@ dependencies {
     def commons_io_android_version = "2.5"
     implementation "commons-io:commons-io:$commons_io_android_version"//sample-host从assets中复制插件用的
     implementation 'androidx.appcompat:appcompat:1.0.0'
+    api 'com.tencent.shadow.dynamic:dynamic-host-multi-loader-ext'
 
     api 'com.tencent.shadow.core:common'
     api 'com.tencent.shadow.dynamic:dynamic-host'

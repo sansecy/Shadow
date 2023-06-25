@@ -28,16 +28,16 @@ android {
         abortOnError false
     }
     flavorDimensions('type')
-    productFlavors {
-        miguplay {
-            dimension "type"
-            applicationId "com.migu.miguplay"
-        }
-        gamehall{
-            dimension "type"
-            applicationId "cn.emagsoftware.gamehall"
-        }
-    }
+//    productFlavors {
+//        miguplay {
+//            dimension "type"
+//            applicationId "com.migu.miguplay"
+//        }
+//        gamehall{
+//            dimension "type"
+//            applicationId "cn.emagsoftware.gamehall"
+//        }
+//    }
 }
 
 dependencies {
@@ -45,6 +45,8 @@ dependencies {
     implementation 'com.tencent.shadow.core:manager'
     implementation 'com.tencent.shadow.dynamic:dynamic-loader'
     implementation project(':sample-constant')
+    implementation 'com.tencent.shadow.dynamic:dynamic-manager-multi-loader-ext'
+    implementation 'com.tencent.shadow.dynamic:dynamic-host-multi-loader-ext'
 
     compileOnly 'com.tencent.shadow.core:common'
     compileOnly 'com.tencent.shadow.dynamic:dynamic-host'

@@ -132,6 +132,9 @@ class PluginClassLoader(
                 }
             }
             if (clazz == null) {
+                if (className.startsWith("com.bumptech.glide")) {
+                    throw ClassNotFoundException("com.bumptech.glide not load from host")
+                }
                 try {
                     //兜底方案。从宿主中查找
                     val loadClass = super.loadClass(className, resolve)

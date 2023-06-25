@@ -136,10 +136,14 @@ public abstract class BasePluginManager {
         }
 
         String newZipHash = mUnpackManager.zipHash(zip);
-        if (!pluginConfig.isUnpacked() || !previousZipHash.equals(newZipHash)) {
+        boolean hashCompare = previousZipHash.equals(newZipHash);
+//        hashCompare = false;
+        ShadowLog.d(TAG, String.format("zip hashCompare = %s ", hashCompare));
+        if (!pluginConfig.isUnpacked() || !hashCompare) {
             mUnpackManager.unpackPlugin(zip, pluginUnpackDir);
             pluginConfig.forceExtract = true;
         }
+        ShadowLog.d(TAG, String.format("forceExtract = %s ", pluginConfig.forceExtract));
         saveZipHash(zipHashFile, newZipHash);
         return pluginConfig;
     }

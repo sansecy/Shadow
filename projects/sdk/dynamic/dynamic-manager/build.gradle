@@ -3,6 +3,7 @@ apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 dependencies {
     compileOnly 'com.tencent.shadow.core:common'
     implementation 'com.tencent.shadow.core:manager'
+    implementation 'com.tencent.shadow.dynamic:dynamic-host-multi-loader-ext'
     implementation project(':dynamic-loader')
     compileOnly project(':dynamic-host')
 }

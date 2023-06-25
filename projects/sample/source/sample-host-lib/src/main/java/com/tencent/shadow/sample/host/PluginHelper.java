@@ -44,7 +44,7 @@ public class PluginHelper {
      */
     public final static String sMainPluginZip = "plugin-main.zip";
     public final static String sCloudPluginZip = "plugin-cloud.zip";
-    public final static String spluginLauncherZipName = "plugin-launcher.zip";
+    public final static String spluginLauncherZipName = "plugin_ar.zip";
     public File pluginManagerFile;
 
     public File pluginLauncherZipFile;
@@ -97,7 +97,7 @@ public class PluginHelper {
             }
             Log.d(TAG, "preparePlugin() done ");
         } catch (IOException e) {
-//            throw new RuntimeException("从assets中复制apk出错", e);
+            throw new RuntimeException("从assets中复制apk出错", e);
         }
     }
 

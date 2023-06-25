@@ -5,15 +5,17 @@ import android.app.Application;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
+import com.tencent.shadow.core.common.ShadowLog;
 
 import java.util.LinkedList;
 import java.util.List;
 
 abstract public class BasePluginProcessService extends Service {
-
+    private static final String TAG = "BasePluginProcessServic";
     protected final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -22,10 +24,11 @@ abstract public class BasePluginProcessService extends Service {
      * 如果出现，将会重复加载Loader、Runtime、业务等插件，进而出现非常奇怪的异常。
      * 因此，用这样一个静态变量检测出这种情况。PPS不能死后重新创建。需要在上层合理设计保持PPS始终存活。
      */
-    private static Object sSingleInstanceFlag = null;
+    private Object sSingleInstanceFlag = null;
 
     @Override
     public void onCreate() {
+        ShadowLog.d(TAG, "onCreate() called");
         if (sSingleInstanceFlag == null) {
             sSingleInstanceFlag = new Object();
         } else {

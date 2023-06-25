@@ -20,7 +20,7 @@ import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RUNTIME
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_DEAD_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION;
 
-public class MultiLoaderPluginProcessService extends BasePluginProcessService {
+public class MultiLoaderPluginProcessService extends BasePluginProcessService implements BinderService {
 
     static final ActivityHolder sActivityHolder = new ActivityHolder();
     private final MultiLoaderPpsBinder mPpsControllerBinder = new MultiLoaderPpsBinder(this);
@@ -46,7 +46,7 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
         return mPpsControllerBinder;
     }
 
-    synchronized void loadRuntimeForPlugin(String pluginKey, String uuid) throws FailedException {
+    public synchronized void loadRuntimeForPlugin(String pluginKey, String uuid) throws FailedException {
         String logIdentity = "pluginKey=" + pluginKey + "|uuid=" + uuid;
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadRuntimeForPlugin:" + logIdentity);
@@ -81,7 +81,7 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
         }
     }
 
-    synchronized void loadPluginLoaderForPlugin(String pluginKey, String uuid) throws FailedException {
+    public synchronized void loadPluginLoaderForPlugin(String pluginKey, String uuid) throws FailedException {
         String logIdentity = "pluginKey=" + pluginKey + "|uuid=" + uuid;
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadPluginLoader:" + logIdentity);
@@ -130,7 +130,7 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
         }
     }
 
-    synchronized void setUuidManagerForPlugin(String pluginKey, UuidManager uuidManager) {
+    public synchronized void setUuidManagerForPlugin(String pluginKey, UuidManager uuidManager) {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("setUuidManagerForPlugin pluginKey=" + pluginKey + ", uuidManager==" + uuidManager);
         }
@@ -144,15 +144,15 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
         }
     }
 
-    synchronized PpsStatus getPpsStatusForPlugin(String pluginKey) {
+    public synchronized PpsStatus getPpsStatusForPlugin(String pluginKey) {
         return new PpsStatus(mUuidMap.get(pluginKey), isRuntimeLoaded(pluginKey), mPluginLoaderMap.get(pluginKey) != null, mUuidManagerMap.get(pluginKey) != null);
     }
 
-    synchronized IBinder getPluginLoaderForPlugin(String pluginKey) {
+    public synchronized IBinder getPluginLoaderForPlugin(String pluginKey) {
         return mPluginLoaderMap.get(pluginKey);
     }
 
-    void exit() {
+    public void exit() {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("exit ");
         }

@@ -1,5 +1,6 @@
 package com.tencent.shadow.dynamic.manager;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +9,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Parcel;
-import android.os.RemoteException;
 
 import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.core.common.Logger;
@@ -47,9 +47,10 @@ abstract public class BaseDynamicPluginManager extends BasePluginManager impleme
     /**
      * 启动PluginProcessService
      *
+     * @param uuid
      * @param serviceName 注册在宿主中的插件进程管理service完整名字
      */
-    public final void bindPluginProcessService(final String serviceName) {
+    public final void bindPluginProcessService(final String uuid, final String serviceName) {
         if (mServiceConnecting.get()) {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("pps service connecting");
@@ -71,7 +72,7 @@ abstract public class BaseDynamicPluginManager extends BasePluginManager impleme
             public void run() {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(mHostContext, serviceName));
-                boolean binding = mHostContext.bindService(intent, new ServiceConnection() {
+                @SuppressLint("WrongConstant") boolean binding = mHostContext.bindService(intent, new ServiceConnection() {
                     @Override
                     public void onServiceConnected(ComponentName name, IBinder service) {
                         if (mLogger.isInfoEnabled()) {
@@ -80,7 +81,7 @@ abstract public class BaseDynamicPluginManager extends BasePluginManager impleme
                         mServiceConnecting.set(false);
 
                         // service connect 后处理逻辑
-                        onPluginServiceConnected(name, service);
+                        onPluginServiceConnected(uuid, name, service);
 
                         mConnectCountDownLatch.get().countDown();
 
@@ -95,7 +96,7 @@ abstract public class BaseDynamicPluginManager extends BasePluginManager impleme
                             mLogger.info("onServiceDisconnected");
                         }
                         mServiceConnecting.set(false);
-                        onPluginServiceDisconnected(name);
+                        onPluginServiceDisconnected(uuid, name);
                     }
                 }, BIND_AUTO_CREATE);
                 asyncResult[0] = binding;
@@ -134,9 +135,9 @@ abstract public class BaseDynamicPluginManager extends BasePluginManager impleme
         }
     }
 
-    protected abstract void onPluginServiceConnected(ComponentName name, IBinder service);
+    protected abstract void onPluginServiceConnected(String uuid, ComponentName name, IBinder service);
 
-    protected abstract void onPluginServiceDisconnected(ComponentName name);
+    protected abstract void onPluginServiceDisconnected(String uuid, ComponentName name);
 
     /**
      * PluginManager对象创建的时候回调
