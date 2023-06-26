@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.DeadObjectException;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
@@ -97,6 +98,7 @@ abstract public class PluginManagerThatSupportMultiLoader extends BaseDynamicPlu
     }
 
     public final void loadPluginLoader(String uuid) throws RemoteException, FailedException {
+        ShadowLog.d(TAG, "loadPluginLoader() called with: uuid = [" + uuid + "]");
         PluginLoader pluginLoader = getBinderPluginLoader(uuid);
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadPluginLoader mPluginLoader:" + pluginLoader);

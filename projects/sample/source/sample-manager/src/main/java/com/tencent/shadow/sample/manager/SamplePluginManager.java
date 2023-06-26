@@ -179,12 +179,10 @@ public class SamplePluginManager extends FastPluginManager {
             @Override
             public void run() {
                 try {
-//                    String uuid = getUUIDByPartKey(targetPartKey);
-                    String uuid = "gamehall";
                     long startTime = System.currentTimeMillis();
                     String localPartKey = targetPartKey;
                     installPlugin(pluginZipPath);
-
+                    String uuid = getUUIDByPartKey(targetPartKey);
                     if (!TextUtils.isEmpty(className)) {
                         Intent pluginIntent = getPluginIntent(context, className, extras, bundle);
 
@@ -273,11 +271,13 @@ public class SamplePluginManager extends FastPluginManager {
     private final HashMap<String, String> mPartKeyToUUIDHashMap = new HashMap<>();
 
     public String getUUIDByPartKey(String partKey) {
-        return mPartKeyToUUIDHashMap.get(partKey);
+        String UUID = mPartKeyToUUIDHashMap.get(partKey);
+        ShadowLog.d(TAG, "getUUIDByPartKey() called with: partKey = [" + partKey + "] UUID = " + UUID);
+        return UUID;
     }
 
     private void init(InstalledPlugin installedPlugin, String partKey) throws RemoteException, TimeoutException, FailedException {
-        Log.d(TAG, "init() called with: installedPlugin.UUID = [" + installedPlugin.UUID + "], partKey = [" + partKey + "]");
+        ShadowLog.d(TAG, "init() called with: installedPlugin.UUID = [" + installedPlugin.UUID + "], partKey = [" + partKey + "]");
         mPartKeyToUUIDHashMap.put(partKey, installedPlugin.UUID);
         loadPlugin(installedPlugin.UUID, partKey);
         callApplicationOnCreate(installedPlugin.UUID, partKey);

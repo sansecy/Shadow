@@ -7,7 +7,7 @@
 
         <service
             android:name="com.tencent.shadow.sample.host.Plugin2ProcessPPS"
-            android:process=":plugin" />
+            android:process=":gamehall_plugin" />
 
         <!--dynamic activity注册
           注意configChanges需要全注册
@@ -41,7 +41,7 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
             android:hardwareAccelerated="true"
             android:launchMode="standard"
-            android:process=":plugin"
+            android:process=":gamehall_plugin"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
@@ -49,7 +49,7 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
             android:hardwareAccelerated="true"
             android:launchMode="singleInstance"
-            android:process=":plugin"
+            android:process=":gamehall_plugin"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
@@ -58,8 +58,21 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
             android:hardwareAccelerated="true"
             android:launchMode="singleTask"
-            android:process=":plugin"
+            android:process=":gamehall_plugin"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+
+        <provider
+            android:name="com.tencent.shadow.core.runtime.container.PluginContainerContentProvider"
+            android:authorities="${applicationId}.contentprovider.authority.dynamic"
+            android:grantUriPermissions="true" />
+
+        <provider
+            android:name="com.tencent.shadow.core.runtime.container.PluginProcessContainerContentProvider"
+            android:authorities="${applicationId}.contentprovider.authority.dynamic.process"
+            android:process=":gamehall_plugin"
+            android:grantUriPermissions="true" />
+
     </application>
 </manifest>

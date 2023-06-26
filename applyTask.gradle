@@ -80,7 +80,7 @@ private void generateTasks(appVariant, buildTypeName, applicationId) {
 //             applicationId = "cn.emagsoftware.gamehall"
         String fileName = "${project.name}-${appVariant.name.replace("plugin","").uncapitalize()}.zip"
         def fromFile = new File(project.buildDir, "${fileName}")
-        String toName = "plugin-${project.name}.zip"
+        String toName = "${project.name}.zip"
         def deviceSDKVersion = execCommand("adb shell getprop ro.build.version.sdk")
         if (deviceSDKVersion != null && Integer.valueOf(deviceSDKVersion) > 19) {
             execCommand("adb shell run-as ${applicationId} mkdir -p /data/data/${applicationId}/files/shadow_plugin")

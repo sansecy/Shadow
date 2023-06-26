@@ -24,8 +24,6 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.util.Pair
 import com.tencent.shadow.coding.java_build_config.BuildConfig
-import com.tencent.shadow.core.common.Logger
-import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
@@ -60,9 +58,12 @@ abstract class ComponentManager : PluginComponentLauncher {
      * @param pluginActivity 插件Activity
      * @return 容器Activity
      */
-    abstract fun onBindContainerActivity(pluginActivity: ComponentName): ComponentName
+    abstract fun onBindContainerActivity(partKey: String, pluginActivity: ComponentName): ComponentName
 
-    abstract fun onBindContainerContentProvider(pluginContentProvider: ComponentName): ContainerProviderInfo
+    abstract fun onBindContainerContentProvider(
+        partKey: String,
+        pluginContentProvider: ComponentName
+    ): ContainerProviderInfo
 
     override fun startActivity(
         shadowContext: ShadowContext,
@@ -193,7 +194,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         loadParameters: LoadParameters,
         archiveFilePath: String
     ) {
-//        ShadowLog.d(TAG, "addPluginApkInfo pluginManifest = [${pluginManifest}], loadParameters = [${loadParameters}], archiveFilePath = [${archiveFilePath}]")
+        //        ShadowLog.d(TAG, "addPluginApkInfo pluginManifest = [${pluginManifest}], loadParameters = [${loadParameters}], archiveFilePath = [${archiveFilePath}]")
         fun common(componentInfo: PluginManifest.ComponentInfo, componentName: ComponentName) {
 //            ShadowLog.d(TAG,"addPluginApkInfo componentInfo = [${componentInfo}], componentName = [${componentName}]")
             packageNameMap[componentInfo.className] = componentName.packageName
@@ -207,7 +208,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         pluginManifest.activities?.forEach {
             val componentName = ComponentName(applicationPackageName, it.className)
             common(it, componentName)
-            componentMap[componentName] = onBindContainerActivity(componentName)
+            componentMap[componentName] = onBindContainerActivity(loadParameters.partKey, componentName)
             pluginActivityInfoMap[componentName] = it
         }
 
@@ -221,7 +222,7 @@ abstract class ComponentManager : PluginComponentLauncher {
             mPluginContentProviderManager!!.addContentProviderInfo(
                 loadParameters.partKey,
                 it,
-                onBindContainerContentProvider(componentName)
+                onBindContainerContentProvider(loadParameters.partKey, componentName)
             )
         }
 

@@ -49,6 +49,7 @@ public class SampleComponentManager extends ComponentManager {
     private static final String ProcessPluginDefaultProxyActivity = "com.tencent.shadow.sample.plugin.runtime.ProcessPluginDefaultProxyActivity";
     private static final String ProcessPluginSingleInstance1ProxyActivity = "com.tencent.shadow.sample.plugin.runtime.ProcessPluginSingleInstance1ProxyActivity";
     private static final String ProcessPluginSingleTask1ProxyActivity = "com.tencent.shadow.sample.plugin.runtime.ProcessPluginSingleTask1ProxyActivity";
+    public static final String PLUGIN_AR = "plugin_ar";
 
     private Context context;
 
@@ -64,21 +65,25 @@ public class SampleComponentManager extends ComponentManager {
      * @return 壳子Activity
      */
     @Override
-    public ComponentName onBindContainerActivity(ComponentName pluginActivity) {
+    public ComponentName onBindContainerActivity(String partKey, ComponentName pluginActivity) {
         ComponentName componentName;
         String className = pluginActivity.getClassName();
         switch (className) {
             /**
              * 这里配置对应的对应关系
              */
-            case "cn.migudm.ar.module.home.mvvm.ui.MainActivity":
-                componentName = new ComponentName(context, ProcessPluginDefaultProxyActivity);
-                break;
-            default:
-                componentName = new ComponentName(context, DEFAULT_ACTIVITY);
+//            case "cn.migudm.ar.module.home.mvvm.ui.MainActivity":
+//                componentName = new ComponentName(context, ProcessPluginDefaultProxyActivity);
+//                break;
+//            default:
+//                componentName = new ComponentName(context, DEFAULT_ACTIVITY);
         }
-        //todo loader最好按照插件分，否则需要把插件所有的Activity作配对关系
-        componentName = new ComponentName(context, ProcessPluginDefaultProxyActivity);
+        if (partKey.equals(PLUGIN_AR)) {
+            componentName = new ComponentName(context, ProcessPluginDefaultProxyActivity);
+        } else {
+            //todo loader最好按照插件分，否则需要把插件所有的Activity作配对关系
+            componentName = new ComponentName(context, DEFAULT_ACTIVITY);
+        }
         ShadowLog.d(TAG, "onBindContainerActivity() called with: className = [" + className + "] to [" + componentName.getClassName() + "]");
         return componentName;
     }
@@ -87,10 +92,20 @@ public class SampleComponentManager extends ComponentManager {
      * 配置对应宿主中预注册的壳子contentProvider的信息
      */
     @Override
-    public ContainerProviderInfo onBindContainerContentProvider(ComponentName pluginContentProvider) {
+    public ContainerProviderInfo onBindContainerContentProvider(String partKey, ComponentName pluginContentProvider) {
+        String className;
+        String authority;
+        if (partKey.equals(PLUGIN_AR)) {
+            className = "com.tencent.shadow.core.runtime.container.PluginProcessContainerContentProvider";
+            authority = context.getPackageName() + ".contentprovider.authority.dynamic.process";
+        } else {
+            className = "com.tencent.shadow.core.runtime.container.PluginContainerContentProvider";
+            authority = context.getPackageName() + ".contentprovider.authority.dynamic";
+        }
+        ShadowLog.d(TAG, "onBindContainerContentProvider() called with: pluginContentProvider = [" + pluginContentProvider.getClassName() + "], to provider = [" + className + "]");
         return new ContainerProviderInfo(
-                "com.tencent.shadow.core.runtime.container.PluginContainerContentProvider",
-                context.getPackageName() + ".contentprovider.authority.dynamic");
+                className,
+                authority);
     }
 
     @Override

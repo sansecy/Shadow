@@ -25,7 +25,7 @@ import android.content.ServiceConnection
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.util.Log
+import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.runtime.container.ContentProviderDelegateProviderHolder
 import com.tencent.shadow.core.runtime.container.DelegateProviderHolder
@@ -202,7 +202,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
             try {
                 mContext.startActivity(intent)
             } catch (e: Exception) {
-                Log.e(TAG, "startActivityInPluginProcess: ", e)
+                ShadowLog.e(TAG, "startActivityInPluginProcess: ", e)
             }
         }
     }

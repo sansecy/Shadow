@@ -13,118 +13,82 @@
         android:xlargeScreens="true" />
 
     <uses-feature android:glEsVersion="0x30000" />
-
     <uses-feature
         android:name="android.hardware.location.gps"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.location"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="true" />
-
     <uses-feature
         android:name="android.hardware.camera.front"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.microphone"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.touchscreen.multitouch"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.touchscreen.multitouch.distinct"
         android:required="false" />
-
     <uses-feature
         android:name="android.hardware.camera.ar"
         android:required="true" />
-
     <uses-feature
         android:name="com.google.ar.core.depth"
         android:required="true" />
 
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
     <uses-permission android:name="android.permission.INSTALL_PACKAGES" />
-
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-
     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
-
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-
     <uses-permission android:name="android.permission.BLUETOOTH" />
-
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
     <uses-permission android:name="android.permission.INSTALL_PACKAGES" />
-
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-
     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
-
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
-        android:name="com.tencent.shadow.sample.host.HostApplication"
+        android:name=".HostApplication"
         android:allowBackup="false"
         android:label="Shadow Dyanamic测试宿主App"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:label">
-        <activity android:name="com.tencent.shadow.sample.host.MainActivity">
+
+
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -132,28 +96,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".plugin_view.HostAddPluginViewActivity" />
-
-        <provider
-            android:name="com.tencent.shadow.core.runtime.container.PluginContainerContentProvider"
-            android:authorities="${applicationId}.contentprovider.authority.dynamic"
-            android:grantUriPermissions="true" />
-
         <activity
-            android:name="com.tencent.shadow.sample.host.PluginLoadActivity"
+            android:name=".PluginLoadActivity"
             android:launchMode="standard"
-            android:screenOrientation="portrait" />
-
-
-        <!--dynamic activity注册 end -->
+            android:screenOrientation="portrait" /> <!-- dynamic activity注册 end -->
         <receiver android:name=".plugin_view.MainProcessManagerReceiver">
             <intent-filter>
                 <action android:name="sample_host.manager.startPluginService" />
             </intent-filter>
         </receiver>
+
         <meta-data
             android:name="com.google.ar.core"
             android:value="required" />
-
     </application>
 
 </manifest>
