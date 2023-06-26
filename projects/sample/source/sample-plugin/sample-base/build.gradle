@@ -18,7 +18,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.tencent.shadow.plugin'
-apply plugin: 'com.didi.virtualapk.host'
+//apply plugin: 'com.didi.virtualapk.host'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -54,7 +54,7 @@ android {
     // 将插件的资源ID分区改为和宿主0x7F不同的值
     aaptOptions {
         additionalParameters "--package-id", "0x7A", "--allow-reserved-package-id"
-        additionalParameters "--emit-ids", "${project.rootProject.file('build/public.txt').absolutePath}"
+//        additionalParameters "--emit-ids", "${project.rootProject.file('build/public.txt').absolutePath}"
     }
 
     lintOptions {

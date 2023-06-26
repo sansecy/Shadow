@@ -18,7 +18,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.tencent.shadow.plugin'
-apply plugin: 'cn.migu.tool.applyHostResource'
+//apply plugin: 'cn.migu.tool.applyHostResource'
 apply from: "${project.rootProject.rootDir.path}/applyTask.gradle"
 //apply plugin: 'com.didi.virtualapk.plugin'
 
@@ -74,10 +74,10 @@ android {
     aaptOptions {
         noCompress "dat"
         additionalParameters "--package-id", "0x7A", "--allow-reserved-package-id"
-        File publicTxtFile = project.rootProject.file('build/public.txt')
-        if (publicTxtFile.exists()) {
-            additionalParameters "--stable-ids", "${project.rootProject.file('build/public.txt').absolutePath}"
-        }
+//        File publicTxtFile = project.rootProject.file('build/public.txt')
+//        if (publicTxtFile.exists()) {
+//            additionalParameters "--stable-ids", "${project.rootProject.file('build/public.txt').absolutePath}"
+//        }
     }
 }
 
