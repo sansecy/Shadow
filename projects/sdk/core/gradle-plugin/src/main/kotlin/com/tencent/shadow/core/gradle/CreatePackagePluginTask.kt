@@ -32,7 +32,7 @@ internal fun createPackagePluginTask(project: Project, buildType: PluginBuildTyp
         project.logger.info("PackagePluginTask task run")
 
         //runtime apk file
-        val runtimeApkName: String = buildType.runtimeApkConfig.first
+        val runtimeApkName = buildType.runtimeApkConfig.first
         var runtimeFile: File? = null
         if (runtimeApkName.isNotEmpty()) {
             runtimeFile = ShadowPluginHelper.getRuntimeApkFile(project, buildType, false)

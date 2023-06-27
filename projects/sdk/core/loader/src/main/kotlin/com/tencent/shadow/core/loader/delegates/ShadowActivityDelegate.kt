@@ -103,7 +103,7 @@ open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivity
             bundleForPluginLoader.getParcelable(CM_ACTIVITY_INFO_KEY)!!
         mPluginActivityInfo = pluginActivityInfo
 
-        mCurrentConfiguration = Configuration(resources.configuration)
+        mCurrentConfiguration = Configuration(getResources().configuration)
         mPluginHandleConfigurationChange =
             (pluginActivityInfo.configChanges
                     or ActivityInfo.CONFIG_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
@@ -269,7 +269,7 @@ open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivity
 
     override fun getLayoutInflater(): LayoutInflater = LayoutInflater.from(mPluginActivity)
 
-    override fun getResources(): Resources {
+     fun getResources(): Resources {
         if (mDependenciesInjected) {
             return mPluginResources;
         } else {

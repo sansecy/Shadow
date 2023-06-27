@@ -18,8 +18,10 @@
 
 package com.tencent.shadow.core.loader.blocs
 
+import android.content.Context
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.Logger
+import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.classloaders.CombineClassLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
@@ -42,10 +44,12 @@ object LoadApkBloc {
      */
     @Throws(LoadApkException::class)
     fun loadPlugin(
-        installedApk: InstalledApk,
-        loadParameters: LoadParameters,
-        pluginPartsMap: MutableMap<String, PluginParts>
+            hostAppContext: Context,
+            installedApk: InstalledApk,
+            loadParameters: LoadParameters,
+            pluginPartsMap: MutableMap<String, PluginParts>
     ): PluginClassLoader {
+        ShadowLog.d(TAG, "loadPlugin hostAppContext = [${hostAppContext}], installedApk = [${installedApk}], loadParameters = [${loadParameters}], pluginPartsMap = [${pluginPartsMap}]")
         val apk = File(installedApk.apkFilePath)
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
         val dependsOn = loadParameters.dependsOn
@@ -54,12 +58,14 @@ object LoadApkBloc {
         val hostParentClassLoader = hostClassLoader.parent
         if (dependsOn == null || dependsOn.isEmpty()) {
             return PluginClassLoader(
-                apk.absolutePath,
-                odexDir,
-                installedApk.libraryPath,
-                hostClassLoader,
-                hostParentClassLoader,
-                loadParameters.hostWhiteList
+                    hostAppContext,
+                    apk.absolutePath,
+                    odexDir,
+                    installedApk.libraryPath,
+                    hostClassLoader,
+                    hostParentClassLoader,
+                    loadParameters.hostWhiteList,
+                    loadParameters.partKey
             )
         } else if (dependsOn.size == 1) {
             val partKey = dependsOn[0]
@@ -68,12 +74,14 @@ object LoadApkBloc {
                 throw LoadApkException("加载" + loadParameters.partKey + "时它的依赖" + partKey + "还没有加载")
             } else {
                 return PluginClassLoader(
-                    apk.absolutePath,
-                    odexDir,
-                    installedApk.libraryPath,
-                    pluginParts.classLoader,
-                    null,
-                    loadParameters.hostWhiteList
+                        hostAppContext,
+                        apk.absolutePath,
+                        odexDir,
+                        installedApk.libraryPath,
+                        pluginParts.classLoader,
+                        null,
+                        loadParameters.hostWhiteList,
+                        loadParameters.partKey
                 )
             }
         } else {
@@ -86,14 +94,16 @@ object LoadApkBloc {
                 }
             }.toTypedArray()
             val combineClassLoader =
-                CombineClassLoader(dependsOnClassLoaders, hostParentClassLoader)
+                    CombineClassLoader(dependsOnClassLoaders, hostParentClassLoader)
             return PluginClassLoader(
-                apk.absolutePath,
-                odexDir,
-                installedApk.libraryPath,
-                combineClassLoader,
-                null,
-                loadParameters.hostWhiteList
+                    hostAppContext,
+                    apk.absolutePath,
+                    odexDir,
+                    installedApk.libraryPath,
+                    combineClassLoader,
+                    null,
+                    loadParameters.hostWhiteList,
+                    loadParameters.partKey
             )
         }
     }

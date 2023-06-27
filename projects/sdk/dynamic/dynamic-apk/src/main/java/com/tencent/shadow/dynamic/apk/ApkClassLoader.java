@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.dynamic.apk;
 
+import android.content.Context;
 import android.os.Build;
 
 import com.tencent.shadow.core.common.InstalledApk;
@@ -35,6 +36,7 @@ import dalvik.system.DexClassLoader;
  *
  * @author cubershi
  */
+
 public class ApkClassLoader extends DexClassLoader {
     private ClassLoader mGrandParent;
     private final String[] mInterfacePackageNames;
@@ -69,7 +71,15 @@ public class ApkClassLoader extends DexClassLoader {
         }
 
         if (isInterface) {
-            return super.loadClass(className, resolve);
+            Class<?> loadClass = null;
+            try {
+                loadClass = super.loadClass(className, resolve);
+            } catch (ClassNotFoundException e) {
+//                Log.d(TAG, "loadClass() called with:not found className = [" + className + "], in = [" + getParent() + "]");
+                throw new ClassNotFoundException(e.getMessage());
+            }
+
+            return loadClass;
         } else {
             Class<?> clazz = findLoadedClass(className);
 

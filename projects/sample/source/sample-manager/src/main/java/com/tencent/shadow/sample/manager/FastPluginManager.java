@@ -24,11 +24,13 @@ import android.util.Pair;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
+import com.tencent.shadow.core.common.ShadowLog;
 import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.manager.installplugin.InstalledType;
 import com.tencent.shadow.core.manager.installplugin.PluginConfig;
 import com.tencent.shadow.dynamic.host.FailedException;
-import com.tencent.shadow.dynamic.manager.PluginManagerThatUseDynamicLoader;
+import com.tencent.shadow.dynamic.loader.PluginLoader;
+import com.tencent.shadow.dynamic.manager.PluginManagerThatSupportMultiLoader;
 
 import org.json.JSONException;
 
@@ -46,8 +48,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoader {
-
+public abstract class FastPluginManager extends PluginManagerThatSupportMultiLoader {
+    private static final String TAG = "FastPluginManager-Shadow";
     private static final Logger mLogger = LoggerFactory.getLogger(FastPluginManager.class);
 
     private ExecutorService mFixedPool = Executors.newFixedThreadPool(4);
@@ -81,11 +83,19 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
                 }
             });
             futures.add(odexLoader);
+            Future<Pair<String, String>> extractLoaderSo = mFixedPool.submit(new Callable<Pair<String, String>>() {
+                @Override
+                public Pair<String, String> call() throws Exception {
+                    return extractLoaderOrRunTimeSo(uuid, InstalledType.TYPE_PLUGIN_LOADER, pluginConfig.pluginLoader.file);
+                }
+            });
+            futures.add(extractLoaderSo);
+            extractSoFutures.add(extractLoaderSo);
         }
         for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : pluginConfig.plugins.entrySet()) {
             final String partKey = plugin.getKey();
             final File apkFile = plugin.getValue().file;
-            Future<Pair<String, String>> extractSo = mFixedPool.submit(() -> extractSo(uuid, partKey, apkFile));
+            Future<Pair<String, String>> extractSo = mFixedPool.submit(() -> extractSo(uuid, partKey, apkFile, pluginConfig.forceExtract));
             futures.add(extractSo);
             extractSoFutures.add(extractSo);
             if (odex) {
@@ -109,22 +119,30 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
             soDirMap.put(pair.first, pair.second);
         }
         onInstallCompleted(pluginConfig, soDirMap);
-
-        return getInstalledPlugins(1).get(0);
+        InstalledPlugin installedPlugin = getInstalledPlugins(1).get(0);
+        Map<String, InstalledPlugin.PluginPart> plugins = installedPlugin.plugins;
+        for (String s : plugins.keySet()) {
+            InstalledPlugin.PluginPart pluginPart = plugins.get(s);
+            if (pluginPart != null) {
+                ShadowLog.i(TAG, "onInstallCompleted " + pluginPart.businessName);
+            }
+        }
+        return installedPlugin;
     }
 
 
-    protected void callApplicationOnCreate(String partKey) throws RemoteException {
-        Map map = mPluginLoader.getLoadedPlugin();
+    protected void callApplicationOnCreate(String uuid, String partKey) throws RemoteException {
+        PluginLoader binderPluginLoader = getBinderPluginLoader(uuid);
+        Map map = binderPluginLoader.getLoadedPlugin();
         Boolean isCall = (Boolean) map.get(partKey);
         if (isCall == null || !isCall) {
-            mPluginLoader.callApplicationOnCreate(partKey);
+            binderPluginLoader.callApplicationOnCreate(partKey);
         }
     }
 
     private void loadPluginLoaderAndRuntime(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
-        if (mPpsController == null) {
-            bindPluginProcessService(getPluginProcessServiceName(partKey));
+        if (getPPSController(uuid) == null) {
+            bindPluginProcessService(uuid, getPluginProcessServiceName(partKey));
             waitServiceConnected(10, TimeUnit.SECONDS);
         }
         loadRunTime(uuid);
@@ -132,10 +150,12 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
     }
 
     protected void loadPlugin(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
+        ShadowLog.d(TAG, "loadPlugin() called with: uuid = [" + uuid + "], partKey = [" + partKey + "]");
         loadPluginLoaderAndRuntime(uuid, partKey);
-        Map map = mPluginLoader.getLoadedPlugin();
+        PluginLoader binderPluginLoader = getBinderPluginLoader(uuid);
+        Map map = binderPluginLoader.getLoadedPlugin();
         if (!map.containsKey(partKey)) {
-            mPluginLoader.loadPlugin(partKey);
+            binderPluginLoader.loadPlugin(partKey);
         }
     }
 

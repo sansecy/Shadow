@@ -30,13 +30,13 @@ java {
 }
 
 def generateCode = tasks.register('generateCode') {
-    inputs.property('VERSION_NAME', project.VERSION_NAME)
+    inputs.property('VERSION_NAME', "1.0")
     outputs.dir(layout.buildDirectory.dir('generateCode'))
             .withPropertyName('outputDir')
     doLast {
         def versionNameField
                 = FieldSpec.builder(String, "VERSION_NAME", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                .initializer('$S', project.VERSION_NAME).build()
+                .initializer('$S', "1.0").build()
 
         def buildConfigClass = TypeSpec.classBuilder("BuildConfig")
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)

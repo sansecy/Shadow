@@ -25,12 +25,14 @@ import android.content.ServiceConnection
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.runtime.container.ContentProviderDelegateProviderHolder
 import com.tencent.shadow.core.runtime.container.DelegateProviderHolder
 import com.tencent.shadow.dynamic.host.UuidManager
 import java.util.concurrent.CountDownLatch
 
+private const val TAG = "DynamicPluginLoader-Shadow"
 internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     companion object {
         private const val CORE_LOADER_FACTORY_IMPL_NAME =
@@ -197,7 +199,11 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     @Synchronized
     fun startActivityInPluginProcess(intent: Intent) {
         mUiHandler.post {
-            mContext.startActivity(intent)
+            try {
+                mContext.startActivity(intent)
+            } catch (e: Exception) {
+                ShadowLog.e(TAG, "startActivityInPluginProcess: ", e)
+            }
         }
     }
 

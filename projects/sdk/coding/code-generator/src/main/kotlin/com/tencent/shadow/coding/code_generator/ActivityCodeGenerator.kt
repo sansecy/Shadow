@@ -149,7 +149,7 @@ class ActivityCodeGenerator {
             addMethod("finish")
             addMethod("getClassLoader")
             addMethod("getLayoutInflater")
-            addMethod("getResources")
+//            addMethod("getResources")
             addMethod("recreate")
             addMethod("getCallingActivity")
 

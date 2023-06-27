@@ -18,7 +18,7 @@
 
 package com.tencent.shadow.core.transform.specific
 
-class ApplicationTransform : SimpleRenameTransform(
+class ApplicationTransform(transformSkipClass: () -> Array<String>) : SimpleRenameTransform(transformSkipClass,
     mapOf(
         "android.app.Application"
                 to "com.tencent.shadow.core.runtime.ShadowApplication",

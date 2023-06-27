@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 import com.tencent.shadow.dynamic.loader.PluginServiceConnection;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 class BinderPluginLoader implements PluginLoader {
+    private static final String TAG = "BinderPluginLoader-App";
     final private IBinder mRemote;
     final private ConcurrentHashMap<PluginServiceConnection, PluginServiceConnectionBinder> conMap =
             new ConcurrentHashMap<>();
@@ -48,6 +50,8 @@ class BinderPluginLoader implements PluginLoader {
             _data.writeString(partKey);
             mRemote.transact(TRANSACTION_loadPlugin, _data, _reply, 0);
             _reply.readException();
+        } catch (Exception e) {
+            Log.e(TAG, "loadPlugin: ", e);
         } finally {
             _reply.recycle();
             _data.recycle();

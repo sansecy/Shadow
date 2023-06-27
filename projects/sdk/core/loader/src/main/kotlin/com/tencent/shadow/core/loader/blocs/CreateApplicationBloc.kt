@@ -21,6 +21,7 @@ package com.tencent.shadow.core.loader.blocs
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.res.Resources
+import com.tencent.shadow.core.common.ShadowLog
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.CreateApplicationException
@@ -46,6 +47,7 @@ object CreateApplicationBloc {
         pluginApplicationInfo: ApplicationInfo,
         appComponentFactory: ShadowAppComponentFactory
     ): ShadowApplication {
+        ShadowLog.d(TAG,"pluginClassLoader = [${pluginClassLoader}], loadParameters = [${loadParameters}], pluginManifest = [${pluginManifest}], resources = [${resources}], hostAppContext = [${hostAppContext}], componentManager = [${componentManager}], pluginApplicationInfo = [${pluginApplicationInfo}], appComponentFactory = [${appComponentFactory}]")
         try {
             val appClassName = pluginManifest.applicationClassName
                 ?: ShadowApplication::class.java.name

@@ -41,8 +41,11 @@ class ShadowPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         agpCompat = buildAgpCompat(project)
-        val baseExtension = project.extensions.getByName("android") as BaseExtension
-
+        val baseExtension = try {
+            project.extensions.getByName("android") as BaseExtension
+        } catch (e: Exception) {
+            return
+        }
         //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
         contextClassLoader = Thread.currentThread().contextClassLoader
         val lateInitBuilder = object : ClassPoolBuilder {
@@ -50,17 +53,20 @@ class ShadowPlugin : Plugin<Project> {
         }
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
+        val pluginExtension =
+            project.extensions.create("packagePlugin", PackagePluginExtension::class.java, project)
         if (!project.hasProperty("disable_shadow_transform")) {
             baseExtension.registerTransform(ShadowTransform(
                 project,
                 lateInitBuilder,
-                { shadowExtension.transformConfig.useHostContext }
+                { shadowExtension.transformConfig.useHostContext },
+                { shadowExtension.transformConfig.transformSkipClass }
             ))
         }
 
         addFlavorForTransform(baseExtension)
 
-        project.extensions.create("packagePlugin", PackagePluginExtension::class.java, project)
+
 
         project.afterEvaluate {
             initAndroidClassPoolBuilder(baseExtension, project)
@@ -157,7 +163,7 @@ class ShadowPlugin : Plugin<Project> {
                         flavor.name == ShadowTransform.ApplyShadowTransformFlavorName
             }
         }
-
+//        val pluginVariants = appExtension.applicationVariants
         checkPluginVariants(pluginVariants, appExtension, project.name)
 
         pluginVariants.forEach(actions)
@@ -374,6 +380,7 @@ class ShadowPlugin : Plugin<Project> {
 
     class TransformConfig {
         var useHostContext: Array<String> = emptyArray()
+        var transformSkipClass: Array<String> = emptyArray()
     }
 
     companion object {

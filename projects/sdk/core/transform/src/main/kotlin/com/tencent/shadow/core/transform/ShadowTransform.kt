@@ -28,7 +28,8 @@ import org.gradle.api.Project
 class ShadowTransform(
     project: Project,
     classPoolBuilder: ClassPoolBuilder,
-    private val useHostContext: () -> Array<String>
+    private val useHostContext: () -> Array<String>,
+    private val transformSkipClass: () -> Array<String>,
 ) : AbstractTransform(project, classPoolBuilder) {
     companion object {
         const val SelfClassNamePlaceholder =
@@ -45,7 +46,8 @@ class ShadowTransform(
 
     override fun beforeTransform(invocation: TransformInvocation) {
         super.beforeTransform(invocation)
-        _mTransformManager = TransformManager(mCtClassInputMap, classPool, useHostContext)
+        _mTransformManager =
+            TransformManager(mCtClassInputMap, classPool, useHostContext, transformSkipClass)
         classPool.makeInterface(SelfClassNamePlaceholder)
     }
 
@@ -56,7 +58,6 @@ class ShadowTransform(
     override fun getName(): String = "ShadowTransform"
 
     override fun applyToVariant(variant: VariantInfo): Boolean {
-        return if (variant.isTest) false
-        else variant.flavorNames.contains(ApplyShadowTransformFlavorName)
+        return true
     }
 }

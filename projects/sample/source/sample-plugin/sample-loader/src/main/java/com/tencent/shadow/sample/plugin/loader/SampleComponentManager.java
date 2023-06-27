@@ -46,24 +46,33 @@ public class SampleComponentManager extends ComponentManager {
      * @param pluginActivity 插件Activity
      * @return 壳子Activity
      */
+//    @Override
+//    public ComponentName onBindContainerActivity(ComponentName pluginActivity) {
+//        switch (pluginActivity.getClassName()) {
+//            /**
+//             * 这里配置对应的对应关系
+//             */
+//        }
+//        return new ComponentName(context, DEFAULT_ACTIVITY);
+//    }
+
+//    /**
+//     * 配置对应宿主中预注册的壳子contentProvider的信息
+//     */
+//    @Override
+//    public ContainerProviderInfo onBindContainerContentProvider(ComponentName pluginContentProvider) {
+//        return new ContainerProviderInfo(
+//                "com.tencent.shadow.core.runtime.container.PluginContainerContentProvider",
+//                context.getPackageName() + ".contentprovider.authority.dynamic");
+//    }
+
     @Override
-    public ComponentName onBindContainerActivity(ComponentName pluginActivity) {
-        switch (pluginActivity.getClassName()) {
-            /**
-             * 这里配置对应的对应关系
-             */
-        }
-        return new ComponentName(context, DEFAULT_ACTIVITY);
+    public ComponentName onBindContainerActivity(String partKey, ComponentName pluginActivity) {
+        return null;
     }
 
-    /**
-     * 配置对应宿主中预注册的壳子contentProvider的信息
-     */
     @Override
-    public ContainerProviderInfo onBindContainerContentProvider(ComponentName pluginContentProvider) {
-        return new ContainerProviderInfo(
-                "com.tencent.shadow.core.runtime.container.PluginContainerContentProvider",
-                context.getPackageName() + ".contentprovider.authority.dynamic");
+    public ContainerProviderInfo onBindContainerContentProvider(String partKey, ComponentName pluginContentProvider) {
+        return null;
     }
-
 }
