@@ -18,6 +18,6 @@
 
 package com.tencent.shadow.core.transform.specific
 
-class IntentServiceTransform : SimpleRenameTransform(
+class IntentServiceTransform(transformSkipClass: () -> Array<String>) : SimpleRenameTransform(transformSkipClass,
     mapOf("android.app.IntentService" to "com.tencent.shadow.core.runtime.ShadowIntentService")
 )

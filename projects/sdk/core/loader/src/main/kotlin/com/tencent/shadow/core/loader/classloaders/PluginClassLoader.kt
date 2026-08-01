@@ -64,26 +64,6 @@ class PluginClassLoader(
     private var partKey: String = ""
     init {
         partKey = outPartKey
-        val sourceApk = File(dexPath)
-        val name = sourceApk.name
-//        try {
-//            val dataDir = File(hostAppContext.cacheDir.toString() + "/shadow_dex")
-//            dataDir.mkdirs()
-//            MultiDex.doInstallation(
-//                hostAppContext, this, sourceApk,
-//                dataDir, name, name
-//            )
-//        } catch (e: IOException) {
-//            e.printStackTrace()
-//        } catch (e: IllegalAccessException) {
-//            e.printStackTrace()
-//        } catch (e: NoSuchFieldException) {
-//            e.printStackTrace()
-//        } catch (e: InvocationTargetException) {
-//            e.printStackTrace()
-//        } catch (e: NoSuchMethodException) {
-//            e.printStackTrace()
-//        }
 
         hostWhiteList?.forEach {
             allHostWhiteTrie.insert(it)
@@ -108,7 +88,6 @@ class PluginClassLoader(
             if (specialClassLoader == null) {
                 try {
                     val loadClass = super.loadClass(className, resolve)
-                    this.loaderClassLoader
 //                    ShadowLog.e(TAG, this.partKey + " loadClass() called with: in parent , found className = $className, in parent = $parent")
                     return loadClass
                 } catch (e: Exception) {
@@ -120,7 +99,6 @@ class PluginClassLoader(
             if (className.subStringBeforeDot() == "com.tencent.shadow.core.runtime") {
                 return loaderClassLoader.loadClass(className)
             }
-
             //包名在白名单中的类按双亲委派逻辑，从宿主中加载
             if (className.inPackage(allHostWhiteTrie)) {
                 try {
@@ -148,21 +126,26 @@ class PluginClassLoader(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         e.addSuppressed(suppressed)
                         suppressed = e
-                        throw e
+//                        throw e
                     }
+//                    throw e
+                }
+            }
+            if (clazz == null) {
+                if (className.startsWith("com.bumptech.glide")) {
+                    throw ClassNotFoundException("com.bumptech.glide not load from host")
+                }
+                try {
+                    //兜底方案。从宿主中查找
+                    val loadClass = super.loadClass(className, resolve)
+//                     ShadowLog.e(TAG, "loadClass() in parent, className = $className, in parent = ${parent}")
+                    return loadClass
+                } catch (e: Exception) {
+//                    ShadowLog.e(TAG, "loadClass() called with: last, not found className = $className, in parent = ${parent}")
+                    e.addSuppressed(suppressed)
                     throw e
                 }
             }
-//            if (clazz == null) {
-//                try {
-//                    val loadClass = super.loadClass(className, resolve)
-//                    return loadClass
-//                } catch (e: Exception) {
-////                    ShadowLog.e(TAG, "loadClass() called with: last, not found className = $className, in parent = ${parent}")
-//                    e.addSuppressed(suppressed)
-//                    throw e
-//                }
-//            }
         }
 
         return clazz

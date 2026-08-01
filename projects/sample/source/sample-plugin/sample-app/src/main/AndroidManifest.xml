@@ -20,9 +20,10 @@
         <activity android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOptionMenu" />
 
         <activity android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOnCreate"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+          />
 
-        <activity
+       <activity
             android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOrientation"
             android:configChanges="orientation|screenSize|fontScale"
             android:windowSoftInputMode="adjustResize" />

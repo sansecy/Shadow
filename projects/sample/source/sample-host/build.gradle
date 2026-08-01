@@ -1,5 +1,23 @@
 apply plugin: 'com.android.application'
+//apply plugin: 'com.tencent.shadow.gradle-method-time-statistics'
 apply from: "${project.rootProject.rootDir.path}/applyTask.gradle"
+buildscript {
+    repositories {
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            mavenCentral()
+        }
+    }
+
+    dependencies {
+        classpath 'com.tencent.shadow.core:runtime'
+        classpath 'com.tencent.shadow.core:activity-container'
+//        classpath 'com.tencent.shadow.core:gradle-method-time-statistics'
+        classpath "org.javassist:javassist:$javassist_version"
+    }
+}
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -13,6 +31,7 @@ android {
     }
     buildTypes {
         debug {
+            multiDexEnabled true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -28,12 +47,10 @@ android {
 
     sourceSets {
         debug {
-            assets.srcDir('build/generated/assets/sample-manager/debug/')
-            assets.srcDir('build/generated/assets/plugin-zip/debug/')
+            assets.srcDir('build/generated/assets/debug/')
         }
         release {
-            assets.srcDir('build/generated/assets/sample-manager/release/')
-            assets.srcDir('build/generated/assets/plugin-zip/release/')
+            assets.srcDir('build/generated/assets/release/')
         }
     }
     lintOptions {
@@ -43,6 +60,7 @@ android {
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
     implementation "commons-io:commons-io:$commons_io_android_version"//sample-host从assets中复制插件用的
     implementation "org.slf4j:slf4j-api:$slf4j_version"
 
@@ -50,13 +68,22 @@ dependencies {
     implementation 'com.tencent.shadow.dynamic:dynamic-host'
     implementation project(':sample-constant')
     implementation project(':sample-host-lib')
-    api "com.android.support:support-v4:$android_support_version"
-    api "com.android.support:appcompat-v7:$android_support_version"
+    implementation project(':tools')
+    implementation project(':AndroidLib')
+    implementation "androidx.core:core:1.5.0"
+    implementation "androidx.appcompat:appcompat:1.2.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.1"
     api "com.android.support:recyclerview-v7:$android_support_version"
+    implementation 'org.jetbrains:annotations:15.0'
+
+    api 'com.github.bumptech.glide:glide:4.14.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+//    api "com.sansecy.tools:monitor"
+//    api "com.sansecy.tools:see"
 }
 
 def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
-    def outputFile = file("${getBuildDir()}/generated/assets/${name}/${buildType}/${apkName}")
+    def outputFile = file("${getBuildDir()}/generated/assets/${buildType}/${apkName}")
     outputFile.getParentFile().mkdirs()
     return tasks.create("copy${buildType.capitalize()}${name.capitalize()}Task", Copy) {
         group = 'build'
@@ -87,6 +114,15 @@ def generateAssets(generateAssetsTask, buildType) {
             "assemble${buildType.capitalize()}"
     )
 
+    generateAssetsTask.dependsOn createCopyTask(
+            ':plugin_ar',
+            buildType,
+            "plugin_ar",
+            'plugin_ar.zip',
+            file("${project(":plugin_ar").buildDir}/plugin_ar-gamehallDebug.zip"),
+            "packageGamehall${buildType.capitalize()}Plugin"
+    )
+
 //    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
 //    generateAssetsTask.dependsOn createCopyTask(
 //            ':sample-app',
@@ -94,6 +130,16 @@ def generateAssets(generateAssetsTask, buildType) {
 //            'plugin-zip',
 //            "plugin-${buildType}.zip",
 //            pluginZip,
+//            "package${buildType.capitalize()}Plugin"
+//    )
+//
+//    def pluginZip2 = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
+//    generateAssetsTask.dependsOn createCopyTask(
+//            ':sample-app2',
+//            buildType,
+//            'plugin-zip2',
+//            "plugin2-${buildType}.zip",
+//            pluginZip2,
 //            "package${buildType.capitalize()}Plugin"
 //    )
 

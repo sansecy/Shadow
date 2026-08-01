@@ -27,5 +27,10 @@ public interface WhiteList {
     String[] sWhiteList = new String[]
             {
                     "com.tencent.shadow.sample.host.lib",
+                    "com.tencent.shadow.sample.host.lib.**",
+                    "com.tencent.shadow.sample.host",
+                    "com.tencent.shadow.sample.host.**",
+                    "cn.migu.gamehalltv.lib",
+                    "cn.migu.gamehalltv.lib.utils"
             };
 }

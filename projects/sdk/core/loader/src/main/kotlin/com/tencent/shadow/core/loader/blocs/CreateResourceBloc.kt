@@ -146,10 +146,6 @@ object CreateResourceBloc {
         pluginApkPath: String,
         dependsOnApkPath: Array<String>,
     ) {
-        Log.d(
-            TAG,
-            "fillApplicationInfoForNewerApi() called with: applicationInfo = $applicationInfo, hostApplicationInfo = $hostApplicationInfo, pluginApkPath = $pluginApkPath"
-        )
         /**
          * 这里虽然sourceDir和sharedLibraryFiles中指定的apk都会进入Resources对象，
          * 但是只有资源id分区大于0x7f时才能在加载之后保持住资源id分区。

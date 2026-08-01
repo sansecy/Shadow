@@ -46,4 +46,6 @@ public class HostUiLayerProvider {
         return LayoutInflater.from(mHostApplicationContext)
                 .inflate(R.layout.host_ui_layer_layout, null, false);
     }
+
+
 }

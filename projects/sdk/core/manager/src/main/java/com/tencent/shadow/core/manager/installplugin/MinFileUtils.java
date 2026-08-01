@@ -20,6 +20,7 @@ package com.tencent.shadow.core.manager.installplugin;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
+import com.tencent.shadow.core.common.ShadowLog;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -39,7 +40,7 @@ import java.util.zip.ZipFile;
  * 没有使用完整的commons-io是因为要控制方法数
  */
 public class MinFileUtils {
-
+    private static final String TAG = "MinFileUtils";
     private static final Logger mLogger = LoggerFactory.getLogger(MinFileUtils.class);
 
     /**
@@ -63,6 +64,7 @@ public class MinFileUtils {
      * @throws IllegalArgumentException if {@code directory} does not exist or is not a directory
      */
     public static void cleanDirectory(final File directory) throws IOException {
+        ShadowLog.d(TAG, "cleanDirectory() called with: directory = [" + directory + "]");
         final File[] files = verifiedListFiles(directory);
 
         IOException exception = null;

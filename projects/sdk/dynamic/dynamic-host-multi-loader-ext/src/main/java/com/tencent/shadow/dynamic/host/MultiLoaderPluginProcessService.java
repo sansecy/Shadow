@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tencent.shadow.core.common.InstalledApk;
+import com.tencent.shadow.core.common.ShadowLog;
 
 import java.io.File;
 import java.util.HashMap;
@@ -20,8 +21,8 @@ import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RUNTIME
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_DEAD_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION;
 
-public class MultiLoaderPluginProcessService extends BasePluginProcessService {
-
+public class MultiLoaderPluginProcessService extends BasePluginProcessService implements BinderService {
+    private static final String TAG = "MultiLoaderPluginProces";
     static final ActivityHolder sActivityHolder = new ActivityHolder();
     private final MultiLoaderPpsBinder mPpsControllerBinder = new MultiLoaderPpsBinder(this);
 
@@ -46,7 +47,7 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
         return mPpsControllerBinder;
     }
 
-    synchronized void loadRuntimeForPlugin(String pluginKey, String uuid) throws FailedException {
+    public synchronized void loadRuntimeForPlugin(String pluginKey, String uuid) throws FailedException {
         String logIdentity = "pluginKey=" + pluginKey + "|uuid=" + uuid;
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadRuntimeForPlugin:" + logIdentity);
@@ -81,11 +82,9 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
         }
     }
 
-    synchronized void loadPluginLoaderForPlugin(String pluginKey, String uuid) throws FailedException {
+    public synchronized void loadPluginLoaderForPlugin(String pluginKey, String uuid) throws FailedException {
         String logIdentity = "pluginKey=" + pluginKey + "|uuid=" + uuid;
-        if (mLogger.isInfoEnabled()) {
-            mLogger.info("loadPluginLoader:" + logIdentity);
-        }
+        ShadowLog.d(TAG,"loadPluginLoader:" + logIdentity);
         UuidManager uuidManager = checkUuidManagerNotNull(pluginKey);
         addUuidForPlugin(pluginKey, uuid);
         if (mPluginLoaderMap.get(pluginKey) != null) {
@@ -95,13 +94,10 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
             InstalledApk installedApk;
             try {
                 installedApk = uuidManager.getPluginLoader(uuid);
-                if (mLogger.isInfoEnabled()) {
-                    mLogger.info("取出" + logIdentity + "的Loader apk:" + installedApk.apkFilePath);
-                }
+                ShadowLog.d(TAG,"取出" + logIdentity + "的Loader apk:" + installedApk.apkFilePath);
+
             } catch (RemoteException e) {
-                if (mLogger.isErrorEnabled()) {
-                    mLogger.error("获取Loader Apk失败", e);
-                }
+                ShadowLog.d(TAG,"获取Loader Apk失败", e);
                 throw new FailedException(ERROR_CODE_UUID_MANAGER_DEAD_EXCEPTION, e.getMessage());
             } catch (NotFoundException e) {
                 throw new FailedException(ERROR_CODE_FILE_NOT_FOUND_EXCEPTION, logIdentity + "的PluginLoader没有找到。cause:" + e.getMessage());
@@ -115,47 +111,37 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
             pluginLoader.setUuidManager(uuidManager);
             mPluginLoaderMap.put(pluginKey, pluginLoader);
         } catch (RuntimeException e) {
-            if (mLogger.isErrorEnabled()) {
-                mLogger.error("loadPluginLoader发生RuntimeException", e);
-            }
+            ShadowLog.d(TAG,"loadPluginLoader发生RuntimeException", e);
             throw new FailedException(e);
         } catch (FailedException e) {
             throw e;
         } catch (Exception e) {
-            if (mLogger.isErrorEnabled()) {
-                mLogger.error("loadPluginLoader发生Exception", e);
-            }
+            ShadowLog.d(TAG,"loadPluginLoader发生Exception", e);
             String msg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
             throw new FailedException(ERROR_CODE_RUNTIME_EXCEPTION, "加载动态实现失败 cause：" + msg);
         }
     }
 
-    synchronized void setUuidManagerForPlugin(String pluginKey, UuidManager uuidManager) {
-        if (mLogger.isInfoEnabled()) {
-            mLogger.info("setUuidManagerForPlugin pluginKey=" + pluginKey + ", uuidManager==" + uuidManager);
-        }
+    public synchronized void setUuidManagerForPlugin(String pluginKey, UuidManager uuidManager) {
+        ShadowLog.d(TAG,"setUuidManagerForPlugin pluginKey=" + pluginKey + ", uuidManager==" + uuidManager);
         mUuidManagerMap.put(pluginKey, uuidManager);
         PluginLoaderImpl pluginLoader = mPluginLoaderMap.get(pluginKey);
         if (pluginLoader != null) {
-            if (mLogger.isInfoEnabled()) {
-                mLogger.info("更新PluginLoader的uuidManager");
-            }
+            ShadowLog.d(TAG,"更新PluginLoader的uuidManager");
             pluginLoader.setUuidManager(uuidManager);
         }
     }
 
-    synchronized PpsStatus getPpsStatusForPlugin(String pluginKey) {
+    public synchronized PpsStatus getPpsStatusForPlugin(String pluginKey) {
         return new PpsStatus(mUuidMap.get(pluginKey), isRuntimeLoaded(pluginKey), mPluginLoaderMap.get(pluginKey) != null, mUuidManagerMap.get(pluginKey) != null);
     }
 
-    synchronized IBinder getPluginLoaderForPlugin(String pluginKey) {
+    public synchronized IBinder getPluginLoaderForPlugin(String pluginKey) {
         return mPluginLoaderMap.get(pluginKey);
     }
 
-    void exit() {
-        if (mLogger.isInfoEnabled()) {
-            mLogger.info("exit ");
-        }
+    public void exit() {
+        ShadowLog.d(TAG,"exit ");
         MultiLoaderPluginProcessService.sActivityHolder.finishAll();
         System.exit(0);
         try {

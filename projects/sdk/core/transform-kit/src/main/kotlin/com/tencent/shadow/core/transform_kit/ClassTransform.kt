@@ -54,6 +54,7 @@ abstract class ClassTransform(val project: Project) : Transform() {
         inputs: Collection<com.android.build.api.transform.TransformInput>,
         outputProvider: TransformOutputProvider
     ) {
+        println("input")
         val logger = project.logger
         if (logger.isInfoEnabled) {
             val sb = StringBuilder()
@@ -116,6 +117,7 @@ abstract class ClassTransform(val project: Project) : Transform() {
     }
 
     fun output(outputProvider: TransformOutputProvider) {
+        println("output")
         inputSet.forEach { input ->
             when (input.format) {
                 Format.DIRECTORY -> {

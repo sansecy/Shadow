@@ -28,7 +28,8 @@ import javassist.CtClass
 class TransformManager(
     ctClassInputMap: Map<CtClass, InputClass>,
     classPool: ClassPool,
-    useHostContext: () -> Array<String>
+    useHostContext: () -> Array<String>,
+    transformSkipClass: () -> Array<String>,
 ) : AbstractTransformManager(ctClassInputMap, classPool) {
 
     /**
@@ -41,10 +42,10 @@ class TransformManager(
      * 因为ActivityTransform在它之前已经生效了。
      */
     override val mTransformList: List<SpecificTransform> = listOf(
-        ApplicationTransform(),
-        ActivityTransform(),
-        ServiceTransform(),
-        IntentServiceTransform(),
+        ApplicationTransform(transformSkipClass),
+        ActivityTransform(transformSkipClass),
+        ServiceTransform(transformSkipClass),
+        IntentServiceTransform(transformSkipClass),
         InstrumentationTransform(),
         FragmentSupportTransform(),
         DialogSupportTransform(),
@@ -52,7 +53,7 @@ class TransformManager(
         ContentProviderTransform(),
         PackageManagerTransform(),
         PackageItemInfoTransform(),
-        AppComponentFactoryTransform(),
+        AppComponentFactoryTransform(transformSkipClass),
         LayoutInflaterTransform(),
         KeepHostContextTransform(useHostContext()),
         ActivityOptionsSupportTransform(),

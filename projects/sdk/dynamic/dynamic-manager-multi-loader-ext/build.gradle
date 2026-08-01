@@ -5,5 +5,6 @@ dependencies {
     implementation project(':dynamic-manager')
     implementation project(':dynamic-loader')
     compileOnly 'com.tencent.shadow.core:common'
-    compileOnly project(':dynamic-host-multi-loader-ext')
+    implementation 'com.tencent.shadow.dynamic:dynamic-host-multi-loader-ext'
+//    implementation project(':dynamic-host-multi-loader-ext')
 }

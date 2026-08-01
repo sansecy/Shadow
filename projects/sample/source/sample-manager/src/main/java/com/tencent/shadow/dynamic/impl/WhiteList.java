@@ -28,5 +28,7 @@ public interface WhiteList {
             {
                     "com.tencent.host.shadow",
                     "com.tencent.shadow.test.lib.constant",
+                    "cn.migu.gamehalltv.lib",
+                    "cn.migu.gamehalltv.lib.utils"
             };
 }

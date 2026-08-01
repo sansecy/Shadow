@@ -23,6 +23,7 @@ import android.text.TextUtils;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
+import com.tencent.shadow.core.common.ShadowLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +34,7 @@ import java.util.zip.ZipFile;
 
 
 public class CopySoBloc {
-
+    private static final String TAG = "CopySoBloc";
     private static final Logger mLogger = LoggerFactory.getLogger(CopySoBloc.class);
 
     private static ConcurrentHashMap<String, Object> sLocks = new ConcurrentHashMap<>();
@@ -49,6 +50,7 @@ public class CopySoBloc {
         synchronized (lock) {
 
             if (TextUtils.isEmpty(filter) || copiedTagFile.exists()) {
+                ShadowLog.d(TAG, "so copied return");
                 return;
             }
 

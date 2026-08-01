@@ -1,0 +1,48 @@
+static def pushFile(String applicationId, File fromFile, String toFileName) {
+    def deviceSDKVersion = execCommand("adb shell getprop ro.build.version.sdk")
+    if (deviceSDKVersion != null && Integer.valueOf(deviceSDKVersion) > 19) {
+        execCommand("adb shell run-as ${applicationId} mkdir -p /data/data/${applicationId}/files/shadow_plugin")
+        execCommand("adb push ${fromFile.path} /data/local/tmp/${toFileName}")
+        execCommand("adb shell run-as ${applicationId} cp /data/local/tmp/${toFileName} /data/data/${applicationId}/files/shadow_plugin/${toFileName}")
+        execCommand("adb shell rm /data/local/tmp/${toFileName}")
+    } else {
+        String com = "adb push ${fromFile.getAbsolutePath()} /data/data/cn.emagsoftware.gamehall/files/appplugin/${toFileName}"
+        execCommand(com)
+    }
+}
+
+static def findLastApk(def dir) {
+    def files = new File(dir).listFiles()
+    def newestApk = null
+    def newestTime
+    files.each {
+        if (it.name.endsWith(".apk")) {
+
+            if (it.lastModified() > newestTime) {
+                newestTime = it.lastModified()
+                newestApk = it
+            }
+        }
+    }
+    return newestApk
+}
+
+static String execCommand(command) {
+    println "execCommand = [$command]"
+    Runtime runtime = Runtime.getRuntime()
+    Process p = runtime.exec(command)
+    InputStream fis = p.getInputStream()
+    InputStreamReader isr = new InputStreamReader(fis)
+    BufferedReader br = new BufferedReader(isr)
+    String line = null
+    StringBuilder sb = new StringBuilder()
+    while ((line = br.readLine()) != null) {
+        sb.append(line)
+    }
+    br.close()
+    isr.close()
+    fis.close()
+    def result = sb.toString()
+    println "result = [$result]"
+    return result
+}

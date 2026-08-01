@@ -20,9 +20,9 @@ public class MultiLoaderPpsBinder extends Binder {
     static final int TRANSACTION_getPluginLoaderForPlugin = (FIRST_CALL_TRANSACTION + 4);
     static final int TRANSACTION_exit = (FIRST_CALL_TRANSACTION + 5);
 
-    private final MultiLoaderPluginProcessService mPps;
+    private final BinderService mPps;
 
-    MultiLoaderPpsBinder(MultiLoaderPluginProcessService pps) {
+    MultiLoaderPpsBinder(BinderService pps) {
         mPps = pps;
     }
 

@@ -157,21 +157,23 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
 
     @Override
     public Resources.Theme getTheme() {
-        if (isBeforeOnCreate) {
-            if (mHostTheme == null) {
-                mHostTheme = super.getResources().newTheme();
-            }
-            return mHostTheme;
-        } else {
-            return super.getTheme();
-        }
+//        Log.d(TAG, "getTheme() called");
+//        if (isBeforeOnCreate) {
+//            if (mHostTheme == null) {
+//                mHostTheme = super.getResources().newTheme();
+//            }
+//            return mHostTheme;
+//        } else {
+        return super.getTheme();
+//        }
     }
 
     @Override
     public void setTheme(int resid) {
-        if (!isBeforeOnCreate) {
-            super.setTheme(resid);
-        }
+//        if (!isBeforeOnCreate) {
+        super.setTheme(resid);
+//        }
+
     }
 
 }

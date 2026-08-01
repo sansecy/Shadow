@@ -1,9 +1,12 @@
 package com.tencent.shadow.core.utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -47,4 +50,17 @@ public class Md5 {
         }
     }
 
+    public static String isToString(InputStream is) throws IOException {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        for (int l; (l = is.read(buffer)) != -1; ) {
+            result.write(buffer, 0, l);
+        }
+        try {
+            return result.toString("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }

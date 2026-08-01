@@ -51,7 +51,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BaseDynamicPlugi
     }
 
     @Override
-    protected void onPluginServiceConnected(ComponentName name, IBinder service) {
+    protected void onPluginServiceConnected(String uuid, ComponentName name, IBinder service) {
         mPpsController = PluginProcessService.wrapBinder(service);
         try {
             mPpsController.setUuidManager(new UuidManagerBinder(PluginManagerThatUseDynamicLoader.this));
@@ -82,7 +82,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BaseDynamicPlugi
     }
 
     @Override
-    protected void onPluginServiceDisconnected(ComponentName name) {
+    protected void onPluginServiceDisconnected(String uuid, ComponentName name) {
         mPpsController = null;
         mPluginLoader = null;
     }

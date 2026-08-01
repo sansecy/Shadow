@@ -1,1 +1,78 @@
-<manifest package="com.tencent.shadow.sample.host.lib" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tencent.shadow.sample.host.lib">
+
+    <application>
+
+        <service android:name="com.tencent.shadow.sample.host.PluginProcessPPS" />
+
+        <service
+            android:name="com.tencent.shadow.sample.host.Plugin2ProcessPPS"
+            android:process=":gamehall_plugin" />
+
+        <!--dynamic activity注册
+          注意configChanges需要全注册
+          theme需要注册成透明
+          -->
+        <!--        orientation|keyboardHidden|screenSize|screenLayout|smallestScreenSize|density|keyboard|navigation-->
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.PluginDefaultProxyActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
+            android:hardwareAccelerated="true"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.PluginSingleInstance1ProxyActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.PluginSingleTask1ProxyActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.ProcessPluginDefaultProxyActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
+            android:hardwareAccelerated="true"
+            android:launchMode="standard"
+            android:process=":gamehall_plugin"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.ProcessPluginSingleInstance1ProxyActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleInstance"
+            android:process=":gamehall_plugin"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.ProcessPluginSingleTask1ProxyActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection|density"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
+            android:process=":gamehall_plugin"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+
+        <provider
+            android:name="com.tencent.shadow.core.runtime.container.PluginContainerContentProvider"
+            android:authorities="${applicationId}.contentprovider.authority.dynamic"
+            android:grantUriPermissions="true" />
+
+        <provider
+            android:name="com.tencent.shadow.core.runtime.container.PluginProcessContainerContentProvider"
+            android:authorities="${applicationId}.contentprovider.authority.dynamic.process"
+            android:process=":gamehall_plugin"
+            android:grantUriPermissions="true" />
+
+    </application>
+</manifest>
