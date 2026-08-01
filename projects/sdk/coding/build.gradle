@@ -31,5 +31,5 @@ allprojects {
     group 'com.tencent.shadow.coding'
 }
 
-tasks.create('test').dependsOn subprojects.collect { it.getTasksByName('test', false) }
+//tasks.create('test').dependsOn subprojects.collect { it.getTasksByName('test', false) }
 
